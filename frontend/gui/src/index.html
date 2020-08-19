@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <link
+    
+    href="src/fonts/font-awesome-4.7.0/css/font-awesome.min.css"
+  />
+    <title>Hello world App</title>
+  </head>
+  <body>
+  <div id="root"></div>
+  <script src="bundle.js"></script>
+  <script src="src/js/jquery.js"></script>
+    <script src="src/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="src/datePicker/pickerJs.js"></script>
+
+    <script>
+      $(document).ready(function () {
+        $("#sidebarCollapse").on("click", function () {
+          console.log("ok");
+          $("#sidebar").toggleClass("active");
+          $("#innerSidebarCollapse").toggleClass("hide");
+        });
+
+        $("#innerSidebarCollapse").on("click", function () {
+          console.log("ok");
+          $("#sidebar").toggleClass("active");
+          $("#innerSidebarCollapse").toggleClass("hide");
+        });
+        $(".input-daterange").datepicker({
+          format: "dd-mm-yyyy",
+          autoclose: true,
+        });
+      });
+    </script>
+  </body>
+</html>
