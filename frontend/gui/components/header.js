@@ -8,7 +8,7 @@ function Header() {
     >
       <div className="container" style={{backgroundColor: "inherit"}}>
         <a className="navbar-brand" href="index.html">
-          <img src="img/icon.png" alt="" width="70px" /><span id="myLogo">
+          <img src="/img/icon.png" alt="" width="70px" /><span id="myLogo">
             Vemon</span
           >
         </a>

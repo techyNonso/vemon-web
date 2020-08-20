@@ -10,15 +10,15 @@ import ReactDOM from 'react-dom';
 //import './css/normalize.css';
 
 import {BrowserRouter as Router,Switch,Route} from 'react-router-dom';
-import Dashboard from '../components/dashboard'
-import About from '../components/about'
-import Contact from '../components/contact'
-import Faq from '../components/faq'
-import Home from '../components/home'
-import Privacy from '../components/privacy'
-import Signin from '../components/signin'
-import Signup from '../components/signup'
-import Terms from '../components/terms'
+import Dashboard from 'Components/dashboard'
+import About from 'Components/about'
+import Contact from 'Components/contact'
+import Faq from 'Components/faq'
+import Home from 'Components/home'
+import Privacy from 'Components/privacy'
+import Signin from 'Components/signin'
+import Signup from 'Components/signup'
+import Terms from 'Components/terms'
 
 
 
@@ -34,7 +34,7 @@ class App extends(Component){
                     <Route path="/" exact component={Home} />
                     <Route path="/about" component={About} />
                     <Route path="/contact" component={Contact} />
-                    <Route path="/faq/:id" component={Faq} />
+                    <Route path="/faq" component={Faq} />
                     <Route path="/privacy" component={Privacy} />
                     <Route path="/signin" component={Signin} />
                     <Route path="/signup" component={Signup} />

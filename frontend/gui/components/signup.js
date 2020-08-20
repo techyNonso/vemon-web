@@ -107,7 +107,7 @@ class Signup extends Component {
             </div>
             <div className="signup-image">
               <figure>
-                <img src="../img/sigup-img.jpg" alt="sing up image" />
+                <img src="/img/sigup-img.jpg" alt="sing up image" />
               </figure>
             </div>
           </div>

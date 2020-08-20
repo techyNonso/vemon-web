@@ -16,7 +16,7 @@ class Contact extends Component {
     
    <section
       className="fdb-block pt-0"
-      style={{backgroundImage: "url(./imgs/shapes/8.svg)"}}
+      style={{backgroundImage: "url(/src/froala/imgs/shapes/8.svg)"}}
     >
       <div className="bg-gray">
         <div className="container">

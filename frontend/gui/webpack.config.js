@@ -13,6 +13,11 @@ module.exports = {
     filename: 'bundle.js',
     publicPath:'/'
   },
+  resolve:{
+    alias:{
+      Components: path.resolve(__dirname,'components')
+    }
+  },
   module: {
     rules: [
       {

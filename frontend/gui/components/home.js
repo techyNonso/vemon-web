@@ -14,11 +14,11 @@ class Home extends Component {
         return(
             <div>
 
-<header style={{backgroundImage: "url(../img/header3.jpg)"}}>
+<header style={{backgroundImage: "url(/img/header3.jpg)"}}>
       <nav className="navbar navbar-expand-lg navbar-light fixed-top navBar">
         <div className="container"  style={{backgroundColor: "inherit"}}>
           <a className="navbar-brand" href="index.html">
-            <img src="img/icon.png" alt="" width="100px" />
+            <img src="/img/icon.png" alt="" width="100px" />
             <span id="myLogo">Vemon</span>
           </a>
           <button
@@ -88,7 +88,7 @@ class Home extends Component {
               <img
                 alt="image"
                 className="fdb-icon"
-                src="../src/froala/imgs/icons/cloud.svg"
+                src="/src/froala/imgs/icons/cloud.svg"
               />
 
               <h3><strong>Accessible</strong></h3>
@@ -104,7 +104,7 @@ class Home extends Component {
               <img
                 alt="image"
                 className="fdb-icon"
-                src="../src/froala/imgs/icons/github.svg"
+                src="/src/froala/imgs/icons/github.svg"
               />
 
               <h3><strong>Secured</strong></h3>
@@ -120,7 +120,7 @@ class Home extends Component {
               <img
                 alt="image"
                 className="fdb-icon"
-                src="../src/froala/imgs/icons/compass.svg"
+                src="/src/froala/imgs/icons/compass.svg"
               />
 
               <h3><strong>Accurate</strong></h3>
@@ -139,7 +139,7 @@ class Home extends Component {
       <div className="container">
         <div className="row align-items-center">
           <div className="col-12 col-md-6 mb-4 mb-md-0">
-            <img alt="image" className="img-fluid" src="./img/intro.png" />
+            <img alt="image" className="img-fluid" src="/img/intro.png" />
           </div>
           <div className="col-12 col-md-6 col-lg-5 ml-md-auto text-left">
             <h1>Vemon</h1>
@@ -229,7 +229,7 @@ class Home extends Component {
 
     <section
       className="fdb-block block-top-adjust"
-      style={{backgroundImage: "url(../src/froala/imgs/shapes/8.svg)"}}
+      style={{backgroundImage: "url(/src/froala/imgs/shapes/8.svg)"}}
     >
       <div className="container">
         <div className="row text-center">
@@ -347,7 +347,7 @@ class Home extends Component {
             <img
               alt="image"
               className="img-fluid"
-              src="../src/froala/imgs/draws/rocket.svg"
+              src="/src/froala/imgs/draws/rocket.svg"
             />
           </div>
         </div>

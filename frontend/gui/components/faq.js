@@ -8,9 +8,7 @@ class Faq extends Component {
         super(props)
     }
 
-    componentDidMount(){
-      console.log(this.props.match.params.id)
-    }
+   
 
     render() {
         return(
