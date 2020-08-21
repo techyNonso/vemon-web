@@ -43,7 +43,7 @@ class StaffList extends Component {
           </table>
         </div>
 
-        <ul className="pagination justify-content-end pr-3 pt-3">
+        <ul className="pagination justify-content-end pr-3 pt-4">
           <li className="page-item">
             <a href="#" className="page-link">
               Previous

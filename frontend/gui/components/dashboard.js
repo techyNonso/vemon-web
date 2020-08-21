@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import Header from "./header";
 
 //import all dashboard child components
@@ -19,6 +20,7 @@ import ExpiredStock from "Components/dashComponents/expiredStock";
 import ExhaustedStock from "Components/dashComponents/exhaustedStock";
 import StockActivities from "./dashComponents/stockActivities";
 import DashboardPage from "./dashComponents/dashboardPage";
+import Settings from "./dashComponents/settings";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -52,7 +54,7 @@ class Dashboard extends Component {
 
             <ul className="lisst-unstyled components">
               <li className="active">
-                <a href="dashboard.html">Dashboard</a>
+                <Link to="/dashboard">Dashboard</Link>
               </li>
 
               <li>
@@ -66,16 +68,16 @@ class Dashboard extends Component {
                 </a>
                 <ul className="collapse lisst-unstyled" id="stockSubmenu">
                   <li>
-                    <a href="allStock.html">All</a>
+                    <Link to="/dashboard/allStock">All</Link>
                   </li>
                   <li>
-                    <a href="expiredStock.html">Expired</a>
+                    <Link to="/dashboard/expiredStock">Expired</Link>
                   </li>
                   <li>
-                    <a href="exhaustedStock.html">Exhausted</a>
+                    <Link to="/dashboard/exhaustedStock">Exhausted</Link>
                   </li>
                   <li>
-                    <a href="stockActivities.html">Activities</a>
+                    <Link to="/dashboard/stockActivities">Activities</Link>
                   </li>
                 </ul>
               </li>
@@ -91,31 +93,31 @@ class Dashboard extends Component {
                 </a>
                 <ul className="collapse lisst-unstyled" id="salesSubmenu">
                   <li>
-                    <a href="allSales.html">All</a>
+                    <Link to="/dashboard/allSales">All</Link>
                   </li>
                   <li>
-                    <a href="cashSales.html">Cash</a>
+                    <Link to="/dashboard/cashSales">Cash</Link>
                   </li>
 
                   <li>
-                    <a href="creditSales.html">Credit</a>
+                    <Link to="/dashboard/creditSales">Credit</Link>
                   </li>
                   <li>
-                    <a href="onlineSales.html">Online</a>
+                    <Link to="/dashboard/onlineSales">Online</Link>
                   </li>
                 </ul>
               </li>
               <li>
-                <a href="debts.html">Debts</a>
+                <Link to="/dashboard/debts">Debts</Link>
               </li>
               <li>
-                <a href="expenses.html">Expenses</a>
+                <Link to="/dashboard/expenses">Expenses</Link>
               </li>
               <li>
-                <a href="companies.html">Companies</a>
+                <Link to="/dashboard/companies">Companies</Link>
               </li>
               <li>
-                <a href="branches.html">Branches</a>
+                <Link to="/dashboard/branches">Branches</Link>
               </li>
               <li>
                 <a
@@ -128,10 +130,10 @@ class Dashboard extends Component {
                 </a>
                 <ul className="collapse lisst-unstyled" id="staffSubmenu">
                   <li>
-                    <a href="staffList.html">List</a>
+                    <Link to="/dashboard/staffList">List</Link>
                   </li>
                   <li>
-                    <a href="attendance.html">Attendance</a>
+                    <Link to="/dashboard/attendance">Attendance</Link>
                   </li>
                 </ul>
               </li>
@@ -147,15 +149,15 @@ class Dashboard extends Component {
                 </a>
                 <ul className="collapse lisst-unstyled" id="reportSubmenu">
                   <li>
-                    <a href="accountReport.html">Account</a>
+                    <Link to="/dashboard/accountReport">Account</Link>
                   </li>
                   <li>
-                    <a href="productReport.html">Product</a>
+                    <Link to="/dashboard/productReport">Product</Link>
                   </li>
                 </ul>
               </li>
               <li>
-                <a href="settings.html">Settings</a>
+                <Link to="/dashboard/settings">Settings</Link>
               </li>
             </ul>
           </nav>
@@ -248,6 +250,7 @@ class Dashboard extends Component {
               {childPage.toUpperCase() === "STOCKACTIVITIES" && (
                 <StockActivities />
               )}
+              {childPage.toUpperCase() === "SETTINGS" && <Settings />}
 
               {childPage.toUpperCase() === "" && <DashboardPage />}
             </div>
