@@ -1,6 +1,7 @@
 from django.contrib import admin
-from debts.models import debt
+from stockActivities.models import stockActivity
 from django.contrib.auth.models import Group
 
+
 # Register your models here.
-admin.site.register(debt)
+admin.site.register(stockActivity)
