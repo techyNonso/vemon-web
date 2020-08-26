@@ -10,4 +10,7 @@ class stock(models.Model):
     unit = models.CharField(max_length=10)
     ppmu = models.CharField(max_length=10)
     price = models.CharField(max_length=10)
-    expDate = models.DateField()
+    #expDate = models.DateField()
+    companyId = models.CharField(max_length=50,null=True)
+    branchId = models.CharField(max_length=50,null=True)
+    

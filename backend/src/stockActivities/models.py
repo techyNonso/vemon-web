@@ -7,3 +7,6 @@ class stockActivity(models.Model):
     editor = models.CharField(max_length=50)
     editorId = models.CharField(max_length=20)
     batchId = models.CharField(max_length=20)
+    companyId = models.CharField(max_length=50,null=True)
+    branchId = models.CharField(max_length=50,null=True)
+    

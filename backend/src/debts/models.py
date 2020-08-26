@@ -10,5 +10,7 @@ class debt(models.Model):
      amount = models.IntegerField()
      paid = models.IntegerField()
      balance = models.IntegerField()
-
+     companyId = models.CharField(max_length=50,null=True)
+     branchId = models.CharField(max_length=50,null=True)
+   
     
