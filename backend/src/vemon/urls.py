@@ -9,5 +9,7 @@ urlpatterns = [
     path('',include('sales.urls')),
     path('',include('staff.urls')),
     path('',include('stock.urls')),
-    path('',include('stockActivities.urls'))
+    path('',include('stockActivities.urls')),
+    path('',include('companies.urls')),
+    path('',include('branches.urls'))
 ]
