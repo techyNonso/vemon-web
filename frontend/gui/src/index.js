@@ -21,27 +21,30 @@ import Signin from "Components/signin";
 import Signup from "Components/signup";
 import Terms from "Components/terms";
 
-import Store from "Store/store";
+import { store, persistor } from "Store/store";
+import { PersistGate } from "redux-persist/integration/react";
 
 class App extends Component {
   render() {
     return (
-      <Provider store={Store}>
+      <Provider store={store}>
         <Router>
-          <div>
-            <Switch>
-              <Route path="/" exact component={Home} />
-              <Route path="/about" component={About} />
-              <Route path="/contact" component={Contact} />
-              <Route path="/faq" component={Faq} />
-              <Route path="/privacy" component={Privacy} />
-              <Route path="/signin" component={Signin} />
-              <Route path="/signup" component={Signup} />
-              <Route path="/terms" component={Terms} />
-              <Route path="/dashboard" exact component={Dashboard} />
-              <Route path="/dashboard/:page" component={Dashboard} />
-            </Switch>
-          </div>
+          <PersistGate persistor={persistor}>
+            <div>
+              <Switch>
+                <Route path="/" exact component={Home} />
+                <Route path="/about" component={About} />
+                <Route path="/contact" component={Contact} />
+                <Route path="/faq" component={Faq} />
+                <Route path="/privacy" component={Privacy} />
+                <Route path="/signin" component={Signin} />
+                <Route path="/signup" component={Signup} />
+                <Route path="/terms" component={Terms} />
+                <Route path="/dashboard" exact component={Dashboard} />
+                <Route path="/dashboard/:page" component={Dashboard} />
+              </Switch>
+            </div>
+          </PersistGate>
         </Router>
       </Provider>
     );

@@ -1,22 +1,23 @@
-import { GET_BRANCHES, GET_BRANCH } from "../actions/types";
+import { GET_COMPANIES, GET_COMPANY } from "../actions/types";
 
 const initialState = {
   items: [],
   item: {},
 };
 
-export default function branchReducer(state = initialState, action) {
+export default function companyReducer(state = initialState, action) {
   switch (action.type) {
-    case GET_BRANCHES:
+    case GET_COMPANIES:
       return {
         ...state,
         items: action.payload,
       };
-    case GET_BRANCH:
+    case GET_COMPANY:
       return {
         ...state,
         item: action.payload,
       };
+
     default:
       return state;
   }

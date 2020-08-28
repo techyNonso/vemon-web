@@ -9,9 +9,9 @@ from .serializers import StockSerializer
 
 # Create your views here.
 @api_view(['GET','POST'])
-def stockHandler(request):
+def stockHandler(request,company,branch):
     if request.method == "GET":
-        allStock = stock.objects.all()
+        allStock = stock.objects.filter(companyId=company,branchId=branch)
         serializer = StockSerializer(allStock, many=True)
         return Response(serializer.data)
     elif request.method == "POST":

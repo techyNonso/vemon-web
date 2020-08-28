@@ -1,6 +1,20 @@
 import { combineReducers } from "redux";
 import branchReducer from "./branchReducer";
+import stockReducer from "./stockReducer";
+import companyReducer from "./companyReducer";
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
-export default combineReducers({
+const persistConfig = {
+  key: "root",
+  storage,
+  whitelist: ["branches", "companies"],
+};
+
+const rootReducer = combineReducers({
   branches: branchReducer,
+  stocks: stockReducer,
+  companies: companyReducer,
 });
+
+export default persistReducer(persistConfig, rootReducer);

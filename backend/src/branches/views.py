@@ -7,6 +7,15 @@ from .serializers import BranchesSerializer
 from account.models import Account
 
 
+#get branches based on company id
+@api_view(["GET"])
+def companyBranches(request,company):
+    if request.method == "GET":
+        branches = branch.objects.filter(companyId=company)
+        serializer = BranchesSerializer(branches, many=True)
+        return Response(serializer.data)
+
+
 # Create your views here.
 @api_view(['GET','POST'])
 def branchHandler(request):

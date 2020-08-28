@@ -1,13 +1,53 @@
-import React, { Component } from "react";
-
+import React, { Component, Fragment } from "react";
+import { getStocks } from "Store/actions/stockAction";
+import { getCompanies } from "Store/actions/companyAction";
+import propTypes from "prop-types";
+import { connect } from "react-redux";
+import {
+  extractProductId,
+  getStockArray,
+  getTotalQty,
+  getTotalBatches,
+} from "Modules/stock";
 class AllStock extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      componentStocks: [],
+      totalQuantity: "",
+      totalBatches: "",
+    };
+
+    this.handleProps = this.handleProps.bind(this);
   }
 
+  //wait for when our props arrive
+  componentWillReceiveProps(nextProps) {
+    this.handleProps(nextProps);
+  }
+
+  //format the data into a displayable
+  handleProps(props) {
+    let ids = extractProductId(props.stocks);
+    let stocks = getStockArray(ids, props.stocks);
+    let totalQty = getTotalQty(props.stocks);
+    let totalBatches = getTotalBatches(props.stocks);
+
+    //set state with new stocks state set
+    this.setState({
+      componentStocks: stocks,
+      totalQuantity: totalQty,
+      totalBatches: totalBatches,
+    });
+  }
+
+  componentDidMount() {
+    this.props.getStocks("Compy2u", "BR1234");
+  }
   render() {
     return (
-      <div>
+      <Fragment>
         <div className="row table-responsive boxUp p-3">
           <table className="table table-sm table-striped table-borderless">
             <thead>
@@ -21,21 +61,23 @@ class AllStock extends Component {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>093033</td>
-                <td>Paracetamol</td>
-                <td>10</td>
-                <td>5</td>
-                <td>1000</td>
-                <td>1500</td>
-              </tr>
+              {this.state.componentStocks.map((stock) => (
+                <tr key={stock.id}>
+                  <td>{stock.id}</td>
+                  <td>{stock.name}</td>
+                  <td>{stock.qty}</td>
+                  <td>{stock.batches}</td>
+                  <td>{stock.bought}</td>
+                  <td>{stock.sold}</td>
+                </tr>
+              ))}
             </tbody>
             <tfoot>
               <tr>
                 <th>Total</th>
-                <th>200</th>
-                <th>1000</th>
-                <th>90</th>
+                <th></th>
+                <th>{this.state.totalQuantity}</th>
+                <th>{this.state.totalBatches}</th>
                 <th></th>
                 <th></th>
               </tr>
@@ -60,9 +102,21 @@ class AllStock extends Component {
             </a>
           </li>
         </ul>
-      </div>
+      </Fragment>
     );
   }
 }
 
-export default AllStock;
+AllStock.propTypes = {
+  getStocks: propTypes.func.isRequired,
+
+  stocks: propTypes.array.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  stocks: state.stocks.items,
+});
+
+export default connect(mapStateToProps, {
+  getStocks,
+})(AllStock);

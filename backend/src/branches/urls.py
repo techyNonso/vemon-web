@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import branchHandler, branchDetail
+from .views import branchHandler, branchDetail, companyBranches
 
 urlpatterns = [
     path('branches/',branchHandler),
-    path('branches/<int:pk>',branchDetail)
+    path('branches/<str:company>',companyBranches),
+    path('branches/branch/<int:pk>',branchDetail)
 ]
 

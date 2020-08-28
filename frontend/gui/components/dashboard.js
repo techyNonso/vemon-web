@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Header from "./header";
+import { connect } from "react-redux";
+import { getCompanyBranches, getBranch } from "Store/actions/branchAction";
+import { getCompanies, getCompany } from "Store/actions/companyAction";
+import propTypes from "prop-types";
 
 //import all dashboard child components
 import AllSales from "Components/dashComponents/allSales";
@@ -25,6 +29,82 @@ import Settings from "./dashComponents/settings";
 class Dashboard extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      companies: [],
+      branches: [],
+      selectedCompany: "",
+      selectedBranch: "",
+      selectedBranchId: "",
+      selectedCompanyId: "",
+    };
+    //this.handleProps = this.handleProps.bind(this);
+  }
+
+  componentDidMount() {
+    //check if we have companies and branches in store
+    if (this.props.companies.length == 0) {
+      this.props.getCompanies();
+    } else {
+      this.setState({
+        companies: this.props.companies,
+        selectedCompany: this.props.company,
+        selectedCompanyId: this.props.company.id,
+      });
+    }
+
+    if (this.props.branches.length > 0) {
+    }
+  }
+
+  //handle company change
+  changeCompany(event) {
+    //get company with this id and store in redux
+    this.props.getCompany(event.target.value);
+    this.setState({
+      selectedCompany: this.props.company,
+      selectedCompanyId: this.props.company.id,
+    });
+  }
+
+  //handle branch change
+  changeBranch(event) {
+    //get branch with this id and store in redux
+    this.props.getBranch(event.target.value);
+    this.setState({
+      selectedBranch: this.props.branch,
+      selectedBranchId: this.props.branch.id,
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    //check when company props change
+    if (prevProps.companies !== this.props.companies) {
+      // get first company
+      this.props.getCompany(this.props.companies[0].id);
+      this.setState({
+        companies: this.props.companies,
+        selectedCompany: this.props.company,
+        selectedCompanyId: this.props.company.id,
+      });
+    }
+
+    if (prevState.selectedCompany !== this.state.selectedCompany) {
+      this.props.getCompanyBranches(this.state.selectedCompany.companyId);
+      
+    }
+
+    if (prevProps.branches !== this.props.branches) {
+      // get first branch
+      this.props.getBranch(this.props.branches[0].id);
+      this.setState({
+        branches: this.props.branches,
+        selectedBranch: this.props.branch,
+        selectedBranchId: this.props.branch.id,
+      });
+
+      
+    }
   }
 
   render() {
@@ -33,6 +113,18 @@ class Dashboard extends Component {
       this.props.match.params.page !== undefined
         ? this.props.match.params.page
         : "";
+
+    const companyOptions = this.props.companies.map((company) => (
+      <option key={company.id} value={company.id}>
+        {company.companyName}
+      </option>
+    ));
+
+    const branchOptions = this.props.branches.map((branch) => (
+      <option key={branch.id} value={branch.id}>
+        {branch.branchId}
+      </option>
+    ));
 
     return (
       <div>
@@ -184,23 +276,25 @@ class Dashboard extends Component {
                     name="company"
                     id=""
                     className="custom-select custom-select-sm"
+                    onChange={this.changeCompany.bind(this)}
+                    value={this.state.selectedCompanyId}
                   >
-                    <option value="">Company</option>
-                    <option value="companyA">Company A</option>
-                    <option value="companyB">Company B</option>
+                    <option value="select">Select</option>
+                    {companyOptions}
                   </select>
                 </form>
               </div>
               <div className="col-4">
                 <form action="">
                   <select
-                    name="company"
+                    name="branch"
                     id=""
                     className="custom-select custom-select-sm"
+                    onChange={this.changeBranch.bind(this)}
+                    value={this.state.selectedBranchId}
                   >
-                    <option value="">Branch</option>
-                    <option value="branchA">Branch A</option>
-                    <option value="branchB">Branch B</option>
+                    
+                    {branchOptions}
                   </select>
                 </form>
               </div>
@@ -209,7 +303,7 @@ class Dashboard extends Component {
             <div className="row mt-3 pl-3 pr-3">
               <div className="col-md-6 pb-2">
                 <span>
-                  <strong>Branches</strong> : 1 of 4{" "}
+                  <strong>Branches</strong> : 1 of {this.state.branches.length}
                 </span>
               </div>
 
@@ -261,4 +355,25 @@ class Dashboard extends Component {
   }
 }
 
-export default Dashboard;
+Dashboard.propTypes = {
+  companies: propTypes.array.isRequired,
+  branches: propTypes.array.isRequired,
+  getCompanyBranches: propTypes.func.isRequired,
+  getCompanies: propTypes.func.isRequired,
+  getCompany: propTypes.func.isRequired,
+  getBranch: propTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  companies: state.companies.items,
+  company: state.companies.item,
+  branches: state.branches.items,
+  branch: state.branches.item,
+});
+
+export default connect(mapStateToProps, {
+  getCompanyBranches,
+  getCompanies,
+  getCompany,
+  getBranch,
+})(Dashboard);

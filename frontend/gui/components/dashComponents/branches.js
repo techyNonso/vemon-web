@@ -1,8 +1,16 @@
 import React, { Component } from "react";
+import propTypes from "prop-types";
+import { connect } from "react-redux";
+//import { getBranches } from "Store/actions/branchAction";
 
 class Branches extends Component {
   constructor(props) {
     super(props);
+  }
+
+  componentWillMount() {
+    this.props.getBranches();
+    console.log(this.props.branches);
   }
 
   render() {
@@ -64,4 +72,13 @@ class Branches extends Component {
   }
 }
 
-export default Branches;
+Branches.propTypes = {
+  //getBranches: propTypes.func.isRequired,
+  branches: propTypes.array.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  branches: state.branches.items,
+});
+
+export default connect(mapStateToProps, null)(Branches);
