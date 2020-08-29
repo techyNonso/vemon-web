@@ -13,15 +13,16 @@ export const extractProductId = (stock) => {
 
 export const getStockArray = (ids, stock) => {
   let stockArray = [];
-  let obj = {
-    id: "",
-    name: "",
-    qty: "",
-    batches: "",
-    bought: "",
-    sold: "",
-  };
+
   ids.forEach((id) => {
+    let obj = {
+      id: "",
+      name: "",
+      qty: "",
+      batches: "",
+      bought: "",
+      sold: "",
+    };
     let ppmu = 0;
     let counter = 0;
     let averagePpmu = 0;
@@ -48,8 +49,10 @@ export const getStockArray = (ids, stock) => {
     averagePpmu = ppmu / counter;
     //assign avgppmu as correct cost price
     obj.bought = averagePpmu;
+
     stockArray.push(obj);
   });
+
   return stockArray;
 };
 

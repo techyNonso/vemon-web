@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { getStocks } from "Store/actions/stockAction";
+import Pagination from "Components/dashComponents/pagination";
 import { getCompanies } from "Store/actions/companyAction";
 import propTypes from "prop-types";
 import { connect } from "react-redux";
@@ -17,6 +18,9 @@ class AllStock extends Component {
       componentStocks: [],
       totalQuantity: "",
       totalBatches: "",
+      loading: false,
+      currentPage: 1,
+      postsPerPage: 1,
     };
 
     this.handleProps = this.handleProps.bind(this);
@@ -32,7 +36,10 @@ class AllStock extends Component {
       prevProps.company !== this.props.company ||
       prevProps.branch !== this.props.branch
     ) {
-      console.log(this.props.company.companyId, this.props.branch.branchId);
+      //console.log(this.props.company.companyId, this.props.branch.branchId);
+      this.setState({
+        loading: true,
+      });
       this.props.getStocks(
         this.props.company.companyId,
         this.props.branch.branchId
@@ -43,6 +50,7 @@ class AllStock extends Component {
   //format the data into a displayable
   handleProps(props) {
     let ids = extractProductId(props.stocks);
+
     let stocks = getStockArray(ids, props.stocks);
     let totalQty = getTotalQty(props.stocks);
     let totalBatches = getTotalBatches(props.stocks);
@@ -52,17 +60,41 @@ class AllStock extends Component {
       componentStocks: stocks,
       totalQuantity: totalQty,
       totalBatches: totalBatches,
+      loading: false,
     });
   }
 
   componentDidMount() {
-    console.log(this.props.company.companyId, this.props.branch.branchId);
+    //console.log(this.props.company.companyId, this.props.branch.branchId);
     this.props.getStocks(
       this.props.company.companyId,
       this.props.branch.branchId
     );
+    this.setState({
+      loading: true,
+    });
   }
   render() {
+    let loading;
+    if (this.state.loading) {
+      loading = (
+        <tr>
+          <td>please wait...</td>
+        </tr>
+      );
+    }
+
+    //get current stocks
+    const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - this.state.postsPerPage;
+    const currentPosts = this.state.componentStocks.slice(
+      indexOfFirstPost,
+      indexOfLastPost
+    );
+
+    //change the page
+    const paginate = (pageNumber) => this.setState({ currentPage: pageNumber });
+
     return (
       <Fragment>
         <div className="row table-responsive boxUp p-3">
@@ -78,7 +110,8 @@ class AllStock extends Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.componentStocks.map((stock) => (
+              {loading}
+              {currentPosts.map((stock) => (
                 <tr key={stock.id}>
                   <td>{stock.id}</td>
                   <td>{stock.name}</td>
@@ -101,24 +134,11 @@ class AllStock extends Component {
             </tfoot>
           </table>
         </div>
-
-        <ul className="pagination justify-content-end pr-3 pt-3">
-          <li className="page-item">
-            <a href="#" className="page-link">
-              Previous
-            </a>
-          </li>
-          <li className="page-item active">
-            <a href="#" className="page-link">
-              2
-            </a>
-          </li>
-          <li className="page-item">
-            <a href="#" className="page-link">
-              Next
-            </a>
-          </li>
-        </ul>
+        <Pagination
+          postsPerPage={this.state.postsPerPage}
+          totalPosts={this.state.componentStocks.length}
+          paginate={paginate}
+        />
       </Fragment>
     );
   }
