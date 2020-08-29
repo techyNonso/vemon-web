@@ -53,35 +53,38 @@ class Dashboard extends Component {
       });
     }
 
+    //load info from persisted storage
     if (this.props.branches.length > 0) {
+      this.setState({
+        branches: this.props.branches,
+        selectedBranch: this.props.branch,
+        selectedBranchId: this.props.branch.id,
+      });
     }
   }
 
   //handle company change
   changeCompany(event) {
-    //get company with this id and store in redux
-    this.props.getCompany(event.target.value);
     this.setState({
-      selectedCompany: this.props.company,
-      selectedCompanyId: this.props.company.id,
+      selectedCompanyId: event.target.value,
     });
+
+    this.props.getCompany(event.target.value);
   }
 
   //handle branch change
   changeBranch(event) {
-    //get branch with this id and store in redux
-    this.props.getBranch(event.target.value);
     this.setState({
-      selectedBranch: this.props.branch,
-      selectedBranchId: this.props.branch.id,
+      selectedBranchId: event.target.value,
     });
+
+    this.props.getBranch(event.target.value);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    //check when company props change
     if (prevProps.companies !== this.props.companies) {
-      // get first company
       this.props.getCompany(this.props.companies[0].id);
+
       this.setState({
         companies: this.props.companies,
         selectedCompany: this.props.company,
@@ -89,21 +92,26 @@ class Dashboard extends Component {
       });
     }
 
-    if (prevState.selectedCompany !== this.state.selectedCompany) {
-      this.props.getCompanyBranches(this.state.selectedCompany.companyId);
-      
+    if (prevProps.company !== this.props.company) {
+      //get branches for this company
+      this.props.getCompanyBranches(this.props.company.companyId);
+      this.setState({
+        selectedCompany: this.props.company,
+      });
     }
 
     if (prevProps.branches !== this.props.branches) {
-      // get first branch
-      this.props.getBranch(this.props.branches[0].id);
       this.setState({
         branches: this.props.branches,
+      });
+      this.props.getBranch(this.props.branches[0].id);
+    }
+
+    if (prevProps.branch !== this.props.branch) {
+      this.setState({
         selectedBranch: this.props.branch,
         selectedBranchId: this.props.branch.id,
       });
-
-      
     }
   }
 
@@ -114,13 +122,13 @@ class Dashboard extends Component {
         ? this.props.match.params.page
         : "";
 
-    const companyOptions = this.props.companies.map((company) => (
+    const companyOptions = this.state.companies.map((company) => (
       <option key={company.id} value={company.id}>
         {company.companyName}
       </option>
     ));
 
-    const branchOptions = this.props.branches.map((branch) => (
+    const branchOptions = this.state.branches.map((branch) => (
       <option key={branch.id} value={branch.id}>
         {branch.branchId}
       </option>
@@ -279,7 +287,6 @@ class Dashboard extends Component {
                     onChange={this.changeCompany.bind(this)}
                     value={this.state.selectedCompanyId}
                   >
-                    <option value="select">Select</option>
                     {companyOptions}
                   </select>
                 </form>
@@ -293,7 +300,6 @@ class Dashboard extends Component {
                     onChange={this.changeBranch.bind(this)}
                     value={this.state.selectedBranchId}
                   >
-                    
                     {branchOptions}
                   </select>
                 </form>
