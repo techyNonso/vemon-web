@@ -23,8 +23,21 @@ class AllStock extends Component {
   }
 
   //wait for when our props arrive
-  componentWillReceiveProps(nextProps) {
-    this.handleProps(nextProps);
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.stocks !== this.props.stocks) {
+      this.handleProps(this.props);
+    }
+
+    if (
+      prevProps.company !== this.props.company ||
+      prevProps.branch !== this.props.branch
+    ) {
+      console.log(this.props.company.companyId, this.props.branch.branchId);
+      this.props.getStocks(
+        this.props.company.companyId,
+        this.props.branch.branchId
+      );
+    }
   }
 
   //format the data into a displayable
@@ -43,7 +56,11 @@ class AllStock extends Component {
   }
 
   componentDidMount() {
-    this.props.getStocks("Compy2u", "BR1234");
+    console.log(this.props.company.companyId, this.props.branch.branchId);
+    this.props.getStocks(
+      this.props.company.companyId,
+      this.props.branch.branchId
+    );
   }
   render() {
     return (
@@ -115,6 +132,8 @@ AllStock.propTypes = {
 
 const mapStateToProps = (state) => ({
   stocks: state.stocks.items,
+  branch: state.branches.item,
+  company: state.companies.item,
 });
 
 export default connect(mapStateToProps, {
