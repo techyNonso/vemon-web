@@ -67,3 +67,15 @@ export const getTotalQty = (stock) => {
 
 //get total batches which is same with number of products occurance
 export const getTotalBatches = (stocks) => stocks.length;
+
+//get result of search
+export const getSearchResult = (stock, detail) => {
+  let match = stock.filter((product) => {
+    return (
+      product.id.toUpperCase().includes(detail.toUpperCase()) ||
+      product.name.toUpperCase().includes(detail.toUpperCase())
+    );
+  });
+
+  return match;
+};

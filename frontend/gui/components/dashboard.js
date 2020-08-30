@@ -306,33 +306,13 @@ class Dashboard extends Component {
               </div>
             </div>
 
-            <div className="row mt-3 pl-3 pr-3">
-              <div className="col-md-6 pb-2">
-                <span>
-                  <strong>Branches</strong> : 1 of {this.state.branches.length}
-                </span>
-              </div>
-
-              <div className="col-md-6 pb-2">
-                <form action="" className="form">
-                  <div className="form-group">
-                    <input
-                      type="text"
-                      placeholder="Search"
-                      className="form-control"
-                    />
-                  </div>
-                </form>
-              </div>
-            </div>
-
             {/** main content starts here */}
 
             <div className="main-content mt-4 pl-4">
               {/*show child pages based on conditions*/}
               {childPage.toUpperCase() === "ALLSALES" && <AllSales />}
               {childPage.toUpperCase() === "ACCOUNTREPORT" && <AccountReport />}
-              {childPage.toUpperCase() === "ALLSTOCK" && <AllStock />}
+              {childPage.toUpperCase() === "ALLSTOCK" && <AllStock branches={this.state.branches} />}
               {childPage.toUpperCase() === "ATTENDANCE" && <Attendance />}
               {childPage.toUpperCase() === "BRANCHES" && <Branches />}
               {childPage.toUpperCase() === "CASHSALES" && <CashSales />}

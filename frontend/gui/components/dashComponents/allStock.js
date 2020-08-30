@@ -9,6 +9,7 @@ import {
   getStockArray,
   getTotalQty,
   getTotalBatches,
+  getSearchResult,
 } from "Modules/stock";
 class AllStock extends Component {
   constructor(props) {
@@ -16,14 +17,49 @@ class AllStock extends Component {
 
     this.state = {
       componentStocks: [],
+      originalStocks: [],
       totalQuantity: "",
       totalBatches: "",
       loading: false,
       currentPage: 1,
-      postsPerPage: 1,
+      postsPerPage: 100,
+      searchValue: "",
     };
 
     this.handleProps = this.handleProps.bind(this);
+  }
+
+  //search item in list
+  searchList(event) {
+    this.setState({
+      searchValue: event.target.value,
+      loading: true,
+    });
+
+    //check if there if value to be searched
+    if (event.target.value.trim().length > 0) {
+      //check if any result was received
+      let list = getSearchResult(this.state.originalStocks, event.target.value);
+
+      if (list.length > 0) {
+        this.setState({
+          componentStocks: list,
+          loading: false,
+        });
+      } else {
+        //set list back to original list
+        this.setState({
+          componentStocks: [],
+          loading: false,
+        });
+      }
+    } else {
+      //if search box is empty
+      this.setState({
+        componentStocks: this.state.originalStocks,
+        loading: false,
+      });
+    }
   }
 
   //wait for when our props arrive
@@ -58,6 +94,7 @@ class AllStock extends Component {
     //set state with new stocks state set
     this.setState({
       componentStocks: stocks,
+      originalStocks: stocks,
       totalQuantity: totalQty,
       totalBatches: totalBatches,
       loading: false,
@@ -94,9 +131,49 @@ class AllStock extends Component {
 
     //change the page
     const paginate = (pageNumber) => this.setState({ currentPage: pageNumber });
-
+    let stockList;
+    //check list
+    if (currentPosts.length > 0) {
+      stockList = currentPosts.map((stock) => (
+        <tr key={stock.id}>
+          <td>{stock.id}</td>
+          <td>{stock.name}</td>
+          <td>{stock.qty}</td>
+          <td>{stock.batches}</td>
+          <td>{stock.bought}</td>
+          <td>{stock.sold}</td>
+        </tr>
+      ));
+    } else {
+      stockList = (
+        <tr>
+          <td>No record found</td>
+        </tr>
+      );
+    }
     return (
       <Fragment>
+        <div className="row mt-3 pl-3 pr-3">
+          <div className="col-md-6 pb-2">
+            <span>
+              <strong>Branches</strong> : 1 of {this.props.branches.length}
+            </span>
+          </div>
+
+          <div className="col-md-6 pb-2">
+            <form action="" className="form">
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="form-control"
+                  value={this.state.searchValue}
+                  onChange={this.searchList.bind(this)}
+                />
+              </div>
+            </form>
+          </div>
+        </div>
         <div className="row table-responsive boxUp p-3">
           <table className="table table-sm table-striped table-borderless">
             <thead>
@@ -111,16 +188,7 @@ class AllStock extends Component {
             </thead>
             <tbody>
               {loading}
-              {currentPosts.map((stock) => (
-                <tr key={stock.id}>
-                  <td>{stock.id}</td>
-                  <td>{stock.name}</td>
-                  <td>{stock.qty}</td>
-                  <td>{stock.batches}</td>
-                  <td>{stock.bought}</td>
-                  <td>{stock.sold}</td>
-                </tr>
-              ))}
+              {stockList}
             </tbody>
             <tfoot>
               <tr>
