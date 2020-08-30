@@ -26,13 +26,15 @@ class AllStock extends Component {
       searchValue: "",
     };
 
+    //handle props received
     this.handleProps = this.handleProps.bind(this);
   }
 
-  //search item in list
+  //search item in list starting from first page
   searchList(event) {
     this.setState({
       searchValue: event.target.value,
+      currentPage: 1,
       loading: true,
     });
 

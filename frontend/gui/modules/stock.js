@@ -1,5 +1,6 @@
 // all stock management functions live here
 
+// all stock page
 import { object } from "prop-types";
 
 export const extractProductId = (stock) => {
@@ -75,6 +76,15 @@ export const getSearchResult = (stock, detail) => {
       product.id.toUpperCase().includes(detail.toUpperCase()) ||
       product.name.toUpperCase().includes(detail.toUpperCase())
     );
+  });
+
+  return match;
+};
+
+// exhausted stock
+export const getLowStock = (stock) => {
+  let match = stock.filter((product) => {
+    return product.qty <= 20;
   });
 
   return match;

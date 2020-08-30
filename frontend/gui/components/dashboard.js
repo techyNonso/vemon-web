@@ -312,20 +312,34 @@ class Dashboard extends Component {
               {/*show child pages based on conditions*/}
               {childPage.toUpperCase() === "ALLSALES" && <AllSales />}
               {childPage.toUpperCase() === "ACCOUNTREPORT" && <AccountReport />}
-              {childPage.toUpperCase() === "ALLSTOCK" && <AllStock branches={this.state.branches} />}
-              {childPage.toUpperCase() === "ATTENDANCE" && <Attendance />}
+              {childPage.toUpperCase() === "ALLSTOCK" && (
+                <AllStock branches={this.state.branches} />
+              )}
+              {childPage.toUpperCase() === "ATTENDANCE" && (
+                <Attendance branches={this.state.branches} />
+              )}
               {childPage.toUpperCase() === "BRANCHES" && <Branches />}
-              {childPage.toUpperCase() === "CASHSALES" && <CashSales />}
+              {childPage.toUpperCase() === "CASHSALES" && (
+                <CashSales branches={this.state.branches} />
+              )}
               {childPage.toUpperCase() === "COMPANIES" && <Companies />}
-              {childPage.toUpperCase() === "CREDITSALES" && <CreditSales />}
+              {childPage.toUpperCase() === "CREDITSALES" && (
+                <CreditSales branches={this.state.branches} />
+              )}
               {childPage.toUpperCase() === "DEBTS" && <Debts />}
               {childPage.toUpperCase() === "EXHAUSTEDSTOCK" && (
-                <ExhaustedStock />
+                <ExhaustedStock branches={this.state.branches} />
               )}
               {childPage.toUpperCase() === "EXPENSES" && <Expenses />}
-              {childPage.toUpperCase() === "EXPIREDSTOCK" && <ExpiredStock />}
-              {childPage.toUpperCase() === "ONLINESALES" && <OnlineSales />}
-              {childPage.toUpperCase() === "STAFFLIST" && <StaffList />}
+              {childPage.toUpperCase() === "EXPIREDSTOCK" && (
+                <ExpiredStock branches={this.state.branches} />
+              )}
+              {childPage.toUpperCase() === "ONLINESALES" && (
+                <OnlineSales branches={this.state.branches} />
+              )}
+              {childPage.toUpperCase() === "STAFFLIST" && (
+                <StaffList branches={this.state.branches} />
+              )}
               {childPage.toUpperCase() === "PRODUCTREPORT" && <ProductReport />}
               {childPage.toUpperCase() === "STOCKACTIVITIES" && (
                 <StockActivities />
