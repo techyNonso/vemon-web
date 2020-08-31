@@ -2,6 +2,7 @@
 
 // all stock page
 import { object } from "prop-types";
+import expiredStock from "../components/dashComponents/expiredStock";
 
 export const extractProductId = (stock) => {
   let idArray = [];
@@ -88,4 +89,55 @@ export const getLowStock = (stock) => {
   });
 
   return match;
+};
+
+//expired stock
+export const getExpiredStock = (stock, limit) => {
+  let date1 = new Date();
+
+  let expiredArray = [];
+
+  stock.forEach((product) => {
+    let obj = {};
+    if (product.expiryDate !== "") {
+      let date2 = new Date(product.expiryDate);
+      let diff_time = date2.getTime() - date1.getTime();
+      let diff_days = Math.ceil(diff_time / (1000 * 3600 * 24));
+      if (diff_days <= limit) {
+        (obj.name = product.productName),
+          (obj.id = product.productId),
+          (obj.batchId = product.batchId),
+          (obj.rowId = product.id),
+          (obj.date = product.expiryDate),
+          (obj.qty = product.quantity),
+          (obj.life = diff_days);
+
+        //push into array
+        expiredArray.push(obj);
+      }
+    }
+  });
+
+  function compare(a, b) {
+    const nameA = a.name.toUpperCase();
+    const nameB = b.name.toUpperCase();
+
+    let comparison = 0;
+    if (nameA > nameB) {
+      comparison = 1;
+    } else if (nameA < nameB) {
+      comparison = -1;
+    }
+
+    return comparison;
+  }
+
+  if (expiredArray.length > 0) {
+    //sort the array
+    let sortedArray = expiredArray.sort(compare);
+
+    return sortedArray;
+  } else {
+    return expiredArray;
+  }
 };
