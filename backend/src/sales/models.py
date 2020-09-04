@@ -10,4 +10,4 @@ class sale(models.Model):
     transactionType = models.CharField(max_length=20)
     companyId = models.CharField(max_length=50,null=True)
     branchId = models.CharField(max_length=50,null=True)
-   
+    date = models.DateField(null=True)

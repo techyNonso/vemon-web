@@ -141,3 +141,60 @@ export const getExpiredStock = (stock, limit) => {
     return expiredArray;
   }
 };
+
+//stock activities
+export const extractDates = (start, end) => {
+  //get array of dates between the two dates
+  let dateArray = [];
+
+  let dt = new Date(start);
+  while (dt <= end) {
+    dateArray = [...dateArray, new Date(dt)];
+    dt.setDate(dt.getDate() + 1);
+  }
+  //get the last day if its not same with the first day
+  if (
+    start.getFullYear() !== end.getFullYear() &&
+    start.getMonth() !== end.getMonth() &&
+    start.getDate() !== end.getDate()
+  ) {
+    dateArray = [...dateArray, end];
+  }
+
+  return dateArray;
+};
+
+//extract activities
+export const extractActivities = (dates, activities) => {
+  let actsArray = [];
+  dates.forEach((date) => {
+    //loop through activities
+    activities.forEach((act) => {
+      let year = date.getFullYear();
+      let month = date.getMonth();
+      let day = date.getDate();
+      let actDate = new Date(act.date);
+      let actYear = actDate.getFullYear();
+      let actMonth = actDate.getMonth();
+      let actDay = actDate.getDate();
+
+      if (year == actYear && month == actMonth && day == actDay) {
+        actsArray = [...actsArray, act];
+      }
+    });
+  });
+
+  return actsArray;
+};
+
+//get result of search for acts
+export const getActSearchResult = (acts, detail) => {
+  let match = acts.filter((act) => {
+    return (
+      act.editorId.toUpperCase().includes(detail.toUpperCase()) ||
+      act.editor.toUpperCase().includes(detail.toUpperCase())
+    );
+  });
+
+  return match;
+};

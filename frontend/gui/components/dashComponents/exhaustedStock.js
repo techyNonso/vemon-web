@@ -40,7 +40,10 @@ class ExhaustedStock extends Component {
     //check if there if value to be searched
     if (event.target.value.trim().length > 0) {
       //check if any result was received
-      let list = getSearchResult(this.state.lowStock, event.target.value);
+      let list = getSearchResult(
+        this.state.originalLowStock,
+        event.target.value
+      );
 
       if (list.length > 0) {
         this.setState({

@@ -21,9 +21,11 @@ import Signin from "Components/signin";
 import Signup from "Components/signup";
 import Terms from "Components/terms";
 
+import "bootstrap/dist/css/bootstrap.min.css";
+
 import { store, persistor } from "Store/store";
 import { PersistGate } from "redux-persist/integration/react";
-
+import "react-calendar/dist/Calendar.css";
 class App extends Component {
   render() {
     return (

@@ -1,13 +1,249 @@
-import React, { Component } from "react";
+import React, { Component, Fragment, useState, useEffect } from "react";
+import DateRangeSelect from "Components/dashComponents/dateRangeSelect";
+import propTypes from "prop-types";
+import { connect } from "react-redux";
+import Pagination from "Components/dashComponents/pagination";
+import { getActivities, getActivity } from "Store/actions/activitiesAction";
+import {
+  extractDates,
+  extractActivities,
+  getActSearchResult,
+} from "Modules/stock";
+
+//import bootstrap component
+import Modal from "react-bootstrap/Modal";
+import ModalBody from "react-bootstrap/ModalBody";
+import ModalHeader from "react-bootstrap/ModalHeader";
+import ModalFooter from "react-bootstrap/ModalFooter";
+import ModalTitle from "react-bootstrap/ModalTitle";
 
 class StockActivities extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      startDate: new Date(),
+      endDate: new Date(),
+      loading: false,
+      activities: [],
+      originalActivities: [],
+      activity: "",
+      postsPerPage: 100,
+      currentPage: 1,
+      searchValue: "",
+      displayModal: false,
+    };
+    //handle props received
+    this.handleProps = this.handleProps.bind(this);
+    this.handleDate = this.handleDate.bind(this);
+  }
+
+  handleDate(data) {
+    this.setState({
+      startDate: data.startDate,
+      endDate: data.endDate,
+    });
+  }
+
+  //search starting from first page
+  searchList(event) {
+    this.setState({
+      searchValue: event.target.value,
+      currentPage: 1,
+      loading: true,
+    });
+
+    //check if there if value to be searched
+    if (event.target.value.trim().length > 0) {
+      //check if any result was received
+      let list = getActSearchResult(
+        this.state.originalActivities,
+        event.target.value
+      );
+
+      if (list.length > 0) {
+        this.setState({
+          activities: list,
+          loading: false,
+        });
+      } else {
+        //set list back to original list
+        this.setState({
+          activities: [],
+          loading: false,
+        });
+      }
+    } else {
+      //if search box is empty
+      this.setState({
+        activities: this.state.originalActivities,
+        loading: false,
+      });
+    }
+  }
+
+  //format the data into a displayable
+  handleProps(props) {
+    //check if both dates are not null
+    let startDate = this.state.startDate;
+    let endDate = this.state.endDate;
+    if (startDate !== null && endDate !== null) {
+      let dates = extractDates(startDate, endDate);
+      let acts = extractActivities(dates, props.activities);
+
+      //set state of activities
+      this.setState({
+        activities: acts,
+        originalActivities: acts,
+        loading: false,
+      });
+    }
+  }
+
+  //change modal state to false
+  hideDisplay() {
+    this.setState({
+      displayModal: false,
+    });
+  }
+
+  showActivity(event) {
+    let id = event.target.dataset.id;
+    this.props.getActivity(id);
+  }
+
+  //wait for when our props arrive
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.activities !== this.props.activities) {
+      this.handleProps(this.props);
+    }
+
+    if (
+      prevProps.company !== this.props.company ||
+      prevProps.branch !== this.props.branch
+    ) {
+      //console.log(this.props.company.companyId, this.props.branch.branchId);
+      this.setState({
+        loading: true,
+      });
+      this.props.getActivities(
+        this.props.company.companyId,
+        this.props.branch.branchId
+      );
+    }
+
+    //check for date change
+    if (
+      prevState.startDate !== this.state.startDate ||
+      prevState.endDate !== this.state.endDate
+    ) {
+      //handle the new props
+      this.handleProps(this.props);
+    }
+
+    //check if activity changes
+    if (prevProps.activity !== this.props.activity) {
+      this.setState({ displayModal: true, activity: this.props.activity });
+    }
+  }
+
+  componentDidMount() {
+    this.props.getActivities(
+      this.props.company.companyId,
+      this.props.branch.branchId
+    );
+    this.setState({
+      loading: true,
+    });
   }
 
   render() {
+    let loading;
+    if (this.state.loading) {
+      loading = (
+        <tr>
+          <td>please wait...</td>
+        </tr>
+      );
+    }
+
+    //get current stocks
+    const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - this.state.postsPerPage;
+    const currentPosts = this.state.activities.slice(
+      indexOfFirstPost,
+      indexOfLastPost
+    );
+
+    let activitiesList;
+    //check list
+    if (currentPosts.length > 0) {
+      activitiesList = currentPosts.map((act) => (
+        <tr key={act.id}>
+          <td>{act.date}</td>
+          <td>{act.editorId}</td>
+          <td>{act.editor}</td>
+          <td>{act.activity}</td>
+
+          <td>
+            <button
+              className="btn btn-secondary btn-sm"
+              data-id={act.id}
+              onClick={this.showActivity.bind(this)}
+            >
+              Detail
+            </button>
+          </td>
+        </tr>
+      ));
+    } else {
+      activitiesList = (
+        <tr>
+          <td>No record found</td>
+        </tr>
+      );
+    }
+
+    //change the page
+    const paginate = (pageNumber) => this.setState({ currentPage: pageNumber });
+
+    //work with modal
+    let modal = null;
+    if (this.state.displayModal) {
+      modal = (
+        <ActMod
+          modState={this.hideDisplay.bind(this)}
+          act={this.state.activity}
+        />
+      );
+    }
     return (
-      <div>
+      <Fragment>
+        {modal}
+        <div className="row mt-3 pl-3 pr-3">
+          <div className="col-md-6 pb-2">
+            <span>
+              <strong>Branches</strong> : 1 of {this.props.branches.length}
+            </span>
+          </div>
+
+          <div className="col-md-6 pb-2">
+            <form action="" className="form">
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="form-control"
+                  value={this.state.searchValue}
+                  onChange={this.searchList.bind(this)}
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+        <div className="row justify-content-center pb-4">
+          <DateRangeSelect style={"zIndex:1000"} parentFunc={this.handleDate} />
+        </div>
         <div className="row table-responsive boxUp p-3">
           <table className="table table-sm table-striped table-borderless">
             <thead>
@@ -21,40 +257,63 @@ class StockActivities extends Component {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>02-12-2020</td>
-                <td>930949</td>
-                <td>Ikeji Johnson</td>
-                <td>Quantity Change</td>
-
-                <td>
-                  <button className="btn btn-secondary btn-sm">Detail</button>
-                </td>
-              </tr>
+              {loading}
+              {activitiesList}
             </tbody>
           </table>
         </div>
 
-        <ul className="pagination justify-content-end pr-3 pt-3">
-          <li className="page-item">
-            <a href="#" className="page-link">
-              Previous
-            </a>
-          </li>
-          <li className="page-item active">
-            <a href="#" className="page-link">
-              2
-            </a>
-          </li>
-          <li className="page-item">
-            <a href="#" className="page-link">
-              Next
-            </a>
-          </li>
-        </ul>
-      </div>
+        <Pagination
+          postsPerPage={this.state.postsPerPage}
+          totalPosts={this.state.activities.length}
+          paginate={paginate}
+        />
+      </Fragment>
     );
   }
 }
 
-export default StockActivities;
+StockActivities.propTypes = {
+  getActivities: propTypes.func.isRequired,
+  getActivity: propTypes.func.isRequired,
+  activities: propTypes.array.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  activities: state.activities.items,
+  activity: state.activities.item,
+  branch: state.branches.item,
+  company: state.companies.item,
+});
+
+export default connect(mapStateToProps, { getActivities, getActivity })(
+  StockActivities
+);
+
+//write modal for this app
+const ActMod = (props) => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  const showModal = () => {
+    setIsOpen(true);
+  };
+
+  const hideModal = () => {
+    setIsOpen(false);
+    props.modState();
+  };
+  return (
+    <Modal show={isOpen} onHide={hideModal}>
+      <ModalHeader>
+        <ModalTitle>Batch ID: {props.act.batchId}</ModalTitle>
+      </ModalHeader>
+
+      <ModalBody>{props.act.detail}</ModalBody>
+      <ModalFooter>
+        <button className="btn btn-sm btn-primary" onClick={hideModal}>
+          Okay
+        </button>
+      </ModalFooter>
+    </Modal>
+  );
+};

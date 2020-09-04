@@ -342,7 +342,7 @@ class Dashboard extends Component {
               )}
               {childPage.toUpperCase() === "PRODUCTREPORT" && <ProductReport />}
               {childPage.toUpperCase() === "STOCKACTIVITIES" && (
-                <StockActivities />
+                <StockActivities branches={this.state.branches} />
               )}
               {childPage.toUpperCase() === "SETTINGS" && <Settings />}
 

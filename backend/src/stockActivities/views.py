@@ -23,6 +23,14 @@ def stockActivityHandler(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+#create view for particular company and branch view
+@api_view(['GET'])
+def companyStockActivity(request,company,branch):
+    if request.method == "GET":
+        allActivity = stockActivity.objects.filter(companyId=company,branchId=branch)
+        serializer = StockActivitySerializer(allActivity,many=True)
+        return Response(serializer.data)
+
 #create your staff detail view
 @api_view(['GET','PUT','DELETE'])
 def stockActivityDetail(request, pk):

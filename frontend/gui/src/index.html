@@ -1,42 +1,37 @@
 <html>
   <head>
-    <link rel="stylesheet" href="/src/fonts/font-awesome-4.7.0/css/font-awesome.min.css"  />
+    <link
+      rel="stylesheet"
+      href="/src/fonts/font-awesome-4.7.0/css/font-awesome.min.css"
+    />
 
-  <link rel="stylesheet" href="/backend/" />
-  <link rel="stylesheet"  href="/src/formTemplate/css/style.css" />
-  <link rel="stylesheet" href="/src/froala/css/froala_blocks.min.css">
-  <link rel="stylesheet" href="/src/datepicker/style.css">
-  <link rel="stylesheet" href="/src/datePicker/picker.css">
-  <link rel="stylesheet" href="/src/formTemplate/css/style.css">
-  <link rel="stylesheet" href="/src/bootstrap/dist/css/bootstrap.css">
-  <link rel="stylesheet" href="/src/css/app.css">
-  <link rel="stylesheet" href="/src/css/normalize.css">
-  
+    <link rel="stylesheet" href="/backend/" />
+    <link rel="stylesheet" href="/src/formTemplate/css/style.css" />
+    <link rel="stylesheet" href="/src/froala/css/froala_blocks.min.css" />
+
+    <link rel="stylesheet" href="/src/formTemplate/css/style.css" />
+    <link rel="stylesheet" href="/src/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="/src/css/app.css" />
+    <link rel="stylesheet" href="/src/css/normalize.css" />
+
     <title>Hello world App</title>
   </head>
   <body>
-  <div id="root"></div>
-  
-  <script src="/src/js/jquery.js"></script>
+    <div id="root"></div>
+
+    <script src="/src/js/jquery.js"></script>
     <script src="/src/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="/src/datePicker/pickerJs.js"></script>
 
     <script>
       $(document).ready(function () {
         $("#sidebarCollapse").on("click", function () {
-          console.log("ok");
           $("#sidebar").toggleClass("active");
           $("#innerSidebarCollapse").toggleClass("hide");
         });
 
         $("#innerSidebarCollapse").on("click", function () {
-          console.log("ok");
           $("#sidebar").toggleClass("active");
           $("#innerSidebarCollapse").toggleClass("hide");
-        });
-        $(".input-daterange").datepicker({
-          format: "dd-mm-yyyy",
-          autoclose: true,
         });
       });
     </script>
