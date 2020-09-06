@@ -5,3 +5,4 @@ export const GET_COMPANY = "GET_COMPANY";
 export const GET_BRANCH = "GET_BRANCH";
 export const GET_ACTIVITIES = "GET_ACTIVITIES";
 export const GET_ACTIVITY = "GET_ACTIVITY";
+export const GET_SALES = "GET_SALES";

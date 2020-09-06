@@ -6,6 +6,13 @@ from .models import sale
 from .serializers import SalesSerializer
 
 
+# create view for per company 
+@api_view(['GET'])
+def companySales(request,company,branch):
+    if request.method == "GET":
+        sales = sale.objects.filter(companyId=company,branchId=branch)
+        serializer = SalesSerializer(sales,many=True)
+        return Response(serializer.data)
 
 # Create your views here.
 @api_view(['GET','POST'])

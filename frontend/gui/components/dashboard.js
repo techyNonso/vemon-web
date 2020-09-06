@@ -310,7 +310,9 @@ class Dashboard extends Component {
 
             <div className="main-content mt-4 pl-4">
               {/*show child pages based on conditions*/}
-              {childPage.toUpperCase() === "ALLSALES" && <AllSales />}
+              {childPage.toUpperCase() === "ALLSALES" && (
+                <AllSales branches={this.state.branches} />
+              )}
               {childPage.toUpperCase() === "ACCOUNTREPORT" && <AccountReport />}
               {childPage.toUpperCase() === "ALLSTOCK" && (
                 <AllStock branches={this.state.branches} />
