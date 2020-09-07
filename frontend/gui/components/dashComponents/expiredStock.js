@@ -142,7 +142,7 @@ class ExpiredStock extends Component {
           <td>{stock.name}</td>
           <td>{stock.batchId}</td>
           <td>{stock.qty}</td>
-          <td>{stock.life}</td>
+          <td>{stock.life} days</td>
           <td>{stock.date}</td>
         </tr>
       ));

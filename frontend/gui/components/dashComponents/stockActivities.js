@@ -24,6 +24,7 @@ class StockActivities extends Component {
     this.state = {
       startDate: new Date(),
       endDate: new Date(),
+      initialStartDate: new Date(),
       loading: false,
       activities: [],
       originalActivities: [],
@@ -43,6 +44,12 @@ class StockActivities extends Component {
       startDate: data.startDate,
       endDate: data.endDate,
     });
+
+    if (data.startDate !== null) {
+      this.setState({
+        initialStartDate: data.startDate,
+      });
+    }
   }
 
   //search starting from first page
@@ -86,6 +93,9 @@ class StockActivities extends Component {
   handleProps(props) {
     //check if both dates are not null
     let startDate = this.state.startDate;
+    if (startDate == null) {
+      startDate = this.state.initialStartDate;
+    }
     let endDate = this.state.endDate;
     if (startDate !== null && endDate !== null) {
       let dates = extractDates(startDate, endDate);

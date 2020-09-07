@@ -8,7 +8,7 @@ function Pagination({ postsPerPage, totalPosts, paginate }) {
   }
   return (
     <nav>
-      <ul className="pagination justify-content-end pr-3 pt-3">
+      <ul className="pagination justify-content-center pr-3 pt-3">
         {pageNumbers.map((number) => (
           <li className="page-item " key={number}>
             <a onClick={() => paginate(number)} href="#" className="page-link">

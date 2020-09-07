@@ -50,7 +50,6 @@ export const getSaleSearchResult = (sales, detail) => {
     );
   });
 
-  console.log(searchArray);
   return searchArray;
 };
 
@@ -71,7 +70,7 @@ export const getOthers = (sales) => {
       cashs += Number(sale.price);
     } else if (sale.transactionType.toUpperCase() == "ONLINE") {
       onlines += Number(sale.price);
-    } else {
+    } else if (sale.transactionType.toUpperCase() == "CREDIT") {
       credits += Number(sale.price);
     }
   });
@@ -91,6 +90,6 @@ export const extractTypeSales = (sales, type) => {
   let match = sales.filter((sale) => {
     return sale.transactionType.toUpperCase() == type.toUpperCase();
   });
-  console.log(match);
+
   return match;
 };
