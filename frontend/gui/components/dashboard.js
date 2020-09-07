@@ -328,11 +328,15 @@ class Dashboard extends Component {
               {childPage.toUpperCase() === "CREDITSALES" && (
                 <CreditSales branches={this.state.branches} />
               )}
-              {childPage.toUpperCase() === "DEBTS" && <Debts />}
+              {childPage.toUpperCase() === "DEBTS" && (
+                <Debts branches={this.state.branches} />
+              )}
               {childPage.toUpperCase() === "EXHAUSTEDSTOCK" && (
                 <ExhaustedStock branches={this.state.branches} />
               )}
-              {childPage.toUpperCase() === "EXPENSES" && <Expenses />}
+              {childPage.toUpperCase() === "EXPENSES" && (
+                <Expenses branches={this.state.branches} />
+              )}
               {childPage.toUpperCase() === "EXPIREDSTOCK" && (
                 <ExpiredStock branches={this.state.branches} />
               )}
@@ -340,7 +344,10 @@ class Dashboard extends Component {
                 <OnlineSales branches={this.state.branches} />
               )}
               {childPage.toUpperCase() === "STAFFLIST" && (
-                <StaffList branches={this.state.branches} />
+                <StaffList
+                  branches={this.state.branches}
+                  branches={this.state.branches}
+                />
               )}
               {childPage.toUpperCase() === "PRODUCTREPORT" && <ProductReport />}
               {childPage.toUpperCase() === "STOCKACTIVITIES" && (

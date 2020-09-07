@@ -6,6 +6,17 @@ from rest_framework.decorators import api_view
 from .serializers import DebtSerializer
 
 
+#create view for company debts
+@api_view(['GET'])
+def debtsForCompany(request,company,branch):
+    if request.method == "GET":
+        debts = debt.objects.filter(companyId=company,branchId=branch)
+        serializer = DebtSerializer(debts,many=True)
+        return Response(serializer.data)
+
+
+
+        
 # create view for debts here
 @api_view(['GET','POST'])
 def debtHandler(request):
