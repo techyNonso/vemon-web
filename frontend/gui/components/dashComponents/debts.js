@@ -73,6 +73,15 @@ class Debts extends Component {
     }
   }
 
+  //check balance status
+  checkStatus(balance) {
+    if (Number(balance) > 0) {
+      return "Pending";
+    } else {
+      return "Cleared";
+    }
+  }
+
   //search starting from first page
   searchList(event) {
     this.setState({
@@ -177,6 +186,18 @@ class Debts extends Component {
           <td>{debt.amount}</td>
           <td>{debt.paid}</td>
           <td>{debt.balance}</td>
+
+          {this.checkStatus(debt.balance) == "Pending" && (
+            <td>
+              <span style={{ color: "red" }}>Pending</span>
+            </td>
+          )}
+
+          {this.checkStatus(debt.balance) == "Cleared" && (
+            <td>
+              <span style={{ color: "green" }}>Cleared</span>
+            </td>
+          )}
         </tr>
       ));
     } else {
@@ -228,6 +249,7 @@ class Debts extends Component {
                 <th>Amount</th>
                 <th>Paid</th>
                 <th>Balance</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>

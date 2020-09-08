@@ -344,10 +344,7 @@ class Dashboard extends Component {
                 <OnlineSales branches={this.state.branches} />
               )}
               {childPage.toUpperCase() === "STAFFLIST" && (
-                <StaffList
-                  branches={this.state.branches}
-                  branches={this.state.branches}
-                />
+                <StaffList branches={this.state.branches} />
               )}
               {childPage.toUpperCase() === "PRODUCTREPORT" && <ProductReport />}
               {childPage.toUpperCase() === "STOCKACTIVITIES" && (

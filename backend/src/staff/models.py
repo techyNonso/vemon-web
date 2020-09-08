@@ -8,6 +8,7 @@ class staff(models.Model):
     email = models.EmailField(max_length=50)
     phone = models.CharField(max_length=20)
     permission = models.CharField(max_length=30)
+    access = models.CharField(max_length=10, null=True)
     registered = models.DateField()
     state = models.CharField(max_length=20)
     town = models.CharField(max_length=50)

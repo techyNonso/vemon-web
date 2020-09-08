@@ -8,3 +8,5 @@ export const GET_ACTIVITY = "GET_ACTIVITY";
 export const GET_SALES = "GET_SALES";
 export const GET_DEBTS = "GET_DEBTS";
 export const GET_EXPENSES = "GET_EXPENSES";
+export const GET_ALL_STAFF = "GET_ALL_STAFF";
+export const GET_STAFF = "GET_STAFF";

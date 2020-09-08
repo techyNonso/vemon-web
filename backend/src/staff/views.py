@@ -7,6 +7,15 @@ from .serializers import StaffSerializer
 
 
 
+#create view for staff per company
+@api_view(["GET"])
+def companyStaff(request,company,branch):
+    if request.method == "GET":
+        allStaff = staff.objects.filter(companyId=company,branchId=branch)
+        serializer = StaffSerializer(allStaff,many=True)
+        return Response(serializer.data)
+
+
 # Create your views here.
 @api_view(['GET','POST'])
 def allStaffHandler(request):
@@ -35,7 +44,7 @@ def staffDetail(request, pk):
         serializer = StaffSerializer(theStaff)
         return Response(serializer.data)
     elif request.method == 'PUT':
-        serializer = StaffSerializer(theStaff,request.data)
+        serializer = StaffSerializer(theStaff,request.data,partial=True)
 
         if serializer.is_valid():
             serializer.save()
