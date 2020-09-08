@@ -5,6 +5,15 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import ExpenseSerializer
 
+#create view for company expenses
+@api_view(["GET"])
+def companyExpense(request,company,branch):
+    if request.method == "GET":
+        expenses = expense.objects.filter(companyId=company,branchId=branch)
+        serializer = ExpenseSerializer(expenses,many=True)
+        return Response(serializer.data)
+
+
 # Create your views here.
 @api_view(['GET','POST'])
 def expenseHandler(request):

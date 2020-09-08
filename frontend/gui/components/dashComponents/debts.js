@@ -23,7 +23,7 @@ class Debts extends Component {
       loading: false,
       debts: [],
       originalDebts: [],
-      postsPerPage: 1,
+      postsPerPage: 100,
       currentPage: 1,
       searchValue: "",
       total: "",

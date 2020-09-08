@@ -7,3 +7,4 @@ export const GET_ACTIVITIES = "GET_ACTIVITIES";
 export const GET_ACTIVITY = "GET_ACTIVITY";
 export const GET_SALES = "GET_SALES";
 export const GET_DEBTS = "GET_DEBTS";
+export const GET_EXPENSES = "GET_EXPENSES";
