@@ -29,7 +29,7 @@ class About extends Component {
               by our founder who at the time of creating this software was a
               college student and at same time worked as an employee for some
               companies and in this time developed this software to help solve
-              the problems of the comapny.
+              the problems of the company.
             </p>
             <p>
               <strong
