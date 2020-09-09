@@ -16,7 +16,7 @@ export const getCompanies = () => (dispatch) => {
 export const getCompany = (id) => (dispatch) => {
   // console.log(id);
   axios
-    .get(`http://127.0.0.1:8000/companies/${id}`)
+    .get(`http://127.0.0.1:8000/companies/${id}/`)
     .then((res) =>
       dispatch({
         type: GET_COMPANY,

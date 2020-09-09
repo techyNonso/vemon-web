@@ -4,7 +4,7 @@ import axios from "axios";
 export const getCompanyBranches = (company) => (dispatch) => {
   // console.log(company);
   axios
-    .get(`http://127.0.0.1:8000/branches/${company}`)
+    .get(`http://127.0.0.1:8000/branches/${company}/`)
     .then((res) =>
       dispatch({
         type: GET_BRANCHES,
@@ -17,7 +17,7 @@ export const getCompanyBranches = (company) => (dispatch) => {
 export const getBranch = (id) => (dispatch) => {
   //console.log(id);
   axios
-    .get(`http://127.0.0.1:8000/branches/branch/${id}`)
+    .get(`http://127.0.0.1:8000/branches/branch/${id}/`)
     .then((res) =>
       dispatch({
         type: GET_BRANCH,

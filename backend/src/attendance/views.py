@@ -7,6 +7,16 @@ from rest_framework import status
 
 # Create your views here.
 @api_view(['GET','POST'])
+def companyAttendance(request, company,branch):
+
+    if request.method == 'GET':
+        allAttendance = attendance.objects.filter(companyId=company,branchId=branch)
+        serializer = AttendanceSerializer(allAttendance, many=True)
+        return Response(serializer.data)
+
+
+# Create your views here.
+@api_view(['GET','POST'])
 def attendanceHandler(request):
 
     if request.method == 'GET':
@@ -35,7 +45,7 @@ def attendanceDetail(request,pk):
         serializer = AttendanceSerializer(myAttendance)
         return  Response(serializer.data)
     elif request.method == 'PUT':
-        serializer = AttendanceSerializer(myAttendance,data=request.data)
+        serializer = AttendanceSerializer(myAttendance,data=request.data,partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

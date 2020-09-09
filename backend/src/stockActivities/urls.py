@@ -4,5 +4,5 @@ from .views import stockActivityHandler, stockActivityDetail, companyStockActivi
 urlpatterns = [
     path('stockactivity/',stockActivityHandler),
     path('stockactivity/company/<str:company>/<str:branch>/',companyStockActivity),
-    path('stockactivity/<int:pk>',stockActivityDetail)
+    path('stockactivity/<int:pk>/',stockActivityDetail)
 ]

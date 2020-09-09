@@ -4,7 +4,7 @@ import axios from "axios";
 
 export const getActivities = (company, branch) => (dispatch) => {
   axios
-    .get(`http://127.0.0.1:8000/stockactivity/company/${company}/${branch}`)
+    .get(`http://127.0.0.1:8000/stockactivity/company/${company}/${branch}/`)
     .then((res) =>
       dispatch({
         type: GET_ACTIVITIES,
@@ -16,7 +16,7 @@ export const getActivities = (company, branch) => (dispatch) => {
 
 export const getActivity = (id) => (dispatch) => {
   axios
-    .get(`http://127.0.0.1:8000/stockactivity/${id}`)
+    .get(`http://127.0.0.1:8000/stockactivity/${id}/`)
     .then((res) =>
       dispatch({
         type: GET_ACTIVITY,

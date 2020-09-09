@@ -4,7 +4,7 @@ import axios from "axios";
 
 export const getStocks = (company, branch) => (dispatch) => {
   axios
-    .get(`http://127.0.0.1:8000/stock/${company}/${branch}`)
+    .get(`http://127.0.0.1:8000/stock/${company}/${branch}/`)
     .then((res) =>
       dispatch({
         type: GET_STOCKS,

@@ -7,6 +7,7 @@ import companyReducer from "./companyReducer";
 import debtsReducer from "./debtsReducer";
 import expenseReducer from "./expenseReducer";
 import staffReducer from "./staffReducer";
+import attendanceReducer from "./attendanceReducer";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   debts: debtsReducer,
   expenses: expenseReducer,
   staff: staffReducer,
+  attendance: attendanceReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);
