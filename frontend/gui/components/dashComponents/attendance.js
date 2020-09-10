@@ -23,7 +23,7 @@ class Attendance extends Component {
       loading: false,
       allAttendance: [],
       originalAllAttendance: [],
-      postsPerPage: 100,
+      postsPerPage: 1,
       currentPage: 1,
       searchValue: "",
     };
