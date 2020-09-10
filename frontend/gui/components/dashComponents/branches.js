@@ -45,24 +45,32 @@ class Branches extends Component {
 
   //add branch
   addBranch() {
-    //get id
-    let id = "BR" + Math.floor(1000 + Math.random() * 1000);
+    //check branch maximum
+    if (
+      this.props.company.plan.toUpperCase() == "PREMIUM ADVANCE" &&
+      this.state.branches.length > 3
+    ) {
+      console.log("Maximum branch reached");
+    } else {
+      //get id
+      let id = "BR" + Math.floor(1000 + Math.random() * 1000);
 
-    //declare data
-    let data = {
-      branchId: id,
-      companyId: this.props.company.companyId,
-    };
-    this.setState({
-      loading: true,
-    });
+      //declare data
+      let data = {
+        branchId: id,
+        companyId: this.props.company.companyId,
+      };
+      this.setState({
+        loading: true,
+      });
 
-    axios
-      .post(`http://127.0.0.1:8000/branches/`, data)
-      .then((res) =>
-        this.props.getCompanyBranches(this.props.company.companyId)
-      )
-      .catch((err) => console.log(err));
+      axios
+        .post(`http://127.0.0.1:8000/branches/`, data)
+        .then((res) =>
+          this.props.getCompanyBranches(this.props.company.companyId)
+        )
+        .catch((err) => console.log(err));
+    }
   }
 
   //delete branch
