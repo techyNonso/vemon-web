@@ -1,37 +1,246 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
+import DateRangeSelect from "Components/dashComponents/dateRangeSelect";
+import propTypes from "prop-types";
+import { connect } from "react-redux";
+import Pagination from "Components/dashComponents/pagination";
+import { getSales } from "Store/actions/salesAction";
+import { getStocks } from "Store/actions/stockAction";
+
+import { extractDates, extractSales } from "Modules/sales";
+
+import {
+  extractProductId,
+  getStockArray,
+  generateProductReport,
+  getReportSearchResult,
+} from "Modules/stock";
 
 class ProductReport extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      startDate: new Date(),
+      endDate: new Date(),
+      initialStartDate: new Date(),
+      loading: false,
+      sales: [],
+      originalSales: [],
+      postsPerPage: 100,
+      currentPage: 1,
+      searchValue: "",
+      report: [],
+      originalReport: [],
+      componentStocks: [],
+      originalStocks: [],
+      stocks: [],
+    };
+
+    //handle props received
+    this.handleProps = this.handleProps.bind(this);
+    this.handleDate = this.handleDate.bind(this);
+  }
+
+  handleDate(data) {
+    this.setState({
+      startDate: data.startDate,
+      endDate: data.endDate,
+    });
+
+    if (data.startDate !== null) {
+      this.setState({
+        initialStartDate: data.startDate,
+      });
+    }
+  }
+
+  //format the data into a displayable
+  handleProps(props) {
+    //console.log(props.stocks);
+    //deal with stock
+    let ids = extractProductId(props.stocks);
+
+    let stocks = getStockArray(ids, props.stocks);
+    let report = generateProductReport(stocks);
+
+    //check if both dates are not null
+    let startDate = this.state.startDate;
+    if (startDate == null) {
+      startDate = this.state.initialStartDate;
+    }
+    let endDate = this.state.endDate;
+    if (startDate !== null && endDate !== null) {
+      let dates = extractDates(startDate, endDate);
+      let mainSales = extractSales(dates, props.sales);
+      let report = generateProductReport(stocks, mainSales);
+      //set state of activities
+      this.setState({
+        sales: mainSales,
+        originalSales: mainSales,
+        loading: false,
+        stocks: stocks,
+        report: report,
+        originalReport: report,
+      });
+    }
+  }
+
+  //search item in list starting from first page
+  searchList(event) {
+    this.setState({
+      searchValue: event.target.value,
+      currentPage: 1,
+      loading: true,
+    });
+
+    //check if there if value to be searched
+    if (event.target.value.trim().length > 0) {
+      //check if any result was received
+      let list = getReportSearchResult(
+        this.state.originalReport,
+        event.target.value
+      );
+
+      if (list.length > 0) {
+        this.setState({
+          report: list,
+          loading: false,
+        });
+      } else {
+        //set list back to original list
+        this.setState({
+          report: [],
+          loading: false,
+        });
+      }
+    } else {
+      //if search box is empty
+      this.setState({
+        report: this.state.originalReport,
+        loading: false,
+      });
+    }
+  }
+
+  //wait for when our props arrive
+  componentDidUpdate(prevProps, prevState) {
+    //focus on stocks  change first
+    if (prevProps.stocks !== this.props.stocks) {
+      this.props.getSales(
+        this.props.company.companyId,
+        this.props.branch.branchId
+      );
+    }
+
+    //now check if sales have arrived
+    if (prevProps.sales !== this.props.sales) {
+      this.handleProps(this.props);
+    }
+
+    if (
+      prevProps.company !== this.props.company ||
+      prevProps.branch !== this.props.branch
+    ) {
+      //console.log(this.props.company.companyId, this.props.branch.branchId);
+      this.setState({
+        loading: true,
+      });
+      this.props.getStocks(
+        this.props.company.companyId,
+        this.props.branch.branchId
+      );
+    }
+
+    //check for date change
+    if (
+      prevState.startDate !== this.state.startDate ||
+      prevState.endDate !== this.state.endDate
+    ) {
+      //handle the new props
+      this.handleProps(this.props);
+    }
+  }
+
+  componentDidMount() {
+    this.props.getStocks(
+      this.props.company.companyId,
+      this.props.branch.branchId
+    );
+
+    this.setState({
+      loading: true,
+    });
   }
 
   render() {
+    let loading;
+    if (this.state.loading) {
+      loading = (
+        <tr>
+          <td>please wait...</td>
+        </tr>
+      );
+    }
+
+    //get current stocks
+    const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - this.state.postsPerPage;
+    const currentPosts = this.state.report.slice(
+      indexOfFirstPost,
+      indexOfLastPost
+    );
+
+    let reportList;
+    //check list
+    if (currentPosts.length > 0) {
+      reportList = currentPosts.map((report) => (
+        <tr key={report.productId}>
+          <td>{report.productId}</td>
+          <td>{report.name}</td>
+          <td>{report.total}</td>
+          <td>{report.percVolume} %</td>
+          <td>{report.gain} %</td>
+        </tr>
+      ));
+    } else {
+      reportList = (
+        <tr>
+          <td>No record found</td>
+        </tr>
+      );
+    }
+
+    //change the page
+    const paginate = (pageNumber) => this.setState({ currentPage: pageNumber });
+
     return (
-      <div>
-        <div className="row table-responsive boxUp p-3">
-          <div className="container px-1 px-sm-5 mx-auto mb-4">
-            <form autoComplete="off">
-              <span className="sortBox">sort By date:</span>
-              <div className="flex-row d-flex justify-content-center">
-                <div className="col-lg-6 col-11">
-                  <div className="input-group input-daterange">
-                    <input
-                      type="text"
-                      className="form-control input1"
-                      placeholder="Start Date"
-                      readOnly={true}
-                    />
-                    <input
-                      type="text"
-                      className="form-control input2"
-                      placeholder="End Date"
-                      readOnly={true}
-                    />
-                  </div>
-                </div>
+      <Fragment>
+        <div className="row mt-3 pl-3 pr-3">
+          <div className="col-md-6 pb-2">
+            <span>
+              <strong>Branches</strong> : 1 of {this.props.branches.length}
+            </span>
+          </div>
+
+          <div className="col-md-6 pb-2">
+            <form action="" className="form">
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="form-control"
+                  value={this.state.searchValue}
+                  onChange={this.searchList.bind(this)}
+                />
               </div>
             </form>
           </div>
+        </div>
+
+        <div className="row justify-content-center pb-4">
+          <DateRangeSelect style={"zIndex:1000"} parentFunc={this.handleDate} />
+        </div>
+        <div className="row table-responsive boxUp p-3">
           <table className="table table-sm table-striped table-borderless">
             <thead>
               <tr>
@@ -44,37 +253,35 @@ class ProductReport extends Component {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>093033</td>
-                <td>Paracetamol</td>
-                <td>10</td>
-                <td>5%</td>
-                <td>100%</td>
-              </tr>
+              {loading}
+
+              {reportList}
             </tbody>
           </table>
         </div>
 
-        <ul className="pagination justify-content-end pr-3 pt-4">
-          <li className="page-item">
-            <a href="#" className="page-link">
-              Previous
-            </a>
-          </li>
-          <li className="page-item active">
-            <a href="#" className="page-link">
-              2
-            </a>
-          </li>
-          <li className="page-item">
-            <a href="#" className="page-link">
-              Next
-            </a>
-          </li>
-        </ul>
-      </div>
+        <Pagination
+          postsPerPage={this.state.postsPerPage}
+          totalPosts={this.state.report.length}
+          paginate={paginate}
+        />
+      </Fragment>
     );
   }
 }
 
-export default ProductReport;
+ProductReport.propTypes = {
+  getSales: propTypes.func.isRequired,
+  sales: propTypes.array.isRequired,
+  getStocks: propTypes.func.isRequired,
+  stocks: propTypes.array.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  stocks: state.stocks.items,
+  sales: state.sales.items,
+  branch: state.branches.item,
+  company: state.companies.item,
+});
+
+export default connect(mapStateToProps, { getSales, getStocks })(ProductReport);

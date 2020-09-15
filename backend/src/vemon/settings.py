@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'staff',
     'stock',
     'attendance',
-    'stockActivities'
+    'stockActivities',
+    'debtclearance'
     
 ]
 

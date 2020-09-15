@@ -5,7 +5,11 @@ import { connect } from "react-redux";
 import Pagination from "Components/dashComponents/pagination";
 import { getCompanyBranches, getBranch } from "Store/actions/branchAction";
 import axios from "axios";
-import { getSearchResult, sortBranches } from "Modules/branch";
+import {
+  getSearchResult,
+  sortBranches,
+  generateBranchId,
+} from "Modules/branch";
 
 //import bootstrap component
 import Modal from "react-bootstrap/Modal";
@@ -48,12 +52,11 @@ class Branches extends Component {
     //check branch maximum
     if (
       this.props.company.plan.toUpperCase() == "PREMIUM ADVANCE" &&
-      this.state.branches.length > 3
+      this.state.branches.length > 5
     ) {
       console.log("Maximum branch reached");
     } else {
-      //get id
-      let id = "BR" + Math.floor(1000 + Math.random() * 1000);
+      let id = generateBranchId(this.state.branches);
 
       //declare data
       let data = {

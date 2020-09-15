@@ -38,7 +38,7 @@ def companyDetail(request, pk):
         serializer = CompanySerializer(theCompany)
         return Response(serializer.data)
     elif request.method == 'PUT':
-        serializer = CompanySerializer(theCompany,request.data)
+        serializer = CompanySerializer(theCompany,request.data,partial=True)
 
         if serializer.is_valid():
             serializer.save()

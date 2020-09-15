@@ -198,3 +198,90 @@ export const getActSearchResult = (acts, detail) => {
 
   return match;
 };
+
+//get search result for report
+export const getReportSearchResult = (reports, detail) => {
+  let match = reports.filter((report) => {
+    return (
+      report.name.toUpperCase().includes(detail.toUpperCase()) ||
+      report.productId.toUpperCase().includes(detail.toUpperCase())
+    );
+  });
+
+  return match;
+};
+
+const getAllMatchingSales = (id, sales) => {
+  let match = sales.filter((sale) => {
+    return id.toUpperCase() == sale.productId.toUpperCase();
+  });
+
+  return match;
+};
+
+const calcAllTotal = (sales) => {
+  let total = 0;
+  sales.forEach((sale) => {
+    total += Number(sale.quantity);
+  });
+
+  return total;
+};
+
+const calcTotal = (salesList, priceBought) => {
+  let total = 0;
+  let totalPrice = 0;
+  let gain = 0;
+
+  let cp = 0;
+  salesList.forEach((sale) => {
+    total += Number(sale.quantity);
+    totalPrice += Number(sale.price);
+  });
+
+  cp = total * Number(priceBought);
+  gain = totalPrice - cp;
+  return [total, gain];
+};
+
+//calculate percentage gain
+const calcGainPercs = (reports, totalGain) => {
+  reports.forEach((report) => {
+    report.gain = isNaN(Math.ceil((report.gain / totalGain) * 100))
+      ? 0
+      : Math.ceil((report.gain / totalGain) * 100);
+  });
+
+  return reports;
+};
+
+//generate product report
+export const generateProductReport = (stocks, sales) => {
+  if (sales !== undefined && stocks !== undefined) {
+    let reports = [];
+    let allTotal = calcAllTotal(sales);
+    let totalGain = 0;
+
+    stocks.forEach((product) => {
+      let obj = {};
+      let salesList = getAllMatchingSales(product.id, sales);
+      let [total, gain] = calcTotal(salesList, product.bought);
+      totalGain += gain;
+      obj.name = product.name;
+      obj.productId = product.id;
+      obj.total = total;
+      obj.gain = isNaN(gain) ? 0 : gain;
+      obj.percVolume = isNaN(Math.ceil((total / allTotal) * 100))
+        ? 0
+        : Math.ceil((total / allTotal) * 100);
+
+      reports = [...reports, obj];
+    });
+
+    //add percentage gain to report
+    let mainReports =
+      reports.length > 0 ? calcGainPercs(reports, totalGain) : reports;
+
+    return mainReports;
+  }
+};

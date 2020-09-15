@@ -104,7 +104,11 @@ class Dashboard extends Component {
       this.setState({
         branches: this.props.branches,
       });
-      this.props.getBranch(this.props.branches[0].id);
+
+      //check if they are branches
+      if (this.props.branches.length > 0) {
+        this.props.getBranch(this.props.branches[0].id);
+      }
     }
 
     if (prevProps.branch !== this.props.branch) {
@@ -313,7 +317,9 @@ class Dashboard extends Component {
               {childPage.toUpperCase() === "ALLSALES" && (
                 <AllSales branches={this.state.branches} />
               )}
-              {childPage.toUpperCase() === "ACCOUNTREPORT" && <AccountReport />}
+              {childPage.toUpperCase() === "ACCOUNTREPORT" && (
+                <AccountReport branches={this.state.branches} />
+              )}
               {childPage.toUpperCase() === "ALLSTOCK" && (
                 <AllStock branches={this.state.branches} />
               )}
@@ -346,7 +352,9 @@ class Dashboard extends Component {
               {childPage.toUpperCase() === "STAFFLIST" && (
                 <StaffList branches={this.state.branches} />
               )}
-              {childPage.toUpperCase() === "PRODUCTREPORT" && <ProductReport />}
+              {childPage.toUpperCase() === "PRODUCTREPORT" && (
+                <ProductReport branches={this.state.branches} />
+              )}
               {childPage.toUpperCase() === "STOCKACTIVITIES" && (
                 <StockActivities branches={this.state.branches} />
               )}

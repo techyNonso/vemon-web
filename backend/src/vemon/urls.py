@@ -11,5 +11,6 @@ urlpatterns = [
     path('',include('stock.urls')),
     path('',include('stockActivities.urls')),
     path('',include('companies.urls')),
-    path('',include('branches.urls'))
+    path('',include('branches.urls')),
+    path('',include('debtclearance.urls'))
 ]
