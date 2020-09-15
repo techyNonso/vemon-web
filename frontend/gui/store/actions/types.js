@@ -11,3 +11,4 @@ export const GET_EXPENSES = "GET_EXPENSES";
 export const GET_ALL_STAFF = "GET_ALL_STAFF";
 export const GET_STAFF = "GET_STAFF";
 export const GET_ALL_ATTENDANCE = "GET_ALL_ATTENDANCE";
+export const GET_ALL_CLEARANCE = "GET_ALL_CLEARANCE";

@@ -1,8 +1,158 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
+import DateRangeSelect from "Components/dashComponents/dateRangeSelect";
+import propTypes from "prop-types";
+import { connect } from "react-redux";
+import Pagination from "Components/dashComponents/pagination";
+import { getSales } from "Store/actions/salesAction";
+import { getStocks } from "Store/actions/stockAction";
+import { getClearance } from "Store/actions/clearanceAction";
+import { getExpenses } from "Store/actions/expenseAction";
+import { getDebts } from "Store/actions/debtsAction";
+
+import { extractDates, extractSales } from "Modules/sales";
+import { extractDebts } from "Modules/debts";
+
+import {
+  extractProductId,
+  getStockArray,
+  generateProductReport,
+  getReportSearchResult,
+} from "Modules/stock";
+
+import { extractExpenses } from "Modules/expenses";
 
 class AccountReport extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      startDate: new Date(),
+      endDate: new Date(),
+      initialStartDate: new Date(),
+      loading: false,
+      sales: [],
+      originalSales: [],
+      postsPerPage: 100,
+      currentPage: 1,
+      searchValue: "",
+      report: [],
+      originalReport: [],
+      originalStocks: [],
+      stocks: [],
+      originalExpenses: [],
+      expenses: [],
+      originalClearance: [],
+      clearance: [],
+      originalDebts: [],
+      debts: [],
+    };
+
+    //handle props received
+    this.handleProps = this.handleProps.bind(this);
+    this.handleDate = this.handleDate.bind(this);
+  }
+
+  handleDate(data) {
+    this.setState({
+      startDate: data.startDate,
+      endDate: data.endDate,
+    });
+
+    if (data.startDate !== null) {
+      this.setState({
+        initialStartDate: data.startDate,
+      });
+    }
+  }
+
+  handleProps(props) {
+    //check if both dates are not null
+    let startDate = this.state.startDate;
+    if (startDate == null) {
+      startDate = this.state.initialStartDate;
+    }
+    let endDate = this.state.endDate;
+    if (startDate !== null && endDate !== null) {
+      let dates = extractDates(startDate, endDate);
+      let mainDebts = extractDebts(dates, props.debts);
+
+      //get others
+      /* let [total, paid, balance] = getOthers(mainDebts);
+      //set state of activities
+      this.setState({
+        debts: mainDebts,
+        originalDebts: mainDebts,
+        loading: false,
+        balance: balance,
+        total: total,
+        paid: paid,
+      });*/
+    }
+  }
+
+  //wait for when our props arrive
+  componentDidUpdate(prevProps, prevState) {
+    //now check if sales have arrived
+    if (prevProps.sales !== this.props.sales) {
+      this.props.getExpenses(
+        this.props.company.companyId,
+        this.props.branch.branchId
+      );
+    }
+
+    //check if expenses have arrived
+    if (prevProps.expenses !== this.props.expenses) {
+      this.props.getClearance(
+        this.props.company.companyId,
+        this.props.branch.branchId
+      );
+    }
+
+    //check if clearance have arrived
+    if (prevProps.clearance !== this.props.clearance) {
+      this.props.getDebts(
+        this.props.company.companyId,
+        this.props.branch.branchId
+      );
+    }
+
+    //check if debts have arrived
+    if (prevProps.debts !== this.props.debts) {
+      this.handleProps(this.props);
+    }
+
+    if (
+      prevProps.company !== this.props.company ||
+      prevProps.branch !== this.props.branch
+    ) {
+      //console.log(this.props.company.companyId, this.props.branch.branchId);
+      this.setState({
+        loading: true,
+      });
+      this.props.getSales(
+        this.props.company.companyId,
+        this.props.branch.branchId
+      );
+    }
+
+    //check for date change
+    if (
+      prevState.startDate !== this.state.startDate ||
+      prevState.endDate !== this.state.endDate
+    ) {
+      //handle the new props
+      this.handleProps(this.props);
+    }
+  }
+
+  componentDidMount() {
+    this.props.getSales(
+      this.props.company.companyId,
+      this.props.branch.branchId
+    );
+
+    this.setState({
+      loading: true,
+    });
   }
 
   render() {
@@ -181,4 +331,32 @@ class AccountReport extends Component {
   }
 }
 
-export default AccountReport;
+AccountReport.propTypes = {
+  getSales: propTypes.func.isRequired,
+  getDebts: propTypes.func.isRequired,
+  getClearance: propTypes.func.isRequired,
+  getExpenses: propTypes.func.isRequired,
+  sales: propTypes.array.isRequired,
+  getStocks: propTypes.func.isRequired,
+  stocks: propTypes.array.isRequired,
+  clearance: propTypes.array.isRequired,
+  expenses: propTypes.array.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  stocks: state.stocks.items,
+  sales: state.sales.items,
+  clearance: state.clearance.items,
+  expenses: state.expenses.items,
+  debts: state.debts.items,
+  branch: state.branches.item,
+  company: state.companies.item,
+});
+
+export default connect(mapStateToProps, {
+  getSales,
+  getStocks,
+  getClearance,
+  getExpenses,
+  getDebts,
+})(AccountReport);
