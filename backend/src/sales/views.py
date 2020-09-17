@@ -42,7 +42,7 @@ def salesDetail(request, pk):
         serializer = SalesSerializer(theSale)
         return Response(serializer.data)
     elif request.method == 'PUT':
-        serializer = SalesSerializer(theSale,request.data)
+        serializer = SalesSerializer(theSale,request.data,partial=True)
 
         if serializer.is_valid():
             serializer.save()

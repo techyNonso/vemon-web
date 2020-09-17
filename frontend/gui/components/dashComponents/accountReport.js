@@ -11,13 +11,15 @@ import { getDebts } from "Store/actions/debtsAction";
 
 import { extractDates, extractSales } from "Modules/sales";
 import { extractDebts } from "Modules/debts";
-
+import { extractClearance } from "Modules/clearance";
 import {
-  extractProductId,
-  getStockArray,
-  generateProductReport,
-  getReportSearchResult,
-} from "Modules/stock";
+  getTotalSalesDetails,
+  getDebtDetails,
+  getExpenseSum,
+  getClearanceDetails,
+  generateReport,
+} from "Modules/account";
+import { extractProductId, getStockArray } from "Modules/stock";
 
 import { extractExpenses } from "Modules/expenses";
 
@@ -44,11 +46,19 @@ class AccountReport extends Component {
       clearance: [],
       originalDebts: [],
       debts: [],
+      total: 0,
+      expenseSum: 0,
+      debtSum: 0,
+      paidSum: 0,
+      debtPaid: 0,
+      balance: 0,
     };
 
     //handle props received
     this.handleProps = this.handleProps.bind(this);
     this.handleDate = this.handleDate.bind(this);
+    this.ifNegative = this.ifNegative.bind(this);
+    this.ifPositive = this.ifPositive.bind(this);
   }
 
   handleDate(data) {
@@ -73,19 +83,42 @@ class AccountReport extends Component {
     let endDate = this.state.endDate;
     if (startDate !== null && endDate !== null) {
       let dates = extractDates(startDate, endDate);
-      let mainDebts = extractDebts(dates, props.debts);
+      let ids = extractProductId(props.stocks);
 
-      //get others
-      /* let [total, paid, balance] = getOthers(mainDebts);
+      let stocks = getStockArray(ids, props.stocks);
+      let mainDebts = extractDebts(dates, props.debts);
+      let mainExpenses = extractExpenses(dates, props.expenses);
+      let mainSales = extractSales(dates, props.sales);
+      let mainClearance = extractClearance(dates, props.clearance);
+      let [total, paidSum] = getTotalSalesDetails(mainSales);
+      let debtSum = getDebtDetails(mainDebts);
+      let clearanceSum = getClearanceDetails(mainClearance);
+      let expenseSum = getExpenseSum(mainExpenses);
+
+      //get balance paid money + money from debt redemption
+      let balance = Number(paidSum + clearanceSum - expenseSum);
+
+      //generate report
+      let report = generateReport(
+        dates,
+        mainDebts,
+        mainExpenses,
+        mainSales,
+        mainClearance,
+        stocks
+      );
+
       //set state of activities
       this.setState({
-        debts: mainDebts,
-        originalDebts: mainDebts,
-        loading: false,
-        balance: balance,
         total: total,
-        paid: paid,
-      });*/
+        paidSum: paidSum,
+        debtSum: debtSum,
+        expenseSum: expenseSum,
+        debtPaid: clearanceSum,
+        balance,
+        loading: false,
+        report,
+      });
     }
   }
 
@@ -117,6 +150,14 @@ class AccountReport extends Component {
 
     //check if debts have arrived
     if (prevProps.debts !== this.props.debts) {
+      this.props.getStocks(
+        this.props.company.companyId,
+        this.props.branch.branchId
+      );
+    }
+
+    //check if stocks have arrived
+    if (prevProps.stocks !== this.props.stocks) {
       this.handleProps(this.props);
     }
 
@@ -155,9 +196,68 @@ class AccountReport extends Component {
     });
   }
 
+  ifNegative(gainPercent) {
+    return Number(gainPercent) < 0 ? true : false;
+  }
+
+  ifPositive(gainPercent) {
+    return Number(gainPercent) >= 0 ? true : false;
+  }
+
   render() {
+    let loading;
+    if (this.state.loading) {
+      loading = (
+        <tr>
+          <td>please wait...</td>
+        </tr>
+      );
+    }
+
+    //get current stocks
+    const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - this.state.postsPerPage;
+    const currentPosts = this.state.report.slice(
+      indexOfFirstPost,
+      indexOfLastPost
+    );
+
+    let reportList;
+    //check list
+    if (currentPosts.length > 0) {
+      reportList = currentPosts.map((report) => (
+        <tr key={report.id}>
+          <td>{report.date}</td>
+          <td>{report.totalPrice}</td>
+          <td>{report.paid}</td>
+          <td>{report.debtPaid}</td>
+          <td>{report.debt}</td>
+          <td>{report.expense}</td>
+          <td>{report.balance}</td>
+          {this.ifNegative(report.gainPercent) && (
+            <td style={{ color: "red" }}>{report.gainPercent} %</td>
+          )}
+          {this.ifPositive(report.gainPercent) && (
+            <td style={{ color: "green" }}>+ {report.gainPercent} %</td>
+          )}
+          <td>
+            <button className="btn btn-sm btn-primary">Detail</button>
+          </td>
+        </tr>
+      ));
+    } else {
+      reportList = (
+        <tr>
+          <td>No record found</td>
+        </tr>
+      );
+    }
+
+    //change the page
+    const paginate = (pageNumber) => this.setState({ currentPage: pageNumber });
+
     return (
-      <div>
+      <Fragment>
         <div className="row mb-2 pr-3">
           <div className="col-lg-3 mb-4 pl-3 pr-3">
             <div className="showBox">
@@ -167,7 +267,7 @@ class AccountReport extends Component {
                   aria-hidden="true"
                   id="saleVol"
                 ></i>
-                <span id="span1">0</span>
+                <span id="span1">{this.state.total}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Total Amount</div>
@@ -179,7 +279,7 @@ class AccountReport extends Component {
             <div className="showBox">
               <div className="showChild showTop">
                 <i className="fa fa-money" aria-hidden="true" id="incVol"></i>
-                <span id="span4">0</span>
+                <span id="span4">{this.state.paidSum}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Paid</div>
@@ -195,7 +295,7 @@ class AccountReport extends Component {
                   aria-hidden="true"
                   id="expVol"
                 ></i>
-                <span id="span2">0</span>
+                <span id="span2">{this.state.debtSum}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Debt</div>
@@ -211,7 +311,7 @@ class AccountReport extends Component {
                   aria-hidden="true"
                   id="expenVol"
                 ></i>
-                <span id="span3">0</span>
+                <span id="span3">{this.state.expenseSum}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Expenses</div>
@@ -229,7 +329,7 @@ class AccountReport extends Component {
                   aria-hidden="true"
                   id="invVol"
                 ></i>
-                <span id="span6">0</span>
+                <span id="span6">{this.state.debtPaid}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Debt Paid</div>
@@ -244,7 +344,7 @@ class AccountReport extends Component {
                   aria-hidden="true"
                   id="stockVol"
                 ></i>
-                <span id="span5">0</span>
+                <span id="span5">{this.state.balance}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Balance</div>
@@ -253,30 +353,18 @@ class AccountReport extends Component {
           </div>
         </div>
 
-        <div className="row table-responsive boxUp p-3">
-          <div className="container px-1 px-sm-5 mx-auto mb-4">
-            <form autoComplete="off">
-              <span className="sortBox">sort By date:</span>
-              <div className="flex-row d-flex justify-content-center">
-                <div className="col-lg-6 col-11">
-                  <div className="input-group input-daterange">
-                    <input
-                      type="text"
-                      className="form-control input1"
-                      placeholder="Start Date"
-                      readOnly={true}
-                    />
-                    <input
-                      type="text"
-                      className="form-control input2"
-                      placeholder="End Date"
-                      readOnly={true}
-                    />
-                  </div>
-                </div>
-              </div>
-            </form>
+        <div className="row mt-3 pl-3 pr-3">
+          <div className="col-md-6 pb-2">
+            <span>
+              <strong>Branches</strong> : 1 of {this.props.branches.length}
+            </span>
           </div>
+        </div>
+
+        <div className="row justify-content-center pb-4">
+          <DateRangeSelect style={"zIndex:1000"} parentFunc={this.handleDate} />
+        </div>
+        <div className="row table-responsive boxUp p-3">
           <table className="table table-sm table-striped table-borderless">
             <thead>
               <tr>
@@ -292,41 +380,19 @@ class AccountReport extends Component {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>02-12-2020</td>
-                <td>2000</td>
-                <td>1200</td>
-                <td>1000</td>
-                <td>500</td>
-                <td>100</td>
-                <td>200</td>
-                <td>+20%</td>
-                <td>
-                  <button className="btn btn-sm btn-primary">Detail</button>
-                </td>
-              </tr>
+              {loading}
+
+              {reportList}
             </tbody>
           </table>
         </div>
 
-        <ul className="pagination justify-content-end pr-3 pt-3">
-          <li className="page-item">
-            <a href="#" className="page-link">
-              Previous
-            </a>
-          </li>
-          <li className="page-item active">
-            <a href="#" className="page-link">
-              2
-            </a>
-          </li>
-          <li className="page-item">
-            <a href="#" className="page-link">
-              Next
-            </a>
-          </li>
-        </ul>
-      </div>
+        <Pagination
+          postsPerPage={this.state.postsPerPage}
+          totalPosts={this.state.report.length}
+          paginate={paginate}
+        />
+      </Fragment>
     );
   }
 }
