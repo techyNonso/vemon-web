@@ -226,8 +226,12 @@ class CashSales extends Component {
           </div>
         </div>
 
-        <div className="row justify-content-center pb-4">
-          <DateRangeSelect style={"zIndex:1000"} parentFunc={this.handleDate} />
+        <div className="row text-center justify-content-center">Sort Date</div>
+        <div
+          className="row justify-content-center pb-4 "
+          style={{ zIndex: "1000", position: "relative" }}
+        >
+          <DateRangeSelect parentFunc={this.handleDate} />
         </div>
         <div className="row table-responsive boxUp p-3">
           <table className="table table-sm table-striped table-borderless">

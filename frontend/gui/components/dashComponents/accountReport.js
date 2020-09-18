@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment, useState } from "react";
 import DateRangeSelect from "Components/dashComponents/dateRangeSelect";
 import propTypes from "prop-types";
 import { connect } from "react-redux";
@@ -9,7 +9,7 @@ import { getClearance } from "Store/actions/clearanceAction";
 import { getExpenses } from "Store/actions/expenseAction";
 import { getDebts } from "Store/actions/debtsAction";
 
-import { extractDates, extractSales } from "Modules/sales";
+import { extractDates } from "Modules/sales";
 import { extractDebts } from "Modules/debts";
 import { extractClearance } from "Modules/clearance";
 import {
@@ -18,10 +18,18 @@ import {
   getExpenseSum,
   getClearanceDetails,
   generateReport,
+  extractSales,
 } from "Modules/account";
 import { extractProductId, getStockArray } from "Modules/stock";
 
 import { extractExpenses } from "Modules/expenses";
+
+//import bootstrap component
+import Modal from "react-bootstrap/Modal";
+import ModalBody from "react-bootstrap/ModalBody";
+import ModalHeader from "react-bootstrap/ModalHeader";
+import ModalFooter from "react-bootstrap/ModalFooter";
+import ModalTitle from "react-bootstrap/ModalTitle";
 
 class AccountReport extends Component {
   constructor(props) {
@@ -31,9 +39,10 @@ class AccountReport extends Component {
       endDate: new Date(),
       initialStartDate: new Date(),
       loading: false,
+      displayModal: false,
       sales: [],
       originalSales: [],
-      postsPerPage: 100,
+      postsPerPage: 10,
       currentPage: 1,
       searchValue: "",
       report: [],
@@ -52,6 +61,15 @@ class AccountReport extends Component {
       paidSum: 0,
       debtPaid: 0,
       balance: 0,
+      lastDate: "",
+      lastSale: "",
+      lastCost: "",
+      lastGain: "",
+      currentGain: "",
+      currentCost: "",
+      currentSale: "",
+      currentDate: "",
+      percentDiff: "",
     };
 
     //handle props received
@@ -204,6 +222,32 @@ class AccountReport extends Component {
     return Number(gainPercent) >= 0 ? true : false;
   }
 
+  //change modal state to false
+  hideDisplay() {
+    this.setState({
+      displayModal: false,
+      //deleteClick: false,
+    });
+  }
+
+  //show summary modal
+  showSummary(event) {
+    let btn = event.target.dataset;
+
+    this.setState({
+      displayModal: true,
+      lastDate: btn.lastdate,
+      lastSale: btn.lastsale,
+      lastCost: btn.lastcost,
+      lastGain: btn.lastgain,
+      currentGain: btn.currentgain,
+      currentCost: btn.currentcost,
+      currentSale: btn.currentsale,
+      currentDate: btn.currentdate,
+      percentDiff: btn.percentdiff,
+    });
+  }
+
   render() {
     let loading;
     if (this.state.loading) {
@@ -238,10 +282,24 @@ class AccountReport extends Component {
             <td style={{ color: "red" }}>{report.gainPercent} %</td>
           )}
           {this.ifPositive(report.gainPercent) && (
-            <td style={{ color: "green" }}>+ {report.gainPercent} %</td>
+            <td style={{ color: "green" }}>+{report.gainPercent} %</td>
           )}
           <td>
-            <button className="btn btn-sm btn-primary">Detail</button>
+            <button
+              className="btn btn-sm btn-primary"
+              data-lastdate={report.lastDate}
+              data-lastsale={report.lastSale}
+              data-lastcost={report.lastCost}
+              data-lastgain={report.lastGain}
+              data-currentdate={report.currentDate}
+              data-currentsale={report.currentSale}
+              data-currentcost={report.currentCost}
+              data-currentgain={report.currentGain}
+              data-percentdiff={report.gainPercent}
+              onClick={this.showSummary.bind(this)}
+            >
+              Detail
+            </button>
           </td>
         </tr>
       ));
@@ -255,9 +313,43 @@ class AccountReport extends Component {
 
     //change the page
     const paginate = (pageNumber) => this.setState({ currentPage: pageNumber });
-
+    //work with modal
+    let modal = null;
+    if (this.state.displayModal) {
+      modal = (
+        <ActMod
+          modState={this.hideDisplay.bind(this)}
+          lastDate={this.state.lastDate}
+          lastSale={this.state.lastSale}
+          lastCost={this.state.lastCost}
+          lastGain={this.state.lastGain}
+          currentDate={this.state.currentDate}
+          currentSale={this.state.currentSale}
+          currentCost={this.state.currentCost}
+          currentGain={this.state.currentGain}
+          percentDiff={this.state.percentDiff}
+        />
+      );
+    }
     return (
       <Fragment>
+        {modal}
+
+        <div className="row mt-3 pl-3 pr-3">
+          <div className="col-md-6 pb-2">
+            <span>
+              <strong>Branches</strong> : 1 of {this.props.branches.length}
+            </span>
+          </div>
+        </div>
+
+        <div className="row text-center justify-content-center">Sort Date</div>
+        <div
+          className="row justify-content-center pb-4 "
+          style={{ zIndex: "1000", position: "relative" }}
+        >
+          <DateRangeSelect parentFunc={this.handleDate} />
+        </div>
         <div className="row mb-2 pr-3">
           <div className="col-lg-3 mb-4 pl-3 pr-3">
             <div className="showBox">
@@ -353,17 +445,6 @@ class AccountReport extends Component {
           </div>
         </div>
 
-        <div className="row mt-3 pl-3 pr-3">
-          <div className="col-md-6 pb-2">
-            <span>
-              <strong>Branches</strong> : 1 of {this.props.branches.length}
-            </span>
-          </div>
-        </div>
-
-        <div className="row justify-content-center pb-4">
-          <DateRangeSelect style={"zIndex:1000"} parentFunc={this.handleDate} />
-        </div>
         <div className="row table-responsive boxUp p-3">
           <table className="table table-sm table-striped table-borderless">
             <thead>
@@ -426,3 +507,78 @@ export default connect(mapStateToProps, {
   getExpenses,
   getDebts,
 })(AccountReport);
+
+//write modal for this app
+const ActMod = (props) => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  const showModal = () => {
+    setIsOpen(false);
+  };
+
+  const hideModal = () => {
+    setIsOpen(false);
+    props.modState();
+  };
+
+  const ifNegative = (gainPercent) => {
+    return Number(gainPercent) < 0 ? true : false;
+  };
+
+  const ifPositive = (gainPercent) => {
+    return Number(gainPercent) >= 0 ? true : false;
+  };
+
+  return (
+    <Modal show={isOpen} onHide={hideModal}>
+      <ModalHeader>
+        <ModalTitle>Summary For {props.currentDate}</ModalTitle>
+      </ModalHeader>
+
+      <ModalBody>
+        <div className="table-responsive">
+          <table className="table ">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Sales</th>
+                <th>Cost</th>
+                <th>Gain</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{props.lastDate}</td>
+                <td>{props.lastSale}</td>
+                <td>{props.lastCost}</td>
+                <td>{props.lastGain}</td>
+              </tr>
+              <tr>
+                <td>{props.currentDate}</td>
+                <td>{props.currentSale}</td>
+                <td>{props.currentCost}</td>
+                <td>{props.currentGain}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Percentage Difference</th>
+                {ifNegative(props.percentDiff) && (
+                  <th style={{ color: "red" }}>{props.percentDiff} % </th>
+                )}
+                {ifPositive(props.percentDiff) && (
+                  <th style={{ color: "green" }}>+{props.percentDiff} %</th>
+                )}
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <button className="btn btn-sm btn-primary" onClick={hideModal}>
+          Done
+        </button>
+      </ModalFooter>
+    </Modal>
+  );
+};

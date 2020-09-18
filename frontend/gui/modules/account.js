@@ -1,3 +1,29 @@
+export const extractSales = (dates, sales) => {
+  //add previous day date to date array
+  let firstDay = new Date(dates[0]);
+  let prevDay = new Date(firstDay.setDate(firstDay.getDate() - 1));
+  dates = [prevDay, ...dates];
+  let salesArray = [];
+  dates.forEach((date) => {
+    //loop through activities
+    sales.forEach((sale) => {
+      let year = date.getFullYear();
+      let month = date.getMonth();
+      let day = date.getDate();
+      let salesDate = new Date(sale.date);
+      let salesYear = salesDate.getFullYear();
+      let salesMonth = salesDate.getMonth();
+      let salesDay = salesDate.getDate();
+
+      if (year == salesYear && month == salesMonth && day == salesDay) {
+        salesArray = [...salesArray, sale];
+      }
+    });
+  });
+
+  return salesArray;
+};
+
 export const getTotalSalesDetails = (sales) => {
   let total = 0;
   let paidSum = 0;
@@ -63,6 +89,8 @@ const getCurrentSalesDetails = (sales, stocks, date) => {
   let totalPrice = 0;
   let paidSum = 0;
   let currentGain = 0;
+  let totalCp = 0;
+  let totalSp = 0;
 
   //match represents all sales for a particular day
   match.forEach((sale) => {
@@ -70,13 +98,54 @@ const getCurrentSalesDetails = (sales, stocks, date) => {
 
     let cp = ppmu * sale.quantity;
     let sp = sale.price;
-
+    totalSp += sp;
+    totalCp += cp;
     currentGain += Number(sp - cp);
     totalPrice += sale.price;
     paidSum += sale.paid;
   });
 
-  return [totalPrice, paidSum, currentGain];
+  return [totalPrice, paidSum, currentGain, totalCp, totalSp];
+};
+
+//get details for day 1 prev day
+const getPrevSalesDetails = (sales, stocks, date) => {
+  let match = sales.filter((sale) => {
+    let currentDate = new Date(sale.date);
+    return (
+      date.getDate() == currentDate.getDate() &&
+      date.getMonth() == currentDate.getMonth() &&
+      date.getFullYear() == currentDate.getFullYear()
+    );
+  });
+
+  //get values
+  let prevTotalPrice = 0;
+  let prevPaidSum = 0;
+  let prevCurrentGain = 0;
+  let prevTotalCp = 0;
+  let prevTotalSp = 0;
+
+  //match represents all sales for a particular day
+  match.forEach((sale) => {
+    let ppmu = getSalePpmu(sale.productId, stocks);
+
+    let cp = ppmu * sale.quantity;
+    let sp = sale.price;
+    prevTotalSp += sp;
+    prevTotalCp += cp;
+    prevCurrentGain += Number(sp - cp);
+    prevTotalPrice += sale.price;
+    prevPaidSum += sale.paid;
+  });
+
+  return [
+    prevTotalPrice,
+    prevPaidSum,
+    prevCurrentGain,
+    prevTotalCp,
+    prevTotalSp,
+  ];
 };
 
 //filter clearance for this date
@@ -150,21 +219,43 @@ export const generateReport = (
   allClearance,
   stocks
 ) => {
+  //get previous day from first day details
+  let firstDay = new Date(dates[0]);
+
+  let prevDay = new Date(firstDay.setDate(firstDay.getDate() - 1));
+  //get details for a day before the first day
+  let [
+    prevTotalPrice,
+    prevPaidSum,
+    prevCurrentGain,
+    prevTotalCp,
+    prevTotalSp,
+  ] = getPrevSalesDetails(sales, stocks, prevDay);
+
   let reportArray = [];
   let id = 0;
-  let lastGain = 0;
+  let lastGain = prevCurrentGain;
+  let lastDate = `${
+    prevDay.getMonth() + 1
+  }-${prevDay.getDate()}-${prevDay.getFullYear()}`;
+  let currentDate = "";
+  let lastSale = prevTotalSp;
+  let currentSale = "";
+  let lastCost = prevTotalCp;
+  let currentCost = "";
 
   //loop through all dates
   dates.forEach((date) => {
     id++;
     //filter details for this date
-    let [totalPrice, paidSum, currentGain] = getCurrentSalesDetails(
-      sales,
-      stocks,
-      date
-    );
+    let [
+      totalPrice,
+      paidSum,
+      currentGain,
+      totalCp,
+      totalSp,
+    ] = getCurrentSalesDetails(sales, stocks, date);
 
-    console.log(lastGain, currentGain);
     let gainPercent = isNaN(Number(((currentGain - lastGain) / lastGain) * 100))
       ? 0
       : isFinite(Number(((currentGain - lastGain) / lastGain) * 100))
@@ -186,9 +277,22 @@ export const generateReport = (
     obj.expense = expense;
     obj.balance = balance;
     obj.gainPercent = gainPercent;
+    obj.currentDate = `${
+      date.getMonth() + 1
+    }-${date.getDate()}-${date.getFullYear()}`;
+    obj.currentSale = totalSp;
+    obj.currentCost = totalCp;
+    obj.lastSale = lastSale;
+    obj.lastCost = lastCost;
+    obj.lastDate = lastDate;
+    obj.currentGain = currentGain;
+    obj.lastGain = lastGain;
 
-    //change last gain
+    //change last values
     lastGain = currentGain;
+    lastDate = `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`;
+    lastSale = totalSp;
+    lastCost = totalCp;
     //add to array
     reportArray = [...reportArray, obj];
   });
