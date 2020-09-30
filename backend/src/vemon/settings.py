@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -49,7 +49,9 @@ INSTALLED_APPS = [
     'stock',
     'attendance',
     'stockActivities',
-    'debtclearance'
+    'debtclearance',
+    'rest_framework.authtoken',
+    'drf_yasg'
     
 ]
 
@@ -83,6 +85,12 @@ TEMPLATES = [
         },
     },
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
 AUTH_USER_MODEL = 'account.Account'
 
@@ -146,3 +154,32 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 
 ALLOWED_HOSTS = ['*']
+"""
+
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_PASSWORD="william19"
+EMAIL_HOST_USER="williamikeji@gmail.com"
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+"""
+"""
+
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_PASSWORD="william19"
+EMAIL_HOST_USER="williamikeji@gmail.com"
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+"""
+"""
+#email settings
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = '1025'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD=''
+EMAIL_USE_TLS = False
+#EMAIL_USE_SSL = False
+"""

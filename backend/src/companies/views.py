@@ -5,9 +5,12 @@ from rest_framework.response import Response
 from .models import company
 from .serializers import CompanySerializer
 from account.models import Account
+from drf_yasg.utils import swagger_auto_schema
 
 
 # Create your views here.
+
+@swagger_auto_schema(method='post',request_body=CompanySerializer)
 @api_view(['GET','POST'])
 def companyHandler(request):
     if request.method == "GET":
@@ -27,6 +30,8 @@ def companyHandler(request):
 
 
 #create your company detail view
+
+@swagger_auto_schema(method='put',request_body=CompanySerializer)
 @api_view(['GET','PUT','DELETE'])
 def companyDetail(request, pk):
     try:

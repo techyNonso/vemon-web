@@ -4,7 +4,10 @@ from .serializers import AttendanceSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
 
+
+@swagger_auto_schema(method='post',request_body=AttendanceSerializer)
 # Create your views here.
 @api_view(['GET','POST'])
 def companyAttendance(request, company,branch):
@@ -15,6 +18,7 @@ def companyAttendance(request, company,branch):
         return Response(serializer.data)
 
 
+@swagger_auto_schema(method='post',request_body=AttendanceSerializer)
 # Create your views here.
 @api_view(['GET','POST'])
 def attendanceHandler(request):
@@ -33,7 +37,7 @@ def attendanceHandler(request):
 
 
 #Create view for put , delete and detail
-
+@swagger_auto_schema(method='put',request_body=AttendanceSerializer)
 @api_view(['GET','PUT','DELETE'])
 def attendanceDetail(request,pk):
     try:

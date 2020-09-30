@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from .models import staff
 from .serializers import StaffSerializer
-
+from drf_yasg.utils import swagger_auto_schema
 
 
 #create view for staff per company
@@ -17,6 +17,8 @@ def companyStaff(request,company,branch):
 
 
 # Create your views here.
+
+@swagger_auto_schema(method='post',request_body=StaffSerializer)
 @api_view(['GET','POST'])
 def allStaffHandler(request):
     if request.method == "GET":
@@ -33,6 +35,8 @@ def allStaffHandler(request):
 
 
 #create your staff detail view
+
+@swagger_auto_schema(method='put',request_body=StaffSerializer)
 @api_view(['GET','PUT','DELETE'])
 def staffDetail(request, pk):
     try:

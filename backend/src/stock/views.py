@@ -4,8 +4,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from .models import stock
 from .serializers import StockSerializer
+from drf_yasg.utils import swagger_auto_schema
 
 #view for all stock
+
+@swagger_auto_schema(method='post',request_body=StockSerializer)
 @api_view(['GET','POST'])
 def allStockHandler(request):
     if request.method == "GET":
@@ -21,6 +24,8 @@ def allStockHandler(request):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 # Create your views here.
+
+@swagger_auto_schema(method='post',request_body=StockSerializer)
 @api_view(['GET','POST'])
 def stockHandler(request,company,branch):
     if request.method == "GET":
@@ -37,6 +42,8 @@ def stockHandler(request,company,branch):
 
 
 #create your stock detail view
+
+@swagger_auto_schema(method='put',request_body=StockSerializer)
 @api_view(['GET','PUT','DELETE'])
 def stockDetail(request, pk):
     try:

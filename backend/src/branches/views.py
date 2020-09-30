@@ -5,9 +5,10 @@ from rest_framework.response import Response
 from .models import branch
 from .serializers import BranchesSerializer
 from account.models import Account
-
+from drf_yasg.utils import swagger_auto_schema
 
 #get branches based on company id
+
 @api_view(["GET"])
 def companyBranches(request,company):
     if request.method == "GET":
@@ -16,6 +17,8 @@ def companyBranches(request,company):
         return Response(serializer.data)
 
 
+
+@swagger_auto_schema(method='post',request_body=BranchesSerializer)
 # Create your views here.
 @api_view(['GET','POST'])
 def branchHandler(request):
@@ -36,6 +39,8 @@ def branchHandler(request):
 
 
 #create your company detail view
+
+@swagger_auto_schema(method='put',request_body=BranchesSerializer)
 @api_view(['GET','PUT','DELETE'])
 def branchDetail(request, pk):
     try:

@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import ExpenseSerializer
+from drf_yasg.utils import swagger_auto_schema
+
 
 #create view for company expenses
 @api_view(["GET"])
@@ -15,6 +17,8 @@ def companyExpense(request,company,branch):
 
 
 # Create your views here.
+
+@swagger_auto_schema(method='post',request_body=ExpenseSerializer)
 @api_view(['GET','POST'])
 def expenseHandler(request):
     if request.method == 'GET':
@@ -32,6 +36,8 @@ def expenseHandler(request):
 
 
 #create api for    handeling each expense
+
+@swagger_auto_schema(method='put',request_body=ExpenseSerializer)
 @api_view(["GET","PUT","DELETE"])
 def expenseDetail(request, pk):
     try:

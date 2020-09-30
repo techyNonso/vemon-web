@@ -4,10 +4,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from .models import stockActivity
 from .serializers import StockActivitySerializer
+from drf_yasg.utils import swagger_auto_schema
 
 
 
 # Create your views here.
+
+@swagger_auto_schema(method='post',request_body=StockActivitySerializer)
 @api_view(['GET','POST'])
 def stockActivityHandler(request):
     if request.method == "GET":
@@ -32,6 +35,8 @@ def companyStockActivity(request,company,branch):
         return Response(serializer.data)
 
 #create your staff detail view
+
+@swagger_auto_schema(method='put',request_body=StockActivitySerializer)
 @api_view(['GET','PUT','DELETE'])
 def stockActivityDetail(request, pk):
     try:

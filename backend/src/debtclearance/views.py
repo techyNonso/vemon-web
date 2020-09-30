@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import DebtClearanceSerializer
-
+from drf_yasg.utils import swagger_auto_schema
 
 #create view for company clearance
 @api_view(['GET'])
@@ -18,6 +18,8 @@ def debtClearanceForCompany(request,company,branch):
 
         
 # create view for clearance here
+
+@swagger_auto_schema(method='post',request_body=DebtClearanceSerializer)
 @api_view(['GET','POST'])
 def debtClearanceHandler(request):
 
@@ -36,6 +38,8 @@ def debtClearanceHandler(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 # Create your views for single debt here.
+
+@swagger_auto_schema(method='put',request_body=DebtClearanceSerializer)
 @api_view(["GET","PUT","DELETE"])
 def debtClearanceDetail(request, pk):
     try:

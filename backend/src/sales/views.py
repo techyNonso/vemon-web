@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from .models import sale
 from .serializers import SalesSerializer
+from drf_yasg.utils import swagger_auto_schema
 
 
 # create view for per company 
@@ -15,6 +16,7 @@ def companySales(request,company,branch):
         return Response(serializer.data)
 
 # Create your views here.
+@swagger_auto_schema(method='post',request_body=SalesSerializer)
 @api_view(['GET','POST'])
 def salesHandler(request):
     if request.method == "GET":
@@ -31,6 +33,7 @@ def salesHandler(request):
 
 
 #create your sale detail view
+@swagger_auto_schema(method='put',request_body=SalesSerializer)
 @api_view(['GET','PUT','DELETE'])
 def salesDetail(request, pk):
     try:
