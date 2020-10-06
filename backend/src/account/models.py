@@ -41,6 +41,7 @@ class MyAccountManager(BaseUserManager):
 
         user.is_admin =  True
         user.is_staff =  True
+        user.is_active = True
         user.is_superuser =  True
         user.is_emailvalidated = True
         user.is_phonevalidated = True
@@ -59,7 +60,7 @@ class Account(AbstractBaseUser):
     date_joined       = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
     last_login        = models.DateTimeField(verbose_name="last login", auto_now_add=True)
     is_admin          = models.BooleanField(default=False)
-    is_active         = models.BooleanField(default=True)
+    is_active         = models.BooleanField(default=False)
     is_staff          = models.BooleanField(default=False)
     is_superuser      = models.BooleanField(default=False)
     is_emailvalidated = models.BooleanField(default=False)

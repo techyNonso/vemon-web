@@ -61,7 +61,7 @@ class LoginSerializer(serializers.ModelSerializer):
         if not user.is_emailvalidated:
             raise AuthenticationFailed('Email is not verified')
         
-
+        
         return {
             'email': user.email,
             'first_name': user.first_name,

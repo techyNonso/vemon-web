@@ -57,8 +57,8 @@ def VerifyEmail(request):
         try:
             payload=jwt.decode(token,settings.SECRET_KEY)
             user = Account.objects.get(id=payload['user_id'])
-            if not user.is_emailvalidated:
-                user.is_emailvalidated=True
+            if not user.is_active:
+                user.is_active=True
                 user.save()
             return Response({'email':"Successfully activated"},status=status.HTTP_200_OK)
         except jwt.ExpiredSignatureError as identifier:
@@ -67,7 +67,7 @@ def VerifyEmail(request):
             return Response({'error':"invalid activation link"},status=status.HTTP_400_BAD_REQUEST)
 
 
-
+"""
 @swagger_auto_schema(method='post',request_body=LoginSerializer)
 #login view
 @api_view(['POST'])
@@ -77,3 +77,4 @@ def LoginView(request):
         serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data,status=status.HTTP_200_OK)
+"""
