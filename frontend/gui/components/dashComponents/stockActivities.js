@@ -4,6 +4,7 @@ import propTypes from "prop-types";
 import { connect } from "react-redux";
 import Pagination from "Components/dashComponents/pagination";
 import { getActivities, getActivity } from "Store/actions/activitiesAction";
+import SingleDatePicker from "Components/dashComponents/singleDatePicker";
 import {
   extractDates,
   extractActivities,
@@ -25,6 +26,7 @@ class StockActivities extends Component {
       startDate: new Date(),
       endDate: new Date(),
       initialStartDate: new Date(),
+      initialEndDate: new Date(),
       loading: false,
       activities: [],
       originalActivities: [],
@@ -33,6 +35,7 @@ class StockActivities extends Component {
       currentPage: 1,
       searchValue: "",
       displayModal: false,
+      date: new Date(),
     };
     //handle props received
     this.handleProps = this.handleProps.bind(this);
@@ -45,9 +48,20 @@ class StockActivities extends Component {
       endDate: data.endDate,
     });
 
-    if (data.startDate !== null) {
+    if (data.startDate == null && data.endDate !== null) {
+      this.setState({
+        initialStartDate: data.endDate,
+        initialEndDate: data.endDate,
+      });
+    } else if (data.startDate !== null && data.endDate == null) {
       this.setState({
         initialStartDate: data.startDate,
+        initialEndDate: data.startDate,
+      });
+    } else if (data.startDate !== null && data.endDate !== null) {
+      this.setState({
+        initialStartDate: data.startDate,
+        initialEndDate: data.endDate,
       });
     }
   }
@@ -98,13 +112,10 @@ class StockActivities extends Component {
     }
     let endDate = this.state.endDate;
     if (startDate !== null && endDate !== null) {
-      let dates = extractDates(startDate, endDate);
-      let acts = extractActivities(dates, props.activities);
-
       //set state of activities
       this.setState({
-        activities: acts,
-        originalActivities: acts,
+        activities: props.activities,
+        originalActivities: props.activities,
         loading: false,
       });
     }
@@ -138,7 +149,9 @@ class StockActivities extends Component {
       });
       this.props.getActivities(
         this.props.company.companyId,
-        this.props.branch.branchId
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
       );
     }
 
@@ -147,8 +160,12 @@ class StockActivities extends Component {
       prevState.startDate !== this.state.startDate ||
       prevState.endDate !== this.state.endDate
     ) {
-      //handle the new props
-      this.handleProps(this.props);
+      this.props.getActivities(
+        this.props.company.companyId,
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
+      );
     }
 
     //check if activity changes
@@ -160,7 +177,9 @@ class StockActivities extends Component {
   componentDidMount() {
     this.props.getActivities(
       this.props.company.companyId,
-      this.props.branch.branchId
+      this.props.branch.branchId,
+      this.state.initialStartDate,
+      this.state.initialEndDate
     );
     this.setState({
       loading: true,
@@ -252,7 +271,7 @@ class StockActivities extends Component {
           </div>
         </div>
         <div className="row justify-content-center pb-4">
-          <DateRangeSelect style={"zIndex:1000"} parentFunc={this.handleDate} />
+          <DateRangeSelect parentFunc={this.handleDate} />
         </div>
         <div className="row table-responsive boxUp p-3">
           <table className="table table-sm table-striped table-borderless">

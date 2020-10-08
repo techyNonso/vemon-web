@@ -28,9 +28,12 @@ def stockActivityHandler(request):
 
 #create view for particular company and branch view
 @api_view(['GET'])
-def companyStockActivity(request,company,branch):
+def companyStockActivity(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
+    start_date = "%d-%d-%d"%(startyear,startmonth,startday)
+    end_date = "%d-%d-%d"%(endyear,endmonth,endday)
+    print(start_date)
     if request.method == "GET":
-        allActivity = stockActivity.objects.filter(companyId=company,branchId=branch)
+        allActivity = stockActivity.objects.filter(companyId=company,branchId=branch,date__range=[start_date, end_date])
         serializer = StockActivitySerializer(allActivity,many=True)
         return Response(serializer.data)
 
