@@ -10,10 +10,12 @@ from drf_yasg.utils import swagger_auto_schema
 @swagger_auto_schema(method='post',request_body=AttendanceSerializer)
 # Create your views here.
 @api_view(['GET','POST'])
-def companyAttendance(request, company,branch):
+def companyAttendance(request, company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
+    start_date = "%d-%d-%d"%(startyear,startmonth,startday)
+    end_date = "%d-%d-%d"%(endyear,endmonth,endday)
 
     if request.method == 'GET':
-        allAttendance = attendance.objects.filter(companyId=company,branchId=branch)
+        allAttendance = attendance.objects.filter(companyId=company,branchId=branch,date__range=[start_date, end_date])
         serializer = AttendanceSerializer(allAttendance, many=True)
         return Response(serializer.data)
 

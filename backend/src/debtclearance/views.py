@@ -8,9 +8,12 @@ from drf_yasg.utils import swagger_auto_schema
 
 #create view for company clearance
 @api_view(['GET'])
-def debtClearanceForCompany(request,company,branch):
+def debtClearanceForCompany(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
+    start_date = "%d-%d-%d"%(startyear,startmonth,startday)
+    end_date = "%d-%d-%d"%(endyear,endmonth,endday)
+    
     if request.method == "GET":
-        clearance = debtClearance.objects.filter(companyId=company,branchId=branch)
+        clearance = debtClearance.objects.filter(companyId=company,branchId=branch,date__range=[start_date, end_date])
         serializer = DebtClearanceSerializer(clearance,many=True)
         return Response(serializer.data)
 

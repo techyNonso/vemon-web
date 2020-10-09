@@ -20,6 +20,7 @@ class Debts extends Component {
       startDate: new Date(),
       endDate: new Date(),
       initialStartDate: new Date(),
+      initialEndDate: new Date(),
       loading: false,
       debts: [],
       originalDebts: [],
@@ -41,9 +42,20 @@ class Debts extends Component {
       endDate: data.endDate,
     });
 
-    if (data.startDate !== null) {
+    if (data.startDate == null && data.endDate !== null) {
+      this.setState({
+        initialStartDate: data.endDate,
+        initialEndDate: data.endDate,
+      });
+    } else if (data.startDate !== null && data.endDate == null) {
       this.setState({
         initialStartDate: data.startDate,
+        initialEndDate: data.startDate,
+      });
+    } else if (data.startDate !== null && data.endDate !== null) {
+      this.setState({
+        initialStartDate: data.startDate,
+        initialEndDate: data.endDate,
       });
     }
   }
@@ -56,8 +68,7 @@ class Debts extends Component {
     }
     let endDate = this.state.endDate;
     if (startDate !== null && endDate !== null) {
-      let dates = extractDates(startDate, endDate);
-      let mainDebts = extractDebts(dates, props.debts);
+      let mainDebts = props.debts;
 
       //get others
       let [total, paid, balance] = getOthers(mainDebts);
@@ -132,7 +143,9 @@ class Debts extends Component {
       });
       this.props.getDebts(
         this.props.company.companyId,
-        this.props.branch.branchId
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
       );
     }
 
@@ -141,15 +154,21 @@ class Debts extends Component {
       prevState.startDate !== this.state.startDate ||
       prevState.endDate !== this.state.endDate
     ) {
-      //handle the new props
-      this.handleProps(this.props);
+      this.props.getDebts(
+        this.props.company.companyId,
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
+      );
     }
   }
 
   componentDidMount() {
     this.props.getDebts(
       this.props.company.companyId,
-      this.props.branch.branchId
+      this.props.branch.branchId,
+      this.state.initialStartDate,
+      this.state.initialEndDate
     );
     this.setState({
       loading: true,

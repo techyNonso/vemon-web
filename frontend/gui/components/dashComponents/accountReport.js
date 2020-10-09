@@ -38,6 +38,7 @@ class AccountReport extends Component {
       startDate: new Date(),
       endDate: new Date(),
       initialStartDate: new Date(),
+      initialEndDate: new Date(),
       loading: false,
       displayModal: false,
       sales: [],
@@ -85,9 +86,20 @@ class AccountReport extends Component {
       endDate: data.endDate,
     });
 
-    if (data.startDate !== null) {
+    if (data.startDate == null && data.endDate !== null) {
+      this.setState({
+        initialStartDate: data.endDate,
+        initialEndDate: data.endDate,
+      });
+    } else if (data.startDate !== null && data.endDate == null) {
       this.setState({
         initialStartDate: data.startDate,
+        initialEndDate: data.startDate,
+      });
+    } else if (data.startDate !== null && data.endDate !== null) {
+      this.setState({
+        initialStartDate: data.startDate,
+        initialEndDate: data.endDate,
       });
     }
   }
@@ -104,10 +116,10 @@ class AccountReport extends Component {
       let ids = extractProductId(props.stocks);
 
       let stocks = getStockArray(ids, props.stocks);
-      let mainDebts = extractDebts(dates, props.debts);
-      let mainExpenses = extractExpenses(dates, props.expenses);
-      let mainSales = extractSales(dates, props.sales);
-      let mainClearance = extractClearance(dates, props.clearance);
+      let mainDebts = props.debts;
+      let mainExpenses = props.expenses;
+      let mainSales = props.sales;
+      let mainClearance = props.clearance;
       let [total, paidSum] = getTotalSalesDetails(mainSales);
       let debtSum = getDebtDetails(mainDebts);
       let clearanceSum = getClearanceDetails(mainClearance);
@@ -146,7 +158,9 @@ class AccountReport extends Component {
     if (prevProps.sales !== this.props.sales) {
       this.props.getExpenses(
         this.props.company.companyId,
-        this.props.branch.branchId
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
       );
     }
 
@@ -154,7 +168,9 @@ class AccountReport extends Component {
     if (prevProps.expenses !== this.props.expenses) {
       this.props.getClearance(
         this.props.company.companyId,
-        this.props.branch.branchId
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
       );
     }
 
@@ -162,7 +178,9 @@ class AccountReport extends Component {
     if (prevProps.clearance !== this.props.clearance) {
       this.props.getDebts(
         this.props.company.companyId,
-        this.props.branch.branchId
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
       );
     }
 
@@ -189,7 +207,9 @@ class AccountReport extends Component {
       });
       this.props.getSales(
         this.props.company.companyId,
-        this.props.branch.branchId
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
       );
     }
 
@@ -198,15 +218,21 @@ class AccountReport extends Component {
       prevState.startDate !== this.state.startDate ||
       prevState.endDate !== this.state.endDate
     ) {
-      //handle the new props
-      this.handleProps(this.props);
+      this.props.getSales(
+        this.props.company.companyId,
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
+      );
     }
   }
 
   componentDidMount() {
     this.props.getSales(
       this.props.company.companyId,
-      this.props.branch.branchId
+      this.props.branch.branchId,
+      this.state.initialStartDate,
+      this.state.initialEndDate
     );
 
     this.setState({

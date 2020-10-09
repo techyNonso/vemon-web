@@ -20,10 +20,11 @@ class Attendance extends Component {
       startDate: new Date(),
       endDate: new Date(),
       initialStartDate: new Date(),
+      initialEndDate: new Date(),
       loading: false,
       allAttendance: [],
       originalAllAttendance: [],
-      postsPerPage: 1,
+      postsPerPage: 100,
       currentPage: 1,
       searchValue: "",
     };
@@ -38,9 +39,20 @@ class Attendance extends Component {
       endDate: data.endDate,
     });
 
-    if (data.startDate !== null) {
+    if (data.startDate == null && data.endDate !== null) {
+      this.setState({
+        initialStartDate: data.endDate,
+        initialEndDate: data.endDate,
+      });
+    } else if (data.startDate !== null && data.endDate == null) {
       this.setState({
         initialStartDate: data.startDate,
+        initialEndDate: data.startDate,
+      });
+    } else if (data.startDate !== null && data.endDate !== null) {
+      this.setState({
+        initialStartDate: data.startDate,
+        initialEndDate: data.endDate,
       });
     }
   }
@@ -53,8 +65,7 @@ class Attendance extends Component {
     }
     let endDate = this.state.endDate;
     if (startDate !== null && endDate !== null) {
-      let dates = extractDates(startDate, endDate);
-      let mainAttendance = extractAttendance(dates, props.allAttendance);
+      let mainAttendance = props.allAttendance;
       //sort
       let sortedAttendance = sortStaff(mainAttendance);
       //set state of
@@ -119,7 +130,9 @@ class Attendance extends Component {
       });
       this.props.getAllAttendance(
         this.props.company.companyId,
-        this.props.branch.branchId
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
       );
     }
 
@@ -128,15 +141,21 @@ class Attendance extends Component {
       prevState.startDate !== this.state.startDate ||
       prevState.endDate !== this.state.endDate
     ) {
-      //handle the new props
-      this.handleProps(this.props);
+      this.props.getAllAttendance(
+        this.props.company.companyId,
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
+      );
     }
   }
 
   componentDidMount() {
     this.props.getAllAttendance(
       this.props.company.companyId,
-      this.props.branch.branchId
+      this.props.branch.branchId,
+      this.state.initialStartDate,
+      this.state.initialEndDate
     );
     this.setState({
       loading: true,

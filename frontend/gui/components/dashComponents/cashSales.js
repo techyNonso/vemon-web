@@ -21,6 +21,7 @@ class CashSales extends Component {
       startDate: new Date(),
       endDate: new Date(),
       initialStartDate: new Date(),
+      initialEndDate: new Date(),
       loading: false,
       sales: [],
       originalSales: [],
@@ -44,9 +45,20 @@ class CashSales extends Component {
       startDate: data.startDate,
       endDate: data.endDate,
     });
-    if (data.startDate !== null) {
+    if (data.startDate == null && data.endDate !== null) {
+      this.setState({
+        initialStartDate: data.endDate,
+        initialEndDate: data.endDate,
+      });
+    } else if (data.startDate !== null && data.endDate == null) {
       this.setState({
         initialStartDate: data.startDate,
+        initialEndDate: data.startDate,
+      });
+    } else if (data.startDate !== null && data.endDate !== null) {
+      this.setState({
+        initialStartDate: data.startDate,
+        initialEndDate: data.endDate,
       });
     }
   }
@@ -60,8 +72,7 @@ class CashSales extends Component {
     }
     let endDate = this.state.endDate;
     if (startDate !== null && endDate !== null) {
-      let dates = extractDates(startDate, endDate);
-      let mainSales = extractSales(dates, props.sales);
+      let mainSales = props.sales;
       let mainTypeSales = extractTypeSales(mainSales, "cash");
 
       //get others
@@ -137,7 +148,9 @@ class CashSales extends Component {
       });
       this.props.getSales(
         this.props.company.companyId,
-        this.props.branch.branchId
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
       );
     }
 
@@ -146,15 +159,21 @@ class CashSales extends Component {
       prevState.startDate !== this.state.startDate ||
       prevState.endDate !== this.state.endDate
     ) {
-      //handle the new props
-      this.handleProps(this.props);
+      this.props.getSales(
+        this.props.company.companyId,
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
+      );
     }
   }
 
   componentDidMount() {
     this.props.getSales(
       this.props.company.companyId,
-      this.props.branch.branchId
+      this.props.branch.branchId,
+      this.state.initialStartDate,
+      this.state.initialEndDate
     );
     this.setState({
       loading: true,

@@ -9,9 +9,12 @@ from drf_yasg.utils import swagger_auto_schema
 
 #create view for company expenses
 @api_view(["GET"])
-def companyExpense(request,company,branch):
+def companyExpense(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
+    start_date = "%d-%d-%d"%(startyear,startmonth,startday)
+    end_date = "%d-%d-%d"%(endyear,endmonth,endday)
+    
     if request.method == "GET":
-        expenses = expense.objects.filter(companyId=company,branchId=branch)
+        expenses = expense.objects.filter(companyId=company,branchId=branch,date__range=[start_date, end_date])
         serializer = ExpenseSerializer(expenses,many=True)
         return Response(serializer.data)
 
