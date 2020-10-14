@@ -1,5 +1,6 @@
 import { GET_ALL_ATTENDANCE } from "./types";
 import axios from "axios";
+import axiosInstance from "Modules/axiosInstance";
 
 const getLength = (num) => num.toString().length;
 
@@ -27,7 +28,7 @@ export const getAllAttendance = (company, branch, startDate, endDate) => (
       ? "0" + endDate.getDate()
       : endDate.getDate();
 
-  axios
+  axiosInstance
     .get(
       `http://127.0.0.1:8000/attendance/company/${company}/${branch}/${startYear}/${startMonth}/${startDay}/${endYear}/${endMonth}/${endDay}/`
     )

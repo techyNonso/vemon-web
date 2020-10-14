@@ -1,8 +1,8 @@
 export const sortCompanies = (companies) => {
   function compare(a, b) {
     //compare object "A" with object "B"
-    const nameA = a.companyId.toUpperCase();
-    const nameB = b.companyId.toUpperCase();
+    const nameA = a.companyName.toUpperCase();
+    const nameB = b.companyName.toUpperCase();
 
     let comparison = 0;
     if (nameA > nameB) {

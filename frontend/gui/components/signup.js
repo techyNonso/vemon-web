@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { useState } from "react";
 import Header from "./header";
 import Footer from "./footer";
-import axiosInstance from "Modules/axios";
+import axiosInstance from "Modules/axiosInstance";
 
 function Signup() {
   const history = useHistory();

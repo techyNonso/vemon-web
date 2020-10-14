@@ -13,6 +13,7 @@ import ModalBody from "react-bootstrap/ModalBody";
 import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalFooter from "react-bootstrap/ModalFooter";
 import ModalTitle from "react-bootstrap/ModalTitle";
+import axiosInstance from "../../modules/axiosInstance";
 
 class Companies extends Component {
   constructor(props) {
@@ -29,10 +30,12 @@ class Companies extends Component {
       company: "",
       deleteClick: false,
       editClick: false,
+      addCompanyClick: false,
       display: "",
     };
 
     this.handleProps = this.handleProps.bind(this);
+    this.getLength = this.getLength.bind(this);
   }
 
   handleProps(props) {
@@ -66,7 +69,7 @@ class Companies extends Component {
         loading: true,
       });
 
-      axios
+      axiosInstance
         .post(`http://127.0.0.1:8000/branches/`, data)
         .then((res) =>
           this.props.getCompanyBranches(this.props.company.companyId)
@@ -95,6 +98,14 @@ class Companies extends Component {
     this.props.getCompany(id);
   }
 
+  //add company
+  addCompany(event) {
+    this.setState({
+      displayModal: true,
+      display: "addcompany",
+    });
+  }
+
   //proceed to delete
   proceedDelete(id) {
     this.setState({
@@ -102,7 +113,7 @@ class Companies extends Component {
       deleteClick: false,
     });
 
-    axios
+    axiosInstance
       .delete(`http://127.0.0.1:8000/companies/${id}/`)
       .then((res) => {
         this.setState({
@@ -127,7 +138,7 @@ class Companies extends Component {
       plan: plan,
     };
 
-    axios
+    axiosInstance
       .put(`http://127.0.0.1:8000/companies/${id}/`, data)
       .then((res) => {
         this.setState({
@@ -138,6 +149,49 @@ class Companies extends Component {
         this.props.getCompanies();
       })
       .catch((err) => console.log(err));
+  }
+
+  getLength(num) {
+    return num.toString().length;
+  }
+
+  generateId() {
+    return "company-" + Math.random().toString(36).substr(2, 6);
+  }
+
+  //proceed to create
+  proceedCreate({ name, plan }) {
+    this.setState({
+      displayModal: false,
+    });
+
+    //generate company Id
+    let compId = this.generateId();
+    //add 14 days ahead
+    let date = new Date(Date.now() + 12096e5);
+
+    let year = date.getFullYear();
+    let month =
+      this.getLength(date.getMonth() + 1) == 1
+        ? "0" + Number(date.getMonth() + 1)
+        : date.getMonth() + 1;
+    let day =
+      this.getLength(date.getDate()) == 1
+        ? "0" + date.getDate()
+        : date.getDate();
+
+    let data = {
+      companyName: name,
+      companyId: compId,
+      expiryDate: `${year}-${month}-${day}`,
+      plan: plan,
+    };
+    axiosInstance
+      .post("http://127.0.0.1:8000/companies/", data)
+      .then((res) => {
+        this.props.getCompanies();
+      })
+      .catch((err) => console.log(err.response.data));
   }
 
   //change modal state to false
@@ -197,13 +251,25 @@ class Companies extends Component {
       (this.state.deleteClick || this.state.editClick)
     ) {
       //check if company has branches
-      if (Number(this.props.company.branches) > 0) {
+      if (Number(this.props.company.branches) > 0 && this.state.deleteClick) {
         console.log(
           "you need to delete all branches associated with this company first"
         );
       } else {
         this.setState({ displayModal: true, company: this.props.company });
       }
+    }
+  }
+
+  checkStatus(date) {
+    let oldDate = new Date(date);
+    let now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    if (oldDate < now) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -246,7 +312,17 @@ class Companies extends Component {
           <td>{company.companyName}</td>
           <td>{company.plan}</td>
           <td>{company.branches}</td>
+          {this.checkStatus(company.expiryDate) && (
+            <td>
+              <button className="btn btn-primary btn-sm">Activate</button>
+            </td>
+          )}
 
+          {!this.checkStatus(company.expiryDate) && (
+            <td>
+              <span style={{ color: "green" }}>Active</span>
+            </td>
+          )}
           <td>
             <button
               className="btn btn-sm btn-primary"
@@ -287,6 +363,7 @@ class Companies extends Component {
           modState={this.hideDisplay.bind(this)}
           proceedDelete={this.proceedDelete.bind(this)}
           proceedUpdate={this.proceedUpdate.bind(this)}
+          proceedCreate={this.proceedCreate.bind(this)}
           company={this.state.company}
           display={this.state.display}
         />
@@ -320,6 +397,7 @@ class Companies extends Component {
                 <th>Company Name</th>
                 <th>Plan</th>
                 <th>Branches</th>
+                <th>Status</th>
                 <th colSpan="2">Action</th>
               </tr>
             </thead>
@@ -333,7 +411,12 @@ class Companies extends Component {
 
         <div className="row mt-4">
           <div className="col text-center">
-            <button className="btn btn-success">Add Company</button>
+            <button
+              className="btn btn-success"
+              onClick={this.addCompany.bind(this)}
+            >
+              Add Company
+            </button>
           </div>
         </div>
 
@@ -367,6 +450,8 @@ const ActMod = (props) => {
   const [isOpen, setIsOpen] = useState(true);
   const [plan, setPlan] = useState(props.company.plan);
   const [name, setName] = useState(props.company.companyName);
+  const [companyname, addName] = useState("");
+  const [companyplan, addPlan] = useState("");
 
   const showModal = () => {
     setIsOpen(false);
@@ -387,12 +472,25 @@ const ActMod = (props) => {
     props.proceedUpdate({ id: event.target.dataset.id, name, plan });
   };
 
+  const hideModalWithCreate = (event) => {
+    setIsOpen(false);
+    props.proceedCreate({ name: companyname, plan: companyplan });
+  };
+
   const changeSelect = (event) => {
     setPlan(event.target.value);
   };
 
   const changeName = (event) => {
     setName(event.target.value);
+  };
+
+  const changeCompName = (event) => {
+    addName(event.target.value);
+  };
+
+  const changeCompPlan = (event) => {
+    addPlan(event.target.value);
   };
 
   //check for display type
@@ -440,6 +538,37 @@ const ActMod = (props) => {
         onClick={hideModalWithDelete}
       >
         Proceed
+      </button>
+    );
+  } else {
+    displayBody = displayBody = (
+      <form className="form">
+        <div className="form-group">
+          <input
+            placeholder="Company name"
+            className="form-control"
+            value={companyname}
+            onChange={changeCompName}
+          />
+        </div>
+
+        <div className="form-group">
+          <select
+            className="form-control"
+            value={companyplan}
+            onChange={changeCompPlan}
+          >
+            <option value="">select</option>
+            <option value="standard">Standard</option>
+            <option value="premium advance">Premium advance</option>
+          </select>
+        </div>
+      </form>
+    );
+
+    btn = (
+      <button className="btn btn-sm btn-primary" onClick={hideModalWithCreate}>
+        Done
       </button>
     );
   }

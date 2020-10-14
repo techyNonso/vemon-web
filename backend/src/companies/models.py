@@ -6,4 +6,5 @@ class company(models.Model):
     companyName = models.CharField(max_length=100,unique=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True)
     plan = models.CharField(max_length=30)
-    branches = models.CharField(max_length=10)
+    branches = models.CharField(max_length=10,default=0)
+    expiryDate=models.DateField(null=True)

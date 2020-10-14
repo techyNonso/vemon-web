@@ -34,6 +34,7 @@ class Debts extends Component {
     //handle props received
     this.handleProps = this.handleProps.bind(this);
     this.handleDate = this.handleDate.bind(this);
+    this.checkStatus = this.checkStatus.bind(this)
   }
 
   handleDate(data) {

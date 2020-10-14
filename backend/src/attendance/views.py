@@ -1,14 +1,15 @@
 from django.shortcuts import render
 from .models import attendance
 from .serializers import AttendanceSerializer
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
-
+from rest_framework.permissions import IsAuthenticated
 
 @swagger_auto_schema(method='post',request_body=AttendanceSerializer)
 # Create your views here.
+@permission_classes((IsAuthenticated,))
 @api_view(['GET','POST'])
 def companyAttendance(request, company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
     start_date = "%d-%d-%d"%(startyear,startmonth,startday)
@@ -22,6 +23,7 @@ def companyAttendance(request, company,branch,startyear,startmonth,startday,endy
 
 @swagger_auto_schema(method='post',request_body=AttendanceSerializer)
 # Create your views here.
+@permission_classes((IsAuthenticated,))
 @api_view(['GET','POST'])
 def attendanceHandler(request):
 
@@ -40,6 +42,7 @@ def attendanceHandler(request):
 
 #Create view for put , delete and detail
 @swagger_auto_schema(method='put',request_body=AttendanceSerializer)
+@permission_classes((IsAuthenticated,))
 @api_view(['GET','PUT','DELETE'])
 def attendanceDetail(request,pk):
     try:

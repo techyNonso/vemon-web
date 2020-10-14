@@ -1,10 +1,12 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from rest_framework.response import Response
 from .models import stockActivity
 from .serializers import StockActivitySerializer
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import IsAuthenticated
+
 
 
 
@@ -28,6 +30,7 @@ def stockActivityHandler(request):
 
 #create view for particular company and branch view
 @api_view(['GET'])
+@permission_classes((IsAuthenticated,))
 def companyStockActivity(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
     start_date = "%d-%d-%d"%(startyear,startmonth,startday)
     end_date = "%d-%d-%d"%(endyear,endmonth,endday)

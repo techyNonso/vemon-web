@@ -1,8 +1,9 @@
 import { GET_BRANCHES, GET_BRANCH } from "./types";
 import axios from "axios";
+import axiosInstance from "Modules/axiosInstance";
 
 export const getCompanyBranches = (company) => (dispatch) => {
-  axios
+  axiosInstance
     .get(`http://127.0.0.1:8000/branches/${company}/`)
     .then((res) =>
       dispatch({
@@ -15,7 +16,7 @@ export const getCompanyBranches = (company) => (dispatch) => {
 
 export const getBranch = (id) => (dispatch) => {
   //console.log(id);
-  axios
+  axiosInstance
     .get(`http://127.0.0.1:8000/branches/branch/${id}/`)
     .then((res) =>
       dispatch({

@@ -1,6 +1,7 @@
 import debtsReducer from "../reducers/debtsReducer";
 import { GET_DEBTS } from "./types";
 import axios from "axios";
+import axiosInstance from "Modules/axiosInstance";
 
 const getLength = (num) => num.toString().length;
 
@@ -25,7 +26,7 @@ export const getDebts = (company, branch, startDate, endDate) => (dispatch) => {
       ? "0" + endDate.getDate()
       : endDate.getDate();
 
-  axios
+  axiosInstance
     .get(
       `http://127.0.0.1:8000/debts/company/${company}/${branch}/${startYear}/${startMonth}/${startDay}/${endYear}/${endMonth}/${endDay}/`
     )

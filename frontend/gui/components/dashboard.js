@@ -26,6 +26,8 @@ import StockActivities from "./dashComponents/stockActivities";
 import DashboardPage from "./dashComponents/dashboardPage";
 import Settings from "./dashComponents/settings";
 
+import { sortCompanies } from "Modules/company";
+
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -83,20 +85,21 @@ class Dashboard extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.companies !== this.props.companies) {
-      this.props.getCompany(this.props.companies[0].id);
+      let sortedCompanies = sortCompanies(this.props.companies);
+      this.props.getCompany(sortedCompanies[0].id);
 
       this.setState({
         companies: this.props.companies,
-        selectedCompany: this.props.company,
-        selectedCompanyId: this.props.company.id,
       });
     }
 
     if (prevProps.company !== this.props.company) {
       //get branches for this company
       this.props.getCompanyBranches(this.props.company.companyId);
+
       this.setState({
         selectedCompany: this.props.company,
+        selectedCompanyId: this.props.company.id,
       });
     }
 

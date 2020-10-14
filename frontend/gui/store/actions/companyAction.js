@@ -1,8 +1,8 @@
 import { GET_COMPANIES, GET_COMPANY } from "./types";
-import axios from "axios";
+import axiosInstance from "Modules/axiosInstance";
 
 export const getCompanies = () => (dispatch) => {
-  axios
+  axiosInstance
     .get("http://127.0.0.1:8000/companies/")
     .then((res) =>
       dispatch({
@@ -10,18 +10,19 @@ export const getCompanies = () => (dispatch) => {
         payload: res.data,
       })
     )
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err.message));
 };
 
 export const getCompany = (id) => (dispatch) => {
   //console.log(id);
-  axios
+  axiosInstance
     .get(`http://127.0.0.1:8000/companies/${id}/`)
-    .then((res) =>
+    .then((res) => {
+      console.log(res.data);
       dispatch({
         type: GET_COMPANY,
         payload: res.data,
-      })
-    )
+      });
+    })
     .catch((err) => console.log(err));
 };

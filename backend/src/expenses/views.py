@@ -1,13 +1,15 @@
 from django.shortcuts import render
 from .models import expense
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .serializers import ExpenseSerializer
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import IsAuthenticated
 
 
 #create view for company expenses
+@permission_classes((IsAuthenticated,))
 @api_view(["GET"])
 def companyExpense(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
     start_date = "%d-%d-%d"%(startyear,startmonth,startday)
@@ -20,7 +22,7 @@ def companyExpense(request,company,branch,startyear,startmonth,startday,endyear,
 
 
 # Create your views here.
-
+@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='post',request_body=ExpenseSerializer)
 @api_view(['GET','POST'])
 def expenseHandler(request):
@@ -39,7 +41,7 @@ def expenseHandler(request):
 
 
 #create api for    handeling each expense
-
+@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='put',request_body=ExpenseSerializer)
 @api_view(["GET","PUT","DELETE"])
 def expenseDetail(request, pk):

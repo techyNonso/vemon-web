@@ -1,6 +1,7 @@
 import clearanceReducer from "../reducers/clearanceReducer";
 import { GET_ALL_CLEARANCE } from "./types";
 import axios from "axios";
+import axiosInstance from "Modules/axiosInstance";
 
 const getLength = (num) => num.toString().length;
 
@@ -27,7 +28,7 @@ export const getClearance = (company, branch, startDate, endDate) => (
       ? "0" + endDate.getDate()
       : endDate.getDate();
 
-  axios
+  axiosInstance
     .get(
       `http://127.0.0.1:8000/clearance/company/${company}/${branch}/${startYear}/${startMonth}/${startDay}/${endYear}/${endMonth}/${endDay}/`
     )

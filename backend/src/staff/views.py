@@ -1,13 +1,15 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from rest_framework.response import Response
 from .models import staff
 from .serializers import StaffSerializer
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import IsAuthenticated 
 
 
 #create view for staff per company
+@permission_classes((IsAuthenticated,))
 @api_view(["GET"])
 def companyStaff(request,company,branch):
     if request.method == "GET":
@@ -17,7 +19,7 @@ def companyStaff(request,company,branch):
 
 
 # Create your views here.
-
+@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='post',request_body=StaffSerializer)
 @api_view(['GET','POST'])
 def allStaffHandler(request):
@@ -35,7 +37,7 @@ def allStaffHandler(request):
 
 
 #create your staff detail view
-
+@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='put',request_body=StaffSerializer)
 @api_view(['GET','PUT','DELETE'])
 def staffDetail(request, pk):

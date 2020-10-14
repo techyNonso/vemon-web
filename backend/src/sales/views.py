@@ -1,13 +1,15 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from rest_framework.response import Response
 from .models import sale
 from .serializers import SalesSerializer
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import IsAuthenticated
 
 
 # create view for per company 
+@permission_classes((IsAuthenticated,))
 @api_view(['GET'])
 def companySales(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
     start_date = "%d-%d-%d"%(startyear,startmonth,startday)
@@ -19,6 +21,7 @@ def companySales(request,company,branch,startyear,startmonth,startday,endyear,en
         return Response(serializer.data)
 
 # Create your views here.
+@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='post',request_body=SalesSerializer)
 @api_view(['GET','POST'])
 def salesHandler(request):
@@ -36,6 +39,7 @@ def salesHandler(request):
 
 
 #create your sale detail view
+@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='put',request_body=SalesSerializer)
 @api_view(['GET','PUT','DELETE'])
 def salesDetail(request, pk):

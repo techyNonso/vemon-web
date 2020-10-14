@@ -1,6 +1,7 @@
 import salesReducer from "../reducers/salesReducer";
 import { GET_SALES } from "./types";
 import axios from "axios";
+import axiosInstance from "Modules/axiosInstance";
 
 const getLength = (num) => num.toString().length;
 
@@ -25,7 +26,7 @@ export const getSales = (company, branch, startDate, endDate) => (dispatch) => {
       ? "0" + endDate.getDate()
       : endDate.getDate();
 
-  axios
+  axiosInstance
     .get(
       `http://127.0.0.1:8000/sales/company/${company}/${branch}/${startYear}/${startMonth}/${startDay}/${endYear}/${endMonth}/${endDay}/`
     )

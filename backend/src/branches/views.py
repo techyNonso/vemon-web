@@ -1,14 +1,15 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from rest_framework.response import Response
 from .models import branch
 from .serializers import BranchesSerializer
 from account.models import Account
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import IsAuthenticated
 
 #get branches based on company id
-
+@permission_classes((IsAuthenticated,))
 @api_view(["GET"])
 def companyBranches(request,company):
     if request.method == "GET":
@@ -17,7 +18,7 @@ def companyBranches(request,company):
         return Response(serializer.data)
 
 
-
+@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='post',request_body=BranchesSerializer)
 # Create your views here.
 @api_view(['GET','POST'])
@@ -39,7 +40,7 @@ def branchHandler(request):
 
 
 #create your company detail view
-
+@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='put',request_body=BranchesSerializer)
 @api_view(['GET','PUT','DELETE'])
 def branchDetail(request, pk):

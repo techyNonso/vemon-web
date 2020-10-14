@@ -2,11 +2,13 @@ from django.shortcuts import render
 from .models import debtClearance
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .serializers import DebtClearanceSerializer
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import IsAuthenticated
 
 #create view for company clearance
+@permission_classes((IsAuthenticated,))
 @api_view(['GET'])
 def debtClearanceForCompany(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
     start_date = "%d-%d-%d"%(startyear,startmonth,startday)
@@ -21,7 +23,7 @@ def debtClearanceForCompany(request,company,branch,startyear,startmonth,startday
 
         
 # create view for clearance here
-
+@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='post',request_body=DebtClearanceSerializer)
 @api_view(['GET','POST'])
 def debtClearanceHandler(request):
@@ -41,7 +43,7 @@ def debtClearanceHandler(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 # Create your views for single debt here.
-
+@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='put',request_body=DebtClearanceSerializer)
 @api_view(["GET","PUT","DELETE"])
 def debtClearanceDetail(request, pk):
