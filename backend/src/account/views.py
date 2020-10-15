@@ -15,6 +15,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 # Create your views here.
 
 
@@ -78,3 +80,20 @@ def LoginView(request):
 
         return Response(serializer.data,status=status.HTTP_200_OK)
 """
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['first_name'] = user.first_name
+        token['last_name'] = user.last_name
+        token['email'] = user.email
+        # ...
+
+        return token
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
