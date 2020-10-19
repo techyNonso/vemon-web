@@ -1,9 +1,12 @@
 import React, { Link, Component } from "react";
 import { useHistory } from "react-router-dom";
 import { useState } from "react";
+import propTypes from "prop-types";
+import { connect } from "react-redux";
 import Header from "./header";
 import Footer from "./footer";
 import axiosInstance from "Modules/axiosInstance";
+import { saveUser } from "Store/actions/accountAction";
 
 function Signin() {
   const history = useHistory();
@@ -21,15 +24,34 @@ function Signin() {
     });
   };
 
+  const decode = (token) => {
+    let base64url = token.split(".")[1];
+    let base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
+    let jsonpayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+
+    let values = JSON.parse(jsonpayload);
+    saveUser(values);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     axiosInstance
-      .post("api/token/", {
+      .post("login/", {
         email: formData.email,
         password: formData.password,
       })
       .then((res) => {
+        //decode access token
+        decode(res.data.access);
+
         localStorage.setItem("access_token", res.data.access);
         localStorage.setItem("refresh_token", res.data.refresh);
         axiosInstance.defaults.headers["Authorization"] =
@@ -142,4 +164,13 @@ function Signin() {
   );
 }
 
-export default Signin;
+Signin.propTypes = {
+  saveUser: propTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  user: state.account.item,
+  company: state.companies.item,
+});
+
+export default connect(mapStateToProps, { saveUser })(Signin);

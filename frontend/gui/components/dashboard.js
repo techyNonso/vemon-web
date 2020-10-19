@@ -39,11 +39,14 @@ class Dashboard extends Component {
       selectedBranch: "",
       selectedBranchId: "",
       selectedCompanyId: "",
+      
     };
     //this.handleProps = this.handleProps.bind(this);
   }
 
+  
   componentDidMount() {
+    
     //check if we have companies and branches in store
     if (this.props.companies.length == 0) {
       this.props.getCompanies();
@@ -386,6 +389,7 @@ const mapStateToProps = (state) => ({
   company: state.companies.item,
   branches: state.branches.items,
   branch: state.branches.item,
+  user: state.account.item,
 });
 
 export default connect(mapStateToProps, {

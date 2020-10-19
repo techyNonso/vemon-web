@@ -20,12 +20,14 @@ import Privacy from "Components/privacy";
 import Signin from "Components/signin";
 import Signup from "Components/signup";
 import Terms from "Components/terms";
+import ProtectedRoute from "Components/protectedRoute";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import { store, persistor } from "Store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import "react-calendar/dist/Calendar.css";
+
 class App extends Component {
   render() {
     return (
@@ -35,15 +37,16 @@ class App extends Component {
             <div>
               <Switch>
                 <Route path="/" exact component={Home} />
-                <Route path="/about" component={About} />
-                <Route path="/contact" component={Contact} />
-                <Route path="/faq" component={Faq} />
-                <Route path="/privacy" component={Privacy} />
-                <Route path="/signin" component={Signin} />
-                <Route path="/signup" component={Signup} />
-                <Route path="/terms" component={Terms} />
-                <Route path="/dashboard" exact component={Dashboard} />
-                <Route path="/dashboard/:page" component={Dashboard} />
+                <Route path="/about" exact component={About} />
+                <Route path="/contact" exact component={Contact} />
+                <Route path="/faq" exact component={Faq} />
+                <Route path="/privacy" exact component={Privacy} />
+                <Route path="/signin" exact component={Signin} />
+                <Route path="/signup" exact component={Signup} />
+                <Route path="/terms" exact component={Terms} />
+                <Route path="*" component={() => "404 Page Not Found "} />
+                <ProtectedRoute path="/dashboard" exact component={Dashboard} />
+                <ProtectedRoute path="/dashboard/:page" component={Dashboard} />
               </Switch>
             </div>
           </PersistGate>
