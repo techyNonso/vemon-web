@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+import Auth from "Components/auth";
 import propTypes from "prop-types";
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
-  //user checker
-  const isEmpty = (obj) => {
-    for (var key in obj) {
-      if (obj.hasOwnProperty(key)) return false;
-    }
-
-    return true;
-  };
-
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (!isEmpty(props.user)) {
+        if (Auth.isAuthenticated()) {
           return <Component {...props} />;
         } else {
           return (

@@ -4,6 +4,7 @@ import Header from "./header";
 import Footer from "./footer";
 import { connect } from "react-redux";
 import propTypes from "prop-types";
+import Auth from "Components/auth";
 
 class Home extends Component {
   constructor(props) {
@@ -27,15 +28,15 @@ class Home extends Component {
 
   componentDidMount() {
     //check if logged in
-    if (this.isEmpty(this.props.user)) {
-      this.setState({
-        online: "none",
-        offline: "block",
-      });
-    } else {
+    if (Auth.isAuthenticated()) {
       this.setState({
         online: "block",
         offline: "none",
+      });
+    } else {
+      this.setState({
+        online: "none",
+        offline: "block",
       });
     }
   }

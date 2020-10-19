@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import propTypes from "prop-types";
+import Auth from "Components/auth";
 
 function Header(props) {
   const [online, setOnline] = useState("none");
@@ -18,12 +19,12 @@ function Header(props) {
 
   useEffect(() => {
     //check if logged in
-    if (isEmpty(props.user)) {
-      setOnline("none");
-      setOffline("block");
-    } else {
+    if (Auth.isAuthenticated()) {
       setOnline("block");
       setOffline("none");
+    } else {
+      setOnline("none");
+      setOffline("block");
     }
   }, []);
   return (

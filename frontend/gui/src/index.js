@@ -44,9 +44,13 @@ class App extends Component {
                 <Route path="/signin" exact component={Signin} />
                 <Route path="/signup" exact component={Signup} />
                 <Route path="/terms" exact component={Terms} />
-                <Route path="*" component={() => "404 Page Not Found "} />
                 <ProtectedRoute path="/dashboard" exact component={Dashboard} />
-                <ProtectedRoute path="/dashboard/:page" component={Dashboard} />
+                <ProtectedRoute
+                  path="/dashboard/:page"
+                  exact
+                  component={Dashboard}
+                />
+                <Route path="*" component={() => "404 Page Not Found "} />
               </Switch>
             </div>
           </PersistGate>
