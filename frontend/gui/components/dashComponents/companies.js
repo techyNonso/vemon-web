@@ -14,6 +14,11 @@ import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalFooter from "react-bootstrap/ModalFooter";
 import ModalTitle from "react-bootstrap/ModalTitle";
 import axiosInstance from "../../modules/axiosInstance";
+import {
+  usePaystackPayment,
+  PaystackButton,
+  PaystackConsumer,
+} from "react-paystack";
 
 class Companies extends Component {
   constructor(props) {
@@ -29,6 +34,7 @@ class Companies extends Component {
       displayModal: false,
       company: "",
       deleteClick: false,
+      activateClick: false,
       editClick: false,
       addCompanyClick: false,
       display: "",
@@ -82,6 +88,15 @@ class Companies extends Component {
     this.setState({
       editClick: true,
       display: "edit",
+    });
+    let id = event.target.dataset.id;
+    this.props.getCompany(id);
+  }
+
+  activateCompany(event) {
+    this.setState({
+      activateClick: true,
+      display: "activate",
     });
     let id = event.target.dataset.id;
     this.props.getCompany(id);
@@ -151,6 +166,12 @@ class Companies extends Component {
       .catch((err) => console.log(err));
   }
 
+  //proceed account activation
+  proceedActivation(id) {
+    this.setState({
+      displayModal: false,
+    });
+  }
   getLength(num) {
     return num.toString().length;
   }
@@ -248,7 +269,9 @@ class Companies extends Component {
     //check if activity changes and a click was done
     if (
       prevProps.company !== this.props.company &&
-      (this.state.deleteClick || this.state.editClick)
+      (this.state.deleteClick ||
+        this.state.editClick ||
+        this.state.activateClick)
     ) {
       //check if company has branches
       if (Number(this.props.company.branches) > 0 && this.state.deleteClick) {
@@ -314,7 +337,13 @@ class Companies extends Component {
           <td>{company.branches}</td>
           {this.checkStatus(company.expiryDate) && (
             <td>
-              <button className="btn btn-primary btn-sm">Activate</button>
+              <button
+                className="btn btn-primary btn-sm"
+                data-id={company.id}
+                onClick={this.activateCompany.bind(this)}
+              >
+                Activate
+              </button>
             </td>
           )}
 
@@ -364,6 +393,7 @@ class Companies extends Component {
           proceedDelete={this.proceedDelete.bind(this)}
           proceedUpdate={this.proceedUpdate.bind(this)}
           proceedCreate={this.proceedCreate.bind(this)}
+          proceedActivation={this.proceedActivation.bind(this)}
           company={this.state.company}
           display={this.state.display}
         />
@@ -452,7 +482,30 @@ const ActMod = (props) => {
   const [name, setName] = useState(props.company.companyName);
   const [companyname, addName] = useState("");
   const [companyplan, addPlan] = useState("");
-
+  const amount = 1000000;
+  const [email, setEmail] = useState("");
+  const [firstname, setFName] = useState("");
+  const [lastname, setLName] = useState("");
+  const [phone, setPhone] = useState("");
+  const publicKey = "pk_test_f8fb957ddc9b7a92212008bccc1a4dfe63ce3e3f";
+  //pay stack settings
+  const componentProps = {
+    email,
+    amount,
+    firstname: firstname,
+    lastname: lastname,
+    channels: ["card", "bank_transfer"],
+    metadata: {
+      firstname,
+      lastname,
+      phone,
+    },
+    currency: "NGN",
+    publicKey,
+    text: "Pay Now",
+    onSuccess: () => paymentComplete(),
+    onClose: () => console.log("Wait! You need this oil, don't go!!!!"),
+  };
   const showModal = () => {
     setIsOpen(false);
   };
@@ -491,6 +544,11 @@ const ActMod = (props) => {
 
   const changeCompPlan = (event) => {
     addPlan(event.target.value);
+  };
+
+  const paymentComplete = () => {
+    setIsOpen(false);
+    props.proceedActivation();
   };
 
   //check for display type
@@ -540,7 +598,7 @@ const ActMod = (props) => {
         Proceed
       </button>
     );
-  } else {
+  } else if (props.display == "addcompany") {
     displayBody = displayBody = (
       <form className="form">
         <div className="form-group">
@@ -571,6 +629,44 @@ const ActMod = (props) => {
         Done
       </button>
     );
+  } else {
+    displayBody = displayBody = (
+      <form className="form">
+        <div className="form-group">
+          <input
+            placeholder="Firstname"
+            className="form-control"
+            onChange={(e) => setFName(e.target.value)}
+          />
+        </div>
+
+        <div className="form-group">
+          <input
+            placeholder="Lastname"
+            className="form-control"
+            onChange={(e) => setLName(e.target.value)}
+          />
+        </div>
+
+        <div className="form-group">
+          <input
+            placeholder="email"
+            className="form-control"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+
+        <div className="form-group">
+          <input
+            placeholder="Phone number"
+            className="form-control"
+            onChange={(e) => setPhone(e.target.value)}
+          />
+        </div>
+      </form>
+    );
+
+    btn = <PaystackButton className="paystack-button" {...componentProps} />;
   }
   return (
     <Modal show={isOpen} onHide={hideModal}>
