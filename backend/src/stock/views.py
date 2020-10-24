@@ -10,8 +10,8 @@ from rest_framework.permissions import IsAuthenticated
 #view for all stock
 
 @swagger_auto_schema(method='post',request_body=StockSerializer)
-@permission_classes((IsAuthenticated,))
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def allStockHandler(request):
     if request.method == "GET":
         allStock = stock.objects.all()
@@ -28,8 +28,8 @@ def allStockHandler(request):
 # Create your views here.
 
 @swagger_auto_schema(method='post',request_body=StockSerializer)
-@permission_classes((IsAuthenticated,))
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def stockHandler(request,company,branch):
     if request.method == "GET":
         allStock = stock.objects.filter(companyId=company,branchId=branch)
@@ -47,8 +47,8 @@ def stockHandler(request,company,branch):
 #create your stock detail view
 
 @swagger_auto_schema(method='put',request_body=StockSerializer)
-@permission_classes((IsAuthenticated,))
 @api_view(['GET','PUT','DELETE'])
+@permission_classes([IsAuthenticated])
 def stockDetail(request, pk):
     try:
         theStock = stock.objects.get(pk=pk)

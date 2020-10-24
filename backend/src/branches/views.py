@@ -9,8 +9,8 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
 
 #get branches based on company id
-@permission_classes((IsAuthenticated,))
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def companyBranches(request,company):
     if request.method == "GET":
         branches = branch.objects.filter(companyId=company)
@@ -18,7 +18,6 @@ def companyBranches(request,company):
         return Response(serializer.data)
 
 
-@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='post',request_body=BranchesSerializer)
 # Create your views here.
 @api_view(['GET','POST'])
@@ -40,9 +39,9 @@ def branchHandler(request):
 
 
 #create your company detail view
-@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='put',request_body=BranchesSerializer)
 @api_view(['GET','PUT','DELETE'])
+@permission_classes([IsAuthenticated])
 def branchDetail(request, pk):
     try:
         theBranch = branch.objects.get(pk=pk)

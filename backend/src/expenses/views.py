@@ -9,8 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 
 
 #create view for company expenses
-@permission_classes((IsAuthenticated,))
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def companyExpense(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
     start_date = "%d-%d-%d"%(startyear,startmonth,startday)
     end_date = "%d-%d-%d"%(endyear,endmonth,endday)
@@ -22,7 +22,6 @@ def companyExpense(request,company,branch,startyear,startmonth,startday,endyear,
 
 
 # Create your views here.
-@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='post',request_body=ExpenseSerializer)
 @api_view(['GET','POST'])
 def expenseHandler(request):
@@ -41,9 +40,9 @@ def expenseHandler(request):
 
 
 #create api for    handeling each expense
-@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='put',request_body=ExpenseSerializer)
 @api_view(["GET","PUT","DELETE"])
+@permission_classes([IsAuthenticated])
 def expenseDetail(request, pk):
     try:
         theExpense = expense.objects.get(pk=pk)

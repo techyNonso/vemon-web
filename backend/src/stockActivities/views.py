@@ -44,6 +44,7 @@ def companyStockActivity(request,company,branch,startyear,startmonth,startday,en
 
 @swagger_auto_schema(method='put',request_body=StockActivitySerializer)
 @api_view(['GET','PUT','DELETE'])
+@permission_classes((IsAuthenticated,))
 def stockActivityDetail(request, pk):
     try:
         theActivity = stockActivity.objects.get(pk=pk)

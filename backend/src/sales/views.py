@@ -9,8 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 
 
 # create view for per company 
-@permission_classes((IsAuthenticated,))
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def companySales(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
     start_date = "%d-%d-%d"%(startyear,startmonth,startday)
     end_date = "%d-%d-%d"%(endyear,endmonth,endday)
@@ -21,7 +21,6 @@ def companySales(request,company,branch,startyear,startmonth,startday,endyear,en
         return Response(serializer.data)
 
 # Create your views here.
-@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='post',request_body=SalesSerializer)
 @api_view(['GET','POST'])
 def salesHandler(request):
@@ -39,9 +38,9 @@ def salesHandler(request):
 
 
 #create your sale detail view
-@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='put',request_body=SalesSerializer)
 @api_view(['GET','PUT','DELETE'])
+@permission_classes([IsAuthenticated])
 def salesDetail(request, pk):
     try:
         theSale = sale.objects.get(pk=pk)

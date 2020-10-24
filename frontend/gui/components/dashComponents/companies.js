@@ -166,14 +166,42 @@ class Companies extends Component {
       .catch((err) => console.log(err));
   }
 
+  getLength(num) {
+    return num.toString().length;
+  }
+
   //proceed account activation
   proceedActivation(id) {
     this.setState({
       displayModal: false,
+      activateClick: false,
     });
-  }
-  getLength(num) {
-    return num.toString().length;
+
+    //add 28 days to today
+    let date = new Date(Date.now() + 24192e5);
+
+    let year = date.getFullYear();
+    let month =
+      this.getLength(date.getMonth() + 1) == 1
+        ? "0" + Number(date.getMonth() + 1)
+        : date.getMonth() + 1;
+    let day =
+      this.getLength(date.getDate()) == 1
+        ? "0" + date.getDate()
+        : date.getDate();
+
+    let data = {
+      expiryDate: `${year}-${month}-${day}`,
+    };
+
+    //update data base
+    axiosInstance
+      .put(`http://127.0.0.1:8000/companies/${id}/`, data)
+      .then((res) => {
+        // get companies
+        this.props.getCompanies();
+      })
+      .catch((err) => console.log(err));
   }
 
   generateId() {
@@ -492,8 +520,8 @@ const ActMod = (props) => {
   const componentProps = {
     email,
     amount,
-    firstname: firstname,
-    lastname: lastname,
+    firstname: firstname.charAt(0).toUpperCase() + firstname.slice(1),
+    lastname: lastname.charAt(0).toUpperCase() + lastname.slice(1),
     channels: ["card", "bank_transfer"],
     metadata: {
       firstname,
@@ -503,7 +531,7 @@ const ActMod = (props) => {
     currency: "NGN",
     publicKey,
     text: "Pay Now",
-    onSuccess: () => paymentComplete(),
+    onSuccess: () => paymentComplete(props.company.id),
     onClose: () => console.log("Wait! You need this oil, don't go!!!!"),
   };
   const showModal = () => {
@@ -546,9 +574,9 @@ const ActMod = (props) => {
     addPlan(event.target.value);
   };
 
-  const paymentComplete = () => {
+  const paymentComplete = (id) => {
     setIsOpen(false);
-    props.proceedActivation();
+    props.proceedActivation(id);
   };
 
   //check for display type

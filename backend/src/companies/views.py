@@ -11,9 +11,9 @@ from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
-@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='post',request_body=CompanySerializer)
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def companyHandler(request):
     
     if request.method == "GET":
@@ -33,9 +33,9 @@ def companyHandler(request):
 
 
 #create your company detail view
-@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='put',request_body=CompanySerializer)
 @api_view(['GET','PUT','DELETE'])
+@permission_classes([IsAuthenticated])
 def companyDetail(request, pk):
     try:
         theCompany = company.objects.get(pk=pk)

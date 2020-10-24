@@ -36,7 +36,17 @@ function Signin() {
         .join("")
     );
 
-    let values = JSON.parse(jsonpayload);
+    let data = JSON.parse(jsonpayload);
+
+    let values = {
+      email: data.email,
+      expirationLimit: data.expirationLimit,
+      first_name: data.first_name,
+      last_name: data.last_name,
+      stockLimit: data.stockLimit,
+      user_id: data.user_id,
+    };
+
     saveUser(values);
   };
 

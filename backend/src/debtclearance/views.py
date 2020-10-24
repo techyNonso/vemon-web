@@ -8,8 +8,8 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
 
 #create view for company clearance
-@permission_classes((IsAuthenticated,))
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def debtClearanceForCompany(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
     start_date = "%d-%d-%d"%(startyear,startmonth,startday)
     end_date = "%d-%d-%d"%(endyear,endmonth,endday)
@@ -23,7 +23,6 @@ def debtClearanceForCompany(request,company,branch,startyear,startmonth,startday
 
         
 # create view for clearance here
-@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='post',request_body=DebtClearanceSerializer)
 @api_view(['GET','POST'])
 def debtClearanceHandler(request):
@@ -43,9 +42,9 @@ def debtClearanceHandler(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 # Create your views for single debt here.
-@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='put',request_body=DebtClearanceSerializer)
 @api_view(["GET","PUT","DELETE"])
+@permission_classes([IsAuthenticated])
 def debtClearanceDetail(request, pk):
     try:
         theDebt = debtClearance.objects.get(pk=pk)

@@ -23,8 +23,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 
 
 @swagger_auto_schema(method='post',request_body=RegistrationSerializer)
-@permission_classes((AllowAny,))
 @api_view(['POST',])
+@permission_classes((AllowAny,))
 def registerUser(request):
     
     if request.method == "POST":
@@ -77,13 +77,13 @@ def VerifyEmail(request):
 #Create view for put , delete and detail
 
 #swagger_auto_schema(method='post',request_body=RegistrationSerializer)
-@permission_classes((IsAuthenticated,))
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def userHandler(request,pk=None):
     try:
-        myUser = Account.objects.get(email=request.user)
+        myUser = Account.objects.get(id=request.user.id)
     except Account.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(data="no  such user exists",status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'PUT':
         serializer = UserSerializer(myUser,data=request.data,partial=True)
@@ -105,7 +105,7 @@ def LoginView(request):
         return Response(serializer.data,status=status.HTTP_200_OK)
 """
 
-
+#login modifier that returns user details
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):

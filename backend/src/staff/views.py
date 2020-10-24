@@ -9,8 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 
 
 #create view for staff per company
-@permission_classes((IsAuthenticated,))
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def companyStaff(request,company,branch):
     if request.method == "GET":
         allStaff = staff.objects.filter(companyId=company,branchId=branch)
@@ -19,7 +19,6 @@ def companyStaff(request,company,branch):
 
 
 # Create your views here.
-@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='post',request_body=StaffSerializer)
 @api_view(['GET','POST'])
 def allStaffHandler(request):
@@ -37,9 +36,9 @@ def allStaffHandler(request):
 
 
 #create your staff detail view
-@permission_classes((IsAuthenticated,))
 @swagger_auto_schema(method='put',request_body=StaffSerializer)
 @api_view(['GET','PUT','DELETE'])
+@permission_classes([IsAuthenticated])
 def staffDetail(request, pk):
     try:
         theStaff = staff.objects.get(pk=pk)
