@@ -65,6 +65,8 @@ class Account(AbstractBaseUser):
     is_superuser      = models.BooleanField(default=False)
     is_emailvalidated = models.BooleanField(default=False)
     is_phonevalidated = models.BooleanField(default=False)
+    expiration_limit  = models.CharField(max_length=10,default=90)
+    stock_limit       = models.CharField(max_length=10,default=10)
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS  =['first_name','last_name','phone']

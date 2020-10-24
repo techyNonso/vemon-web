@@ -70,6 +70,14 @@ class LoginSerializer(serializers.ModelSerializer):
         }
         return super().validate(attrs)
 
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Account
+       # fields = ['staffId', 'staffName', 'arrivalTime','exitTime']
+        fields = '__all__'
 """
 class EmailVerificationSerializer(serializers.ModelSerializer):
     token=serializers.CharField(max_length=555)

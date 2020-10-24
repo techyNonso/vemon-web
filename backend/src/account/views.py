@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import Account
-from .serializers import RegistrationSerializer, LoginSerializer
-from rest_framework.decorators import api_view
+from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -17,11 +17,13 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.permissions import AllowAny, IsAuthenticated
 # Create your views here.
 
 
 
 @swagger_auto_schema(method='post',request_body=RegistrationSerializer)
+@permission_classes((AllowAny,))
 @api_view(['POST',])
 def registerUser(request):
     
@@ -69,6 +71,28 @@ def VerifyEmail(request):
             return Response({'error':"invalid activation link"},status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
+
+#Create view for put , delete and detail
+
+#swagger_auto_schema(method='post',request_body=RegistrationSerializer)
+@permission_classes((IsAuthenticated,))
+@api_view(['PUT'])
+def userHandler(request,pk=None):
+    try:
+        myUser = Account.objects.get(email=request.user)
+    except Account.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        serializer = UserSerializer(myUser,data=request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
 """
 @swagger_auto_schema(method='post',request_body=LoginSerializer)
 #login view
@@ -91,6 +115,9 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['first_name'] = user.first_name
         token['last_name'] = user.last_name
         token['email'] = user.email
+        token['expirationLimit'] = user.expiration_limit
+        token['stockLimit'] = user.stock_limit
+
         # ...
 
         return token
