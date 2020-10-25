@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect } from "react";
 import propTypes from "prop-types";
 import { connect } from "react-redux";
-import { saveUser } from "Store/actions/accountAction";
+import { updateDetails, updateLimits } from "Store/actions/accountAction";
 import axiosInstance from "Modules/axiosInstance";
 
 const Settings = (props) => {
@@ -37,8 +37,8 @@ const Settings = (props) => {
   const changeLname = (event) => {
     setLname(event.target.value);
   };
-  const setRedux = () => {
-    //saveUser(values);
+
+  const workOnLimits = () => {
     let values = {
       email: email,
       expirationLimit: expirationLimit,
@@ -48,44 +48,22 @@ const Settings = (props) => {
       user_id: user_id,
     };
 
-    props.saveUser(values);
+    props.updateLimits(values);
   };
 
-  const updateLimits = () => {
-    let data = {
-      expiration_limit: expirationLimit,
-      stock_limit: stockLimit,
-    };
-
-    axiosInstance
-      .put(`http://127.0.0.1:8000/user-update/`, data)
-      .then((res) => {
-        setAlert("block");
-        setTimeout(() => {
-          setAlert("none");
-          setRedux();
-        }, 2000);
-      })
-      .catch((err) => console.log(err.response.data));
-  };
-
-  const updateDetails = () => {
-    let data = {
+  const workOnDetails = () => {
+    let values = {
+      email: email,
+      expirationLimit: expirationLimit,
       first_name: first_name,
       last_name: last_name,
+      stockLimit: stockLimit,
+      user_id: user_id,
     };
 
-    axiosInstance
-      .put(`http://127.0.0.1:8000/user-update/`, data)
-      .then((res) => {
-        setAlert("block");
-        setTimeout(() => {
-          setAlert("none");
-          setRedux();
-        }, 2000);
-      })
-      .catch((err) => console.log(err));
+    props.updateDetails(values);
   };
+
   return (
     <div>
       <div className="row mb-3 " style={{ display: popAlert }}>
@@ -135,7 +113,7 @@ const Settings = (props) => {
                 <a
                   href="#"
                   className="btn btn-sm btn-primary mt-2"
-                  onClick={updateLimits}
+                  onClick={workOnLimits}
                 >
                   Save
                 </a>
@@ -191,7 +169,7 @@ const Settings = (props) => {
                   href="#"
                   className="btn btn-sm btn-primary mt-2"
                   className="btn btn-sm btn-primary mt-2"
-                  onClick={updateDetails}
+                  onClick={workOnDetails}
                 >
                   Save
                 </a>
@@ -206,11 +184,12 @@ const Settings = (props) => {
 
 Settings.propTypes = {
   user: propTypes.object.isRequired,
-  saveUser: propTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   user: state.account.item,
 });
 
-export default connect(mapStateToProps, { saveUser })(Settings);
+export default connect(mapStateToProps, { updateLimits, updateDetails })(
+  Settings
+);
