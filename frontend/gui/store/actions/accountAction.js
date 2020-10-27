@@ -2,6 +2,8 @@ import { GET_USER } from "./types";
 import axiosInstance from "Modules/axiosInstance";
 import { store } from "../store.js";
 import Auth from "Components/auth";
+
+import { toast } from "react-toastify";
 export const saveUser = (values) => {
   store.dispatch({
     type: GET_USER,
@@ -38,6 +40,10 @@ export const updateDetails = (values) => (dispatch) => {
   axiosInstance
     .put(`http://127.0.0.1:8000/user-update/`, data)
     .then((res) => {
+      toast.success("Your details have been updated successfully", {
+        position: toast.POSITION.BOTTOM_RIGHT,
+        autoClose: 6000,
+      });
       dispatch({
         type: GET_USER,
         payload: values,

@@ -270,7 +270,7 @@ class StockActivities extends Component {
             </form>
           </div>
         </div>
-        <div className="row justify-content-center pb-4">
+        <div className="row justify-content-center pb-4" style={{ zIndex: "100", position: "relative" }}>
           <DateRangeSelect parentFunc={this.handleDate} />
         </div>
         <div className="row table-responsive boxUp p-3">

@@ -249,7 +249,7 @@ class OnlineSales extends Component {
         <div className="row text-center justify-content-center">Sort Date</div>
         <div
           className="row justify-content-center pb-4 "
-          style={{ zIndex: "1000", position: "relative" }}
+          style={{ zIndex: "100", position: "relative" }}
         >
           <DateRangeSelect parentFunc={this.handleDate} />
         </div>

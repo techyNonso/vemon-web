@@ -4,6 +4,9 @@ import Pagination from "Components/dashComponents/pagination";
 import { getCompanies } from "Store/actions/companyAction";
 import propTypes from "prop-types";
 import { connect } from "react-redux";
+import { toast } from "react-toastify";
+//loading imports
+
 import {
   extractProductId,
   getStockArray,
@@ -103,6 +106,7 @@ class AllStock extends Component {
     });
   }
 
+
   componentDidMount() {
     //console.log(this.props.company.companyId, this.props.branch.branchId);
     this.props.getStocks(
@@ -160,6 +164,7 @@ class AllStock extends Component {
             <span>
               <strong>Branches</strong> : 1 of {this.props.branches.length}
             </span>
+            
           </div>
 
           <div className="col-md-6 pb-2">
