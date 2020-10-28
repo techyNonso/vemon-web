@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import propTypes from "prop-types";
 import Auth from "Components/auth";
 
+
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -44,8 +45,9 @@ class Home extends Component {
   render() {
     return (
       <div>
+        
         <header style={{ backgroundImage: "url(/img/header3.jpg)" }}>
-          <nav className="navbar navbar-expand-lg navbar-light fixed-top navBar">
+          <nav className="navbar navbar-expand-lg navbar-light  navBar">
             <div className="container" style={{ backgroundColor: "inherit" }}>
               <Link className="navbar-brand" to="/">
                 <img src="/img/icon.png" alt="" width="100px" />

@@ -28,6 +28,12 @@ import { store, persistor } from "Store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import "react-calendar/dist/Calendar.css";
 
+//react toast
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+toast.configure();
+
 class App extends Component {
   render() {
     return (

@@ -6,6 +6,11 @@ import propTypes from "prop-types";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
 //loading imports
+import {css} from '@emotion/core'
+import {BeatLoader} from 'react-spinners'
+//alert
+import SweetAlert from 'sweetalert2-react'
+import swal from 'sweetalert'
 
 import {
   extractProductId,
@@ -14,6 +19,8 @@ import {
   getTotalBatches,
   getSearchResult,
 } from "Modules/stock";
+
+
 class AllStock extends Component {
   constructor(props) {
     super(props);
@@ -27,12 +34,17 @@ class AllStock extends Component {
       currentPage: 1,
       postsPerPage: 100,
       searchValue: "",
+      show:false
     };
+
+   
 
     //handle props received
     this.handleProps = this.handleProps.bind(this);
+    
   }
 
+ 
   //search item in list starting from first page
   searchList(event) {
     this.setState({
@@ -159,12 +171,17 @@ class AllStock extends Component {
     }
     return (
       <Fragment>
+       
         <div className="row mt-3 pl-3 pr-3">
           <div className="col-md-6 pb-2">
             <span>
               <strong>Branches</strong> : 1 of {this.props.branches.length}
             </span>
-            
+           <button onClick={() =>swal({ title:"First Alert",
+        text :" Message",
+        icon:"success",
+        button:"OK",
+        dangerMode:true})}>Alert</button>
           </div>
 
           <div className="col-md-6 pb-2">
@@ -180,6 +197,10 @@ class AllStock extends Component {
               </div>
             </form>
           </div>
+        </div>
+
+        <div className="row pr-4 mb-3">
+          <div className="col text-center "><BeatLoader size={15} color="green" loading/></div>
         </div>
         <div className="row table-responsive boxUp p-3">
           <table className="table table-sm table-striped table-borderless">

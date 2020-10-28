@@ -28,6 +28,7 @@ import Settings from "./dashComponents/settings";
 
 import { sortCompanies } from "Modules/company";
 
+
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -146,6 +147,7 @@ class Dashboard extends Component {
 
     return (
       <div>
+         
         <Header />
 
         <div className="wrapper ">
