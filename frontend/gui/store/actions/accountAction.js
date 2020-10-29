@@ -2,6 +2,7 @@ import { GET_USER } from "./types";
 import axiosInstance from "Modules/axiosInstance";
 import { store } from "../store.js";
 import Auth from "Components/auth";
+import swal from 'sweetalert'
 
 import { toast } from "react-toastify";
 export const saveUser = (values) => {
@@ -27,6 +28,12 @@ export const updateLimits = (values) => (dispatch) => {
         type: GET_USER,
         payload: values,
       });
+
+      swal({ title:"Account Update Successful",
+        //text :" Name change successful",
+        icon:"success",
+        button:"OK",
+      })
     })
     .catch((err) => console.log(err.response.data));
 };
@@ -40,14 +47,16 @@ export const updateDetails = (values) => (dispatch) => {
   axiosInstance
     .put(`http://127.0.0.1:8000/user-update/`, data)
     .then((res) => {
-      toast.success("Your details have been updated successfully", {
-        position: toast.POSITION.BOTTOM_RIGHT,
-        autoClose: 6000,
-      });
+      
       dispatch({
         type: GET_USER,
         payload: values,
       });
+      swal({ title:"Account Update Successful",
+        //text :" Name change successful",
+        icon:"success",
+        button:"OK",
+      })
     })
-    .catch((err) => console.log(err.response.data));
+    .catch((err) => console.log(err.response));
 };

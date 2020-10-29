@@ -18,7 +18,6 @@ export const getCompany = (id) => (dispatch) => {
   axiosInstance
     .get(`http://127.0.0.1:8000/companies/${id}/`)
     .then((res) => {
-      console.log(res.data);
       dispatch({
         type: GET_COMPANY,
         payload: res.data,

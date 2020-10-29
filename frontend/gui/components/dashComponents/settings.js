@@ -3,6 +3,9 @@ import propTypes from "prop-types";
 import { connect } from "react-redux";
 import { updateDetails, updateLimits } from "Store/actions/accountAction";
 import axiosInstance from "Modules/axiosInstance";
+//loading imports
+import {css} from '@emotion/core'
+import {BeatLoader} from 'react-spinners'
 
 const Settings = (props) => {
   const [email, setEmail] = useState("");
@@ -12,6 +15,7 @@ const Settings = (props) => {
   const [expirationLimit, setExp] = useState("");
   const [stockLimit, setStockLimit] = useState("");
   const [popAlert, setAlert] = useState("none");
+  const [loading, setLoading] = useState("none")
 
   useEffect(() => {
     setEmail(props.user.email);
@@ -38,6 +42,14 @@ const Settings = (props) => {
     setLname(event.target.value);
   };
 
+  const showLoading = () => {
+    setLoading("block")
+  }
+
+  const hideLoading = () => {
+    setLoading("none")
+  }
+
   const workOnLimits = () => {
     let values = {
       email: email,
@@ -48,6 +60,7 @@ const Settings = (props) => {
       user_id: user_id,
     };
 
+    
     props.updateLimits(values);
   };
 
@@ -60,15 +73,24 @@ const Settings = (props) => {
       stockLimit: stockLimit,
       user_id: user_id,
     };
-
+    showLoading()
     props.updateDetails(values);
   };
 
+  const loaderStyle = {
+    "width":"200px",
+    "position":"fixed",
+    "zIndex":"1000",
+    "left":"50%",
+    "marginLeft":"-100px",
+    "display":loading
+  }
+
   return (
     <div>
-      <div className="row mb-3 " style={{ display: popAlert }}>
-        <div className="alert alert-success ">Details recorded</div>
-      </div>
+        <div className="row pr-4 mb-3" >
+          <div className="text-center  " style={loaderStyle} ><BeatLoader size={15} color="green" loading /></div>
+        </div>
       <div className="row  mb-4">
         <div className="col-lg-6  pr-4 pl-4 mb-4">
           <div className="boardBearer p-3">

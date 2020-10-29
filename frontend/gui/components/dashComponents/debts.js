@@ -12,6 +12,10 @@ import {
   getSearchResult,
 } from "Modules/debts";
 
+//loading imports
+import {css} from '@emotion/core'
+import {BeatLoader} from 'react-spinners'
+
 class Debts extends Component {
   constructor(props) {
     super(props);
@@ -21,7 +25,7 @@ class Debts extends Component {
       endDate: new Date(),
       initialStartDate: new Date(),
       initialEndDate: new Date(),
-      loading: false,
+      loading: "none",
       debts: [],
       originalDebts: [],
       postsPerPage: 100,
@@ -77,7 +81,7 @@ class Debts extends Component {
       this.setState({
         debts: mainDebts,
         originalDebts: mainDebts,
-        loading: false,
+        loading: "none",
         balance: balance,
         total: total,
         paid: paid,
@@ -99,7 +103,7 @@ class Debts extends Component {
     this.setState({
       searchValue: event.target.value,
       currentPage: 1,
-      loading: true,
+      loading: "block",
     });
 
     //check if there if value to be searched
@@ -110,20 +114,20 @@ class Debts extends Component {
       if (list.length > 0) {
         this.setState({
           debts: list,
-          loading: false,
+          loading: "none",
         });
       } else {
         //set list back to original list
         this.setState({
           debts: [],
-          loading: false,
+          loading: "none",
         });
       }
     } else {
       //if search box is empty
       this.setState({
         debts: this.state.originalDebts,
-        loading: false,
+        loading: "none",
       });
     }
   }
@@ -139,15 +143,17 @@ class Debts extends Component {
       prevProps.branch !== this.props.branch
     ) {
       //console.log(this.props.company.companyId, this.props.branch.branchId);
-      this.setState({
-        loading: true,
-      });
+      
       this.props.getDebts(
         this.props.company.companyId,
         this.props.branch.branchId,
         this.state.initialStartDate,
         this.state.initialEndDate
       );
+
+      this.setState({
+        loading: "block",
+      });
     }
 
     //check for date change
@@ -161,6 +167,10 @@ class Debts extends Component {
         this.state.initialStartDate,
         this.state.initialEndDate
       );
+
+      this.setState({
+        loading: "block",
+      });
     }
   }
 
@@ -172,19 +182,20 @@ class Debts extends Component {
       this.state.initialEndDate
     );
     this.setState({
-      loading: true,
+      loading: "block",
     });
   }
 
   render() {
-    let loading;
-    if (this.state.loading) {
-      loading = (
-        <tr>
-          <td>please wait...</td>
-        </tr>
-      );
+    const loaderStyle = {
+      "width":"200px",
+      "position":"fixed",
+      "zIndex":"1000",
+      "left":"50%",
+      "marginLeft":"-100px",
+      "display":this.state.loading
     }
+
 
     //get current stocks
     const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
@@ -233,6 +244,9 @@ class Debts extends Component {
 
     return (
       <Fragment>
+        <div className="row pr-4 mb-3" >
+          <div className="text-center  " style={loaderStyle} ><BeatLoader size={15} color="green" loading /></div>
+        </div>
         <div className="row mt-3 pl-3 pr-3">
           <div className="col-md-6 pb-2">
             <span>
@@ -277,8 +291,6 @@ class Debts extends Component {
               </tr>
             </thead>
             <tbody>
-              {loading}
-
               {debtsList}
             </tbody>
           </table>

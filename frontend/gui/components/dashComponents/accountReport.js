@@ -31,6 +31,13 @@ import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalFooter from "react-bootstrap/ModalFooter";
 import ModalTitle from "react-bootstrap/ModalTitle";
 
+
+//loading imports
+import {css} from '@emotion/core'
+import {BeatLoader} from 'react-spinners'
+
+
+
 class AccountReport extends Component {
   constructor(props) {
     super(props);
@@ -39,11 +46,11 @@ class AccountReport extends Component {
       endDate: new Date(),
       initialStartDate: new Date(),
       initialEndDate: new Date(),
-      loading: false,
+      loading: "none",
       displayModal: false,
       sales: [],
       originalSales: [],
-      postsPerPage: 10,
+      postsPerPage: 100,
       currentPage: 1,
       searchValue: "",
       report: [],
@@ -146,7 +153,7 @@ class AccountReport extends Component {
         expenseSum: expenseSum,
         debtPaid: clearanceSum,
         balance,
-        loading: false,
+        loading: "none",
         report,
       });
     }
@@ -202,15 +209,17 @@ class AccountReport extends Component {
       prevProps.branch !== this.props.branch
     ) {
       //console.log(this.props.company.companyId, this.props.branch.branchId);
-      this.setState({
-        loading: true,
-      });
+      
       this.props.getSales(
         this.props.company.companyId,
         this.props.branch.branchId,
         this.state.initialStartDate,
         this.state.initialEndDate
       );
+
+      this.setState({
+        loading: "block",
+      });
     }
 
     //check for date change
@@ -224,6 +233,10 @@ class AccountReport extends Component {
         this.state.initialStartDate,
         this.state.initialEndDate
       );
+
+      this.setState({
+        loading: "block",
+      });
     }
   }
 
@@ -236,7 +249,7 @@ class AccountReport extends Component {
     );
 
     this.setState({
-      loading: true,
+      loading: "block",
     });
   }
 
@@ -275,13 +288,13 @@ class AccountReport extends Component {
   }
 
   render() {
-    let loading;
-    if (this.state.loading) {
-      loading = (
-        <tr>
-          <td>please wait...</td>
-        </tr>
-      );
+    const loaderStyle = {
+      "width":"200px",
+      "position":"fixed",
+      "zIndex":"1000",
+      "left":"50%",
+      "marginLeft":"-100px",
+      "display":this.state.loading
     }
 
     //get current stocks
@@ -360,7 +373,9 @@ class AccountReport extends Component {
     return (
       <Fragment>
         {modal}
-
+        <div className="row pr-4 mb-3" >
+          <div className="text-center  " style={loaderStyle} ><BeatLoader size={15} color="green" loading /></div>
+        </div>
         <div className="row mt-3 pl-3 pr-3">
           <div className="col-md-6 pb-2">
             <span>
@@ -487,9 +502,7 @@ class AccountReport extends Component {
               </tr>
             </thead>
             <tbody>
-              {loading}
-
-              {reportList}
+               {reportList}
             </tbody>
           </table>
         </div>

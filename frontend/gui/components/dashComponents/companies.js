@@ -20,12 +20,21 @@ import {
   PaystackConsumer,
 } from "react-paystack";
 
+//loading imports
+import {css} from '@emotion/core'
+import {BeatLoader} from 'react-spinners'
+
+
+
+import swal from 'sweetalert'
+
+
 class Companies extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      loading: false,
+      loading: "none",
       companies: [],
       originalCompanies: [],
       postsPerPage: 100,
@@ -50,7 +59,7 @@ class Companies extends Component {
     this.setState({
       companies: sortedList,
       originalCompanies: sortedList,
-      loading: false,
+      loading: "none",
     });
   }
 
@@ -72,7 +81,7 @@ class Companies extends Component {
         companyId: this.props.company.companyId,
       };
       this.setState({
-        loading: true,
+        loading: "block",
       });
 
       axiosInstance
@@ -124,7 +133,7 @@ class Companies extends Component {
   //proceed to delete
   proceedDelete(id) {
     this.setState({
-      loading: true,
+      loading: "block",
       deleteClick: false,
     });
 
@@ -133,8 +142,14 @@ class Companies extends Component {
       .then((res) => {
         this.setState({
           displayModal: false,
-          loading: false,
+          loading: "none",
         });
+
+        swal({ title:"Company Deleted Successfully",
+        //text :" Name change successful",
+        icon:"success",
+        button:"OK",
+      })
 
         this.props.getCompanies();
       })
@@ -144,7 +159,7 @@ class Companies extends Component {
   //proceed to update
   proceedUpdate({ id, plan, name }) {
     this.setState({
-      loading: true,
+      loading: "block",
       editClick: false,
     });
 
@@ -158,8 +173,15 @@ class Companies extends Component {
       .then((res) => {
         this.setState({
           displayModal: false,
-          loading: false,
+          loading: "none",
         });
+
+        swal({ title:"Company Updated Successfully",
+        //text :" Name change successful",
+        icon:"success",
+        button:"OK",
+      })
+
 
         this.props.getCompanies();
       })
@@ -235,10 +257,19 @@ class Companies extends Component {
       expiryDate: `${year}-${month}-${day}`,
       plan: plan,
     };
+
+    this.setState({
+        loading: "block",
+      });
+
+
     axiosInstance
       .post("http://127.0.0.1:8000/companies/", data)
       .then((res) => {
         this.props.getCompanies();
+        this.setState({
+          loading: "none",
+        });
       })
       .catch((err) => console.log(err.response.data));
   }
@@ -256,7 +287,7 @@ class Companies extends Component {
     this.setState({
       searchValue: event.target.value,
       currentPage: 1,
-      loading: true,
+      loading: "block",
     });
 
     //check if there if value to be searched
@@ -270,20 +301,20 @@ class Companies extends Component {
       if (list.length > 0) {
         this.setState({
           companies: list,
-          loading: false,
+          loading: "none",
         });
       } else {
         //set list back to original list
         this.setState({
           companies: [],
-          loading: false,
+          loading: "none",
         });
       }
     } else {
       //if search box is empty
       this.setState({
         companies: this.state.originalCompanies,
-        loading: false,
+        loading: "none",
       });
     }
   }
@@ -325,26 +356,27 @@ class Companies extends Component {
   }
 
   componentDidMount() {
-    this.setState({
-      loading: true,
-    });
     //check companies
     if (this.props.companies.length > 0) {
       this.handleProps(this.props);
     } else {
       this.props.getCompanies();
+      this.setState({
+        loading: "block",
+      });
     }
   }
 
   render() {
-    let loading;
-    if (this.state.loading) {
-      loading = (
-        <tr>
-          <td>please wait...</td>
-        </tr>
-      );
+    const loaderStyle = {
+      "width":"200px",
+      "position":"fixed",
+      "zIndex":"1000",
+      "left":"50%",
+      "marginLeft":"-100px",
+      "display":this.state.loading
     }
+
 
     //get current stocks
     const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
@@ -431,6 +463,9 @@ class Companies extends Component {
     return (
       <Fragment>
         {modal}
+        <div className="row pr-4 mb-3" >
+          <div className="text-center  " style={loaderStyle} ><BeatLoader size={15} color="green" loading /></div>
+        </div>
         <div className="row mt-3 pl-3 pr-3">
           <div className="col-md-6 pb-2"></div>
           <div className="col-md-6 pb-2">
@@ -460,8 +495,6 @@ class Companies extends Component {
               </tr>
             </thead>
             <tbody>
-              {loading}
-
               {companyList}
             </tbody>
           </table>

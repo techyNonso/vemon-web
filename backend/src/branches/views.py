@@ -9,14 +9,23 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
 
 #get branches based on company id
-@api_view(["GET"])
+@api_view(["GET","POST"])
 @permission_classes([IsAuthenticated])
 def companyBranches(request,company):
     if request.method == "GET":
         branches = branch.objects.filter(companyId=company)
         serializer = BranchesSerializer(branches, many=True)
         return Response(serializer.data)
+    elif request.method == "POST":
+        #hard code user detail , letter do it with authentication
+        account = request.user
+        branchPost = branch(owner=account)
+        serializer = BranchesSerializer(branchPost,data=request.data)
 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @swagger_auto_schema(method='post',request_body=BranchesSerializer)
 # Create your views here.
@@ -28,7 +37,7 @@ def branchHandler(request):
         return Response(serializer.data)
     elif request.method == "POST":
         #hard code user detail , letter do it with authentication
-        account = Account.objects.get(pk=1)
+        account = request.user
         branchPost = branch(owner=account)
         serializer = BranchesSerializer(branchPost,data=request.data)
 
