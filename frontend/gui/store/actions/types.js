@@ -13,3 +13,4 @@ export const GET_STAFF = "GET_STAFF";
 export const GET_ALL_ATTENDANCE = "GET_ALL_ATTENDANCE";
 export const GET_ALL_CLEARANCE = "GET_ALL_CLEARANCE";
 export const GET_USER = "GET_USER";
+export const GET_ERRORS = "GET_ERRORS"

@@ -1,4 +1,4 @@
-import { GET_USER } from "./types";
+import { GET_USER,GET_ERRORS } from "./types";
 import axiosInstance from "Modules/axiosInstance";
 import { store } from "../store.js";
 import Auth from "Components/auth";
@@ -58,5 +58,11 @@ export const updateDetails = (values) => (dispatch) => {
         button:"OK",
       })
     })
-    .catch((err) => console.log(err.response));
+    .catch((err) => 
+    {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    });
 };

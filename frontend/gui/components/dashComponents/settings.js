@@ -2,6 +2,7 @@ import React, { Component, useState, useEffect } from "react";
 import propTypes from "prop-types";
 import { connect } from "react-redux";
 import { updateDetails, updateLimits } from "Store/actions/accountAction";
+import Alerts from "Components/alerts";
 import axiosInstance from "Modules/axiosInstance";
 //loading imports
 import {css} from '@emotion/core'
@@ -88,6 +89,7 @@ const Settings = (props) => {
 
   return (
     <div>
+      <Alerts hideLoading={hideLoading} />
         <div className="row pr-4 mb-3" >
           <div className="text-center  " style={loaderStyle} ><BeatLoader size={15} color="green" loading /></div>
         </div>
