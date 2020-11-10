@@ -1,12 +1,17 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from rest_framework.response import Response
 from .models import stock
 from .serializers import StockSerializer
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import IsAuthenticated
 
 #view for all stock
+
+@swagger_auto_schema(method='post',request_body=StockSerializer)
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def allStockHandler(request):
     if request.method == "GET":
         allStock = stock.objects.all()
@@ -21,7 +26,10 @@ def allStockHandler(request):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 # Create your views here.
+
+@swagger_auto_schema(method='post',request_body=StockSerializer)
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def stockHandler(request,company,branch):
     if request.method == "GET":
         allStock = stock.objects.filter(companyId=company,branchId=branch)
@@ -37,7 +45,10 @@ def stockHandler(request,company,branch):
 
 
 #create your stock detail view
+
+@swagger_auto_schema(method='put',request_body=StockSerializer)
 @api_view(['GET','PUT','DELETE'])
+@permission_classes([IsAuthenticated])
 def stockDetail(request, pk):
     try:
         theStock = stock.objects.get(pk=pk)

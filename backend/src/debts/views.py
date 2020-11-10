@@ -2,15 +2,20 @@ from django.shortcuts import render
 from .models import debt
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .serializers import DebtSerializer
-
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import IsAuthenticated
 
 #create view for company debts
+@permission_classes((IsAuthenticated,))
 @api_view(['GET'])
-def debtsForCompany(request,company,branch):
+def debtsForCompany(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
+    start_date = "%d-%d-%d"%(startyear,startmonth,startday)
+    end_date = "%d-%d-%d"%(endyear,endmonth,endday)
+
     if request.method == "GET":
-        debts = debt.objects.filter(companyId=company,branchId=branch)
+        debts = debt.objects.filter(companyId=company,branchId=branch,date__range=[start_date, end_date])
         serializer = DebtSerializer(debts,many=True)
         return Response(serializer.data)
 
@@ -18,6 +23,8 @@ def debtsForCompany(request,company,branch):
 
         
 # create view for debts here
+@permission_classes((IsAuthenticated,))
+@swagger_auto_schema(method='post',request_body=DebtSerializer)
 @api_view(['GET','POST'])
 def debtHandler(request):
 
@@ -36,6 +43,8 @@ def debtHandler(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 # Create your views for single debt here.
+@permission_classes((IsAuthenticated,))
+@swagger_auto_schema(method='put',request_body=DebtSerializer)
 @api_view(["GET","PUT","DELETE"])
 def debtDetail(request, pk):
     try:

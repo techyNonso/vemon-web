@@ -6,6 +6,8 @@ class sale(models.Model):
     productName = models.CharField(max_length=50)
     quantity = models.IntegerField()
     price = models.IntegerField()
+    paid = models.IntegerField(default=0)
+    toPay = models.IntegerField(default=0)
     disccount = models.IntegerField()
     transactionType = models.CharField(max_length=20)
     companyId = models.CharField(max_length=50,null=True)

@@ -3,6 +3,6 @@ from .views import companyHandler, companyDetail
 
 urlpatterns = [
     path('companies/',companyHandler),
-    path('companies/<int:pk>',companyDetail)
+    path('companies/<int:pk>/',companyDetail)
 ]
 

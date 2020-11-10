@@ -1,21 +1,249 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
+//import DateRangeSelect from "Components/dashComponents/dateRangeSelect";
+import propTypes from "prop-types";
+import { connect } from "react-redux";
+import Pagination from "Components/dashComponents/pagination";
+import { getAllStaff, getStaff } from "Store/actions/staffAction";
+import axios from "axios";
+import { getSearchResult, sortStaff } from "Modules/staff";
 
 class StaffList extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      startDate: new Date(),
+      endDate: new Date(),
+      initialStartDate: new Date(),
+      loading: false,
+      allStaff: [],
+      staff: "",
+      originalAllStaff: [],
+      postsPerPage: 100,
+      currentPage: 1,
+      searchValue: "",
+    };
+    //handle props received
+    this.handleProps = this.handleProps.bind(this);
+  }
+
+  handleProps(props) {
+    //sort to ensure position is maintained
+    let sortedStaff = sortStaff(props.allStaff);
+    this.setState({
+      allStaff: sortedStaff,
+      originalAllStaff: sortedStaff,
+      loading: false,
+    });
+  }
+
+  //search starting from first page
+  searchList(event) {
+    this.setState({
+      searchValue: event.target.value,
+      currentPage: 1,
+      loading: true,
+    });
+
+    //check if there if value to be searched
+    if (event.target.value.trim().length > 0) {
+      //check if any result was received
+      let list = getSearchResult(
+        this.state.originalAllStaff,
+        event.target.value
+      );
+
+      if (list.length > 0) {
+        this.setState({
+          allStaff: list,
+          loading: false,
+        });
+      } else {
+        //set list back to original list
+        this.setState({
+          allStaff: [],
+          loading: false,
+        });
+      }
+    } else {
+      //if search box is empty
+      this.setState({
+        allStaff: this.state.originalAllStaff,
+        loading: false,
+      });
+    }
+  }
+
+  checkStatus(access) {
+    return access.toUpperCase() == "OPEN"
+      ? "Open"
+      : access.toUpperCase() == "CLOSED"
+      ? "Closed"
+      : "";
+  }
+
+  //wait for when our props arrive
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.allStaff !== this.props.allStaff) {
+      this.handleProps(this.props);
+    }
+
+    if (
+      prevProps.company !== this.props.company ||
+      prevProps.branch !== this.props.branch
+    ) {
+      //console.log(this.props.company.companyId, this.props.branch.branchId);
+      this.setState({
+        loading: true,
+      });
+      this.props.getAllStaff(
+        this.props.company.companyId,
+        this.props.branch.branchId
+      );
+    }
+  }
+
+  componentDidMount() {
+    this.props.getAllStaff(
+      this.props.company.companyId,
+      this.props.branch.branchId
+    );
+    this.setState({
+      loading: true,
+    });
+  }
+
+  changeAccess(event) {
+    let id = event.target.dataset.staff;
+    let command = event.target.dataset.command;
+
+    let data = {
+      access: command == "activate" ? "open" : "closed",
+    };
+
+    this.setState({
+      loading: true,
+    });
+    axios
+      .put(`http://127.0.0.1:8000/staff/${id}/`, data)
+      .then((res) =>
+        this.props.getAllStaff(
+          this.props.company.companyId,
+          this.props.branch.branchId
+        )
+      )
+      .catch((err) => {
+        this.setState({
+          loading: false,
+        });
+
+        console.log(err);
+      });
   }
 
   render() {
+    let loading;
+    if (this.state.loading) {
+      loading = (
+        <tr>
+          <td>please wait...</td>
+        </tr>
+      );
+    }
+
+    //get current stocks
+    const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - this.state.postsPerPage;
+    const currentPosts = this.state.allStaff.slice(
+      indexOfFirstPost,
+      indexOfLastPost
+    );
+
+    let staffList;
+    //check list
+    if (currentPosts.length > 0) {
+      staffList = currentPosts.map((staff) => (
+        <tr key={staff.id}>
+          <td>{staff.staffId}</td>
+          <td>{staff.staffName}</td>
+          <td>{staff.email}</td>
+          <td>{staff.position}</td>
+          <td>{staff.phone}</td>
+          <td>
+            {staff.street},{staff.street}, {staff.state}
+          </td>
+          <td>{staff.permission}</td>
+          <td>{staff.registered}</td>
+
+          {this.checkStatus(staff.access) == "Open" && (
+            <td>
+              <button
+                className="btn btn-sm btn-danger"
+                data-command="block"
+                data-staff={staff.id}
+                onClick={this.changeAccess.bind(this)}
+              >
+                Block
+              </button>
+            </td>
+          )}
+
+          {this.checkStatus(staff.access) == "Closed" && (
+            <td>
+              <button
+                className="btn btn-sm btn-success w-100"
+                data-command="activate"
+                data-staff={staff.id}
+                onClick={this.changeAccess.bind(this)}
+              >
+                Activate
+              </button>
+            </td>
+          )}
+        </tr>
+      ));
+    } else {
+      staffList = (
+        <tr>
+          <td>No record found</td>
+        </tr>
+      );
+    }
+
+    //change the page
+    const paginate = (pageNumber) => this.setState({ currentPage: pageNumber });
+
     return (
-      <div>
+      <Fragment>
+        <div className="row mt-3 pl-3 pr-3">
+          <div className="col-md-6 pb-2">
+            <span>
+              <strong>Branches</strong> : 1 of {this.props.branches.length}
+            </span>
+          </div>
+
+          <div className="col-md-6 pb-2">
+            <form action="" className="form">
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="form-control"
+                  value={this.state.searchValue}
+                  onChange={this.searchList.bind(this)}
+                />
+              </div>
+            </form>
+          </div>
+        </div>
         <div className="row table-responsive boxUp p-3">
           <table className="table table-sm table-striped table-borderless">
             <thead>
               <tr>
                 <th>Id</th>
                 <th>Name</th>
-                <th>Position</th>
                 <th>Email</th>
+                <th>Position</th>
 
                 <th>Phone</th>
                 <th>Address</th>
@@ -25,44 +253,33 @@ class StaffList extends Component {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>STF109</td>
-                <td>Ikeji William</td>
-                <td>Accountant</td>
-                <td>Williamikeji@gmail.com</td>
-                <td>08131832011</td>
-                <td>9 umunya street</td>
-                <td>Admin</td>
-                <td>23-12-2020</td>
+              {loading}
 
-                <td>
-                  <button className="btn btn-sm btn-danger">Block</button>
-                </td>
-              </tr>
+              {staffList}
             </tbody>
           </table>
         </div>
 
-        <ul className="pagination justify-content-end pr-3 pt-4">
-          <li className="page-item">
-            <a href="#" className="page-link">
-              Previous
-            </a>
-          </li>
-          <li className="page-item active">
-            <a href="#" className="page-link">
-              2
-            </a>
-          </li>
-          <li className="page-item">
-            <a href="#" className="page-link">
-              Next
-            </a>
-          </li>
-        </ul>
-      </div>
+        <Pagination
+          postsPerPage={this.state.postsPerPage}
+          totalPosts={this.state.allStaff.length}
+          paginate={paginate}
+        />
+      </Fragment>
     );
   }
 }
 
-export default StaffList;
+StaffList.propTypes = {
+  getAllStaff: propTypes.func.isRequired,
+  allStaff: propTypes.array.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  allStaff: state.staff.items,
+  staff: state.staff.item,
+  branch: state.branches.item,
+  company: state.companies.item,
+});
+
+export default connect(mapStateToProps, { getAllStaff, getStaff })(StaffList);

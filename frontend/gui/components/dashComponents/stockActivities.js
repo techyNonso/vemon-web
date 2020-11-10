@@ -4,6 +4,7 @@ import propTypes from "prop-types";
 import { connect } from "react-redux";
 import Pagination from "Components/dashComponents/pagination";
 import { getActivities, getActivity } from "Store/actions/activitiesAction";
+import SingleDatePicker from "Components/dashComponents/singleDatePicker";
 import {
   extractDates,
   extractActivities,
@@ -17,6 +18,10 @@ import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalFooter from "react-bootstrap/ModalFooter";
 import ModalTitle from "react-bootstrap/ModalTitle";
 
+//loading imports
+import {css} from '@emotion/core'
+import {BeatLoader} from 'react-spinners'
+
 class StockActivities extends Component {
   constructor(props) {
     super(props);
@@ -25,7 +30,8 @@ class StockActivities extends Component {
       startDate: new Date(),
       endDate: new Date(),
       initialStartDate: new Date(),
-      loading: false,
+      initialEndDate: new Date(),
+      loading: "none",
       activities: [],
       originalActivities: [],
       activity: "",
@@ -33,6 +39,7 @@ class StockActivities extends Component {
       currentPage: 1,
       searchValue: "",
       displayModal: false,
+      date: new Date(),
     };
     //handle props received
     this.handleProps = this.handleProps.bind(this);
@@ -45,9 +52,20 @@ class StockActivities extends Component {
       endDate: data.endDate,
     });
 
-    if (data.startDate !== null) {
+    if (data.startDate == null && data.endDate !== null) {
+      this.setState({
+        initialStartDate: data.endDate,
+        initialEndDate: data.endDate,
+      });
+    } else if (data.startDate !== null && data.endDate == null) {
       this.setState({
         initialStartDate: data.startDate,
+        initialEndDate: data.startDate,
+      });
+    } else if (data.startDate !== null && data.endDate !== null) {
+      this.setState({
+        initialStartDate: data.startDate,
+        initialEndDate: data.endDate,
       });
     }
   }
@@ -57,7 +75,7 @@ class StockActivities extends Component {
     this.setState({
       searchValue: event.target.value,
       currentPage: 1,
-      loading: true,
+      loading: "block",
     });
 
     //check if there if value to be searched
@@ -71,20 +89,20 @@ class StockActivities extends Component {
       if (list.length > 0) {
         this.setState({
           activities: list,
-          loading: false,
+          loading: "none",
         });
       } else {
         //set list back to original list
         this.setState({
           activities: [],
-          loading: false,
+          loading: "none",
         });
       }
     } else {
       //if search box is empty
       this.setState({
         activities: this.state.originalActivities,
-        loading: false,
+        loading: "none",
       });
     }
   }
@@ -98,14 +116,11 @@ class StockActivities extends Component {
     }
     let endDate = this.state.endDate;
     if (startDate !== null && endDate !== null) {
-      let dates = extractDates(startDate, endDate);
-      let acts = extractActivities(dates, props.activities);
-
       //set state of activities
       this.setState({
-        activities: acts,
-        originalActivities: acts,
-        loading: false,
+        activities: props.activities,
+        originalActivities: props.activities,
+        loading: "none",
       });
     }
   }
@@ -133,13 +148,16 @@ class StockActivities extends Component {
       prevProps.branch !== this.props.branch
     ) {
       //console.log(this.props.company.companyId, this.props.branch.branchId);
-      this.setState({
-        loading: true,
-      });
+      
       this.props.getActivities(
         this.props.company.companyId,
-        this.props.branch.branchId
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
       );
+      this.setState({
+        loading: "block",
+      });
     }
 
     //check for date change
@@ -147,8 +165,16 @@ class StockActivities extends Component {
       prevState.startDate !== this.state.startDate ||
       prevState.endDate !== this.state.endDate
     ) {
-      //handle the new props
-      this.handleProps(this.props);
+      this.props.getActivities(
+        this.props.company.companyId,
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
+      );
+
+      this.setState({
+        loading: "block",
+      });
     }
 
     //check if activity changes
@@ -160,21 +186,23 @@ class StockActivities extends Component {
   componentDidMount() {
     this.props.getActivities(
       this.props.company.companyId,
-      this.props.branch.branchId
+      this.props.branch.branchId,
+      this.state.initialStartDate,
+      this.state.initialEndDate
     );
     this.setState({
-      loading: true,
+      loading: "block",
     });
   }
 
   render() {
-    let loading;
-    if (this.state.loading) {
-      loading = (
-        <tr>
-          <td>please wait...</td>
-        </tr>
-      );
+    const loaderStyle = {
+      "width":"200px",
+      "position":"fixed",
+      "zIndex":"1000",
+      "left":"50%",
+      "marginLeft":"-100px",
+      "display":this.state.loading
     }
 
     //get current stocks
@@ -229,6 +257,9 @@ class StockActivities extends Component {
     }
     return (
       <Fragment>
+        <div className="row pr-4 mb-3" >
+          <div className="text-center  " style={loaderStyle} ><BeatLoader size={15} color="green" loading /></div>
+        </div>
         {modal}
         <div className="row mt-3 pl-3 pr-3">
           <div className="col-md-6 pb-2">
@@ -251,8 +282,8 @@ class StockActivities extends Component {
             </form>
           </div>
         </div>
-        <div className="row justify-content-center pb-4">
-          <DateRangeSelect style={"zIndex:1000"} parentFunc={this.handleDate} />
+        <div className="row justify-content-center pb-4" style={{ zIndex: "100", position: "relative" }}>
+          <DateRangeSelect parentFunc={this.handleDate} />
         </div>
         <div className="row table-responsive boxUp p-3">
           <table className="table table-sm table-striped table-borderless">
@@ -267,7 +298,7 @@ class StockActivities extends Component {
               </tr>
             </thead>
             <tbody>
-              {loading}
+              
               {activitiesList}
             </tbody>
           </table>

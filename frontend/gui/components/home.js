@@ -2,19 +2,54 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Header from "./header";
 import Footer from "./footer";
+import { connect } from "react-redux";
+import propTypes from "prop-types";
+import Auth from "Components/auth";
+
 
 class Home extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      online: "none",
+      offline: "block",
+    };
+
+    this.isEmpty = this.isEmpty.bind(this);
+  }
+
+  //user checker
+  isEmpty(obj) {
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) return false;
+    }
+
+    return true;
+  }
+
+  componentDidMount() {
+    //check if logged in
+    if (Auth.isAuthenticated()) {
+      this.setState({
+        online: "block",
+        offline: "none",
+      });
+    } else {
+      this.setState({
+        online: "none",
+        offline: "block",
+      });
+    }
   }
 
   render() {
     return (
       <div>
+        
         <header style={{ backgroundImage: "url(/img/header3.jpg)" }}>
-          <nav className="navbar navbar-expand-lg navbar-light fixed-top navBar">
+          <nav className="navbar navbar-expand-lg navbar-light  navBar">
             <div className="container" style={{ backgroundColor: "inherit" }}>
-              <Link className="navbar-brand" to="index">
+              <Link className="navbar-brand" to="/">
                 <img src="/img/icon.png" alt="" width="100px" />
                 <span id="myLogo">Vemon</span>
               </Link>
@@ -51,23 +86,35 @@ class Home extends Component {
                       Contact
                     </Link>
                   </li>
-                  <li className="nav-item">
+                  <li
+                    className="nav-item"
+                    style={{ display: this.state.online }}
+                  >
                     <Link className="nav-link pl-2" to="/dashboard">
                       Dashboard
                     </Link>
                   </li>
 
-                  <li className="nav-item">
+                  <li
+                    className="nav-item"
+                    style={{ display: this.state.offline }}
+                  >
                     <Link className="nav-link pl-2" to="/signin">
                       Sign in
                     </Link>
                   </li>
-                  <li className="nav-item">
+                  <li
+                    className="nav-item"
+                    style={{ display: this.state.offline }}
+                  >
                     <Link className="nav-link pl-2" to="/signup">
                       Sign up
                     </Link>
                   </li>
-                  <li className="nav-item">
+                  <li
+                    className="nav-item"
+                    style={{ display: this.state.online }}
+                  >
                     <Link className="nav-link pl-2" to="#">
                       Sign out
                     </Link>
@@ -375,4 +422,8 @@ class Home extends Component {
   }
 }
 
-export default Home;
+const mapStateToProps = (state) => ({
+  user: state.account.item,
+});
+
+export default connect(mapStateToProps, null)(Home);

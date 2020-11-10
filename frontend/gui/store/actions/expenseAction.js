@@ -1,10 +1,37 @@
 import expenseReducer from "../reducers/expenseReducer";
 import { GET_EXPENSES } from "./types";
 import axios from "axios";
+import axiosInstance from "Modules/axiosInstance";
 
-export const getExpenses = (company, branch) => (dispatch) => {
-  axios
-    .get(`http://127.0.0.1:8000/expenses/company/${company}/${branch}`)
+const getLength = (num) => num.toString().length;
+
+export const getExpenses = (company, branch, startDate, endDate) => (
+  dispatch
+) => {
+  let startYear = startDate.getFullYear();
+  let startMonth =
+    getLength(startDate.getMonth() + 1) == 1
+      ? "0" + Number(startDate.getMonth() + 1)
+      : startDate.getMonth() + 1;
+  let startDay =
+    getLength(startDate.getDate()) == 1
+      ? "0" + startDate.getDate()
+      : startDate.getDate();
+
+  let endYear = endDate.getFullYear();
+  let endMonth =
+    getLength(endDate.getMonth() + 1) == 1
+      ? "0" + Number(endDate.getMonth() + 1)
+      : endDate.getMonth() + 1;
+  let endDay =
+    getLength(endDate.getDate()) == 1
+      ? "0" + endDate.getDate()
+      : endDate.getDate();
+
+  axiosInstance
+    .get(
+      `http://127.0.0.1:8000/expenses/company/${company}/${branch}/${startYear}/${startMonth}/${startDay}/${endYear}/${endMonth}/${endDay}/`
+    )
     .then((res) =>
       dispatch({
         type: GET_EXPENSES,

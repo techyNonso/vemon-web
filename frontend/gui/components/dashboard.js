@@ -26,6 +26,9 @@ import StockActivities from "./dashComponents/stockActivities";
 import DashboardPage from "./dashComponents/dashboardPage";
 import Settings from "./dashComponents/settings";
 
+import { sortCompanies } from "Modules/company";
+
+
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -37,11 +40,14 @@ class Dashboard extends Component {
       selectedBranch: "",
       selectedBranchId: "",
       selectedCompanyId: "",
+      
     };
     //this.handleProps = this.handleProps.bind(this);
   }
 
+  
   componentDidMount() {
+    
     //check if we have companies and branches in store
     if (this.props.companies.length == 0) {
       this.props.getCompanies();
@@ -83,20 +89,21 @@ class Dashboard extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.companies !== this.props.companies) {
-      this.props.getCompany(this.props.companies[0].id);
+      let sortedCompanies = sortCompanies(this.props.companies);
+      this.props.getCompany(sortedCompanies[0].id);
 
       this.setState({
         companies: this.props.companies,
-        selectedCompany: this.props.company,
-        selectedCompanyId: this.props.company.id,
       });
     }
 
     if (prevProps.company !== this.props.company) {
       //get branches for this company
       this.props.getCompanyBranches(this.props.company.companyId);
+
       this.setState({
         selectedCompany: this.props.company,
+        selectedCompanyId: this.props.company.id,
       });
     }
 
@@ -104,7 +111,11 @@ class Dashboard extends Component {
       this.setState({
         branches: this.props.branches,
       });
-      this.props.getBranch(this.props.branches[0].id);
+
+      //check if they are branches
+      if (this.props.branches.length > 0) {
+        this.props.getBranch(this.props.branches[0].id);
+      }
     }
 
     if (prevProps.branch !== this.props.branch) {
@@ -136,6 +147,7 @@ class Dashboard extends Component {
 
     return (
       <div>
+         
         <Header />
 
         <div className="wrapper ">
@@ -313,7 +325,9 @@ class Dashboard extends Component {
               {childPage.toUpperCase() === "ALLSALES" && (
                 <AllSales branches={this.state.branches} />
               )}
-              {childPage.toUpperCase() === "ACCOUNTREPORT" && <AccountReport />}
+              {childPage.toUpperCase() === "ACCOUNTREPORT" && (
+                <AccountReport branches={this.state.branches} />
+              )}
               {childPage.toUpperCase() === "ALLSTOCK" && (
                 <AllStock branches={this.state.branches} />
               )}
@@ -344,12 +358,11 @@ class Dashboard extends Component {
                 <OnlineSales branches={this.state.branches} />
               )}
               {childPage.toUpperCase() === "STAFFLIST" && (
-                <StaffList
-                  branches={this.state.branches}
-                  branches={this.state.branches}
-                />
+                <StaffList branches={this.state.branches} />
               )}
-              {childPage.toUpperCase() === "PRODUCTREPORT" && <ProductReport />}
+              {childPage.toUpperCase() === "PRODUCTREPORT" && (
+                <ProductReport branches={this.state.branches} />
+              )}
               {childPage.toUpperCase() === "STOCKACTIVITIES" && (
                 <StockActivities branches={this.state.branches} />
               )}
@@ -378,6 +391,7 @@ const mapStateToProps = (state) => ({
   company: state.companies.item,
   branches: state.branches.items,
   branch: state.branches.item,
+  user: state.account.item,
 });
 
 export default connect(mapStateToProps, {
