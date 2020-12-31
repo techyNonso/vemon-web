@@ -90,7 +90,8 @@ class Dashboard extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.companies !== this.props.companies) {
       let sortedCompanies = sortCompanies(this.props.companies);
-      this.props.getCompany(sortedCompanies[0].id);
+      //check length for sortedCompanies
+       sortedCompanies.length > 0 ? this.props.getCompany(sortedCompanies[0].id): "";
 
       this.setState({
         companies: this.props.companies,
