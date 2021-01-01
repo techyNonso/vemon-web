@@ -108,7 +108,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'vemon',
         'USER': 'postgres',
-        'PASSWORD': '12345',
+        'PASSWORD': 'William=19?',
         'HOST': 'localhost'
     }
 }

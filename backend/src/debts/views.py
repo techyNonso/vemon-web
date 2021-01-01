@@ -10,6 +10,21 @@ from rest_framework.permissions import IsAuthenticated
 #create view for company debts
 @permission_classes((IsAuthenticated,))
 @api_view(['GET'])
+def debtsPerCompany(request,company,startyear,startmonth,startday,endyear,endmonth,endday):
+    start_date = "%d-%d-%d"%(startyear,startmonth,startday)
+    end_date = "%d-%d-%d"%(endyear,endmonth,endday)
+
+    if request.method == "GET":
+        debts = debt.objects.filter(companyId=company,date__range=[start_date, end_date])
+        serializer = DebtSerializer(debts,many=True)
+        return Response(serializer.data)
+
+
+
+
+#create view for company debts
+@permission_classes((IsAuthenticated,))
+@api_view(['GET'])
 def debtsForCompany(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
     start_date = "%d-%d-%d"%(startyear,startmonth,startday)
     end_date = "%d-%d-%d"%(endyear,endmonth,endday)

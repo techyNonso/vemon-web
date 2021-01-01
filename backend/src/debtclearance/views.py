@@ -7,6 +7,21 @@ from .serializers import DebtClearanceSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
 
+
+#create view for company clearance
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def debtClearancePerCompany(request,company,startyear,startmonth,startday,endyear,endmonth,endday):
+    start_date = "%d-%d-%d"%(startyear,startmonth,startday)
+    end_date = "%d-%d-%d"%(endyear,endmonth,endday)
+    
+    if request.method == "GET":
+        clearance = debtClearance.objects.filter(companyId=company,date__range=[start_date, end_date])
+        serializer = DebtClearanceSerializer(clearance,many=True)
+        return Response(serializer.data)
+
+
+
 #create view for company clearance
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
