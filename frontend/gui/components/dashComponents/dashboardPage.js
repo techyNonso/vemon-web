@@ -29,6 +29,8 @@ import { extractExpenses } from "Modules/expenses";
 //loading imports
 import {css} from '@emotion/core'
 import {BeatLoader} from 'react-spinners'
+import SingleDatePicker from "./singleDatePicker";
+
 
 class DashboardPage extends Component {
   constructor(props) {
@@ -176,6 +178,12 @@ class DashboardPage extends Component {
     }
     return (
       <Fragment>
+
+        <div className="row justify-content-center mb-4">
+          <SingleDatePicker style={{"textAlign":"center"}}/>
+          
+
+        </div>
         <div className="row mb-2 pr-3">
           <div className="col-lg-3 mb-4 pl-3 pr-3">
             <div className="showBox">
