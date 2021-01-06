@@ -20,6 +20,9 @@ import {
   getClearanceDetails,
   generateReport,
   extractSales,
+  getMonthlySalesReport,
+  getMonthlyAnalysis,
+  getBranchPerformance
 } from "Modules/account";
 import { extractProductId, getStockArray } from "Modules/stock";
 
@@ -36,10 +39,10 @@ class DashboardPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      startDate: new Date(),
-      endDate: new Date(),
-      initialStartDate: new Date(),
-      initialEndDate: new Date(),
+      startDate: new Date(2020,0,1),
+      endDate: new Date(2020,11,31),
+      initialStartDate: new Date(2020,0,1),
+      initialEndDate: new Date(2020,11,31),
       loading: "none",
       displayModal: false,
       sales: [],
@@ -72,8 +75,72 @@ class DashboardPage extends Component {
       currentSale: "",
       currentDate: "",
       percentDiff: "",
+      monthlySales:{},
+      monthlyAnalysis:{},
+      branchPerformance:[]
     };
 
+  }
+
+  
+  handleProps(props) {
+    //check if both dates are not null
+    let startDate = this.state.startDate;
+    if (startDate == null) {
+      startDate = this.state.initialStartDate;
+    }
+    let endDate = this.state.endDate;
+    if (startDate !== null && endDate !== null) {
+     // console.log(startDate, endDate)
+      let dates = extractDates(startDate, endDate);
+      //let ids = extractProductId(props.stocks);
+
+     // let stocks = getStockArray(ids, props.stocks);
+      let mainDebts = props.debts;
+      let mainExpenses = props.expenses;
+      let mainSales = props.sales;
+      let mainClearance = props.clearance;
+      let [total, paidSum] = getTotalSalesDetails(mainSales);
+      let debtSum = getDebtDetails(mainDebts);
+      let clearanceSum = getClearanceDetails(mainClearance);
+      let expenseSum = getExpenseSum(mainExpenses);
+
+      //sort sales based on month
+      let monthlySalesReport= getMonthlySalesReport(mainSales)
+
+      //get sales analysis based on month
+      let monthlyAnalysis= getMonthlyAnalysis(mainSales)
+
+      //get branch performance
+      let branchPerformance = getBranchPerformance(props.branches,mainSales)
+      
+      //get balance paid money + money from debt redemption
+      let balance = Number(paidSum + clearanceSum);
+      
+      //generate report
+     // let report = generateReport(
+     //   dates,
+      //  mainDebts,
+     //   mainExpenses,
+     //   mainSales,
+     //   mainClearance,
+     //   stocks
+     // );
+
+      //set state of activities
+      this.setState({
+        total: total,
+        paidSum: paidSum,
+        debtSum: debtSum,
+        expenseSum: expenseSum,
+        debtPaid: clearanceSum,
+        balance,
+        loading: "none",
+        //report,
+        monthlySales: monthlySalesReport,
+        monthlyAnalysis
+      });
+    }
   }
 
 
@@ -109,16 +176,13 @@ class DashboardPage extends Component {
 
     //check if debts have arrived
     if (prevProps.debts !== this.props.debts) {
-      this.props.getStocks(
-        this.props.company.companyId,
-        this.props.branch.branchId
-      );
+      this.handleProps(this.props)
     }
 
     //check if stocks have arrived
-    if (prevProps.stocks !== this.props.stocks) {
-     // this.handleProps(this.props);
-    }
+    //if (prevProps.stocks !== this.props.stocks) {
+      //this.handleProps(this.props);
+    //}
 
     if (
       prevProps.company !== this.props.company ||
@@ -170,6 +234,21 @@ class DashboardPage extends Component {
     });
   }
 
+  workDate(date){
+    let firstDate = date
+    let lastDate = new Date(date.getFullYear(),11,31)
+    
+
+    this.setState({
+      initialStartDate: firstDate,
+      initialEndDate: lastDate,
+      startDate: firstDate,
+      endDate: lastDate,
+    });
+
+    
+  }
+
 
   render() {
     const tableStyle={
@@ -180,7 +259,7 @@ class DashboardPage extends Component {
       <Fragment>
 
         <div className="row justify-content-center mb-4">
-          <SingleDatePicker style={{"textAlign":"center"}}/>
+          <SingleDatePicker fxn={this.workDate.bind(this)} style={{"textAlign":"center"}}/>
           
 
         </div>
@@ -205,7 +284,7 @@ class DashboardPage extends Component {
             <div className="showBox">
               <div className="showChild showTop">
                 <i className="fa fa-money" aria-hidden="true" id="incVol"></i>
-                <span id="span4">{this.state.paidSum}</span>
+                <span id="span4">{this.state.balance}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Total Cash</div>
@@ -246,9 +325,27 @@ class DashboardPage extends Component {
           </div>
         </div>
 
+        
+
+        {/** row for charts */}
+       <div className="row pr-3 pl-2" >
+          <div className="col-lg-6  pl-2 pr-3 mb-3 " >
+          <div className="p-3  showBox " style={{'height':'350px'}} >
+          <BarChart data={this.state.monthlySales} />
+            </div>
+        </div>
+          <div className="col-lg-6  pl-2 pr-3 mb-3 " >
+            <div className="p-3 showBox"  style={{'height':'350px'}}>
+           
+              <LineChart data={this.state.monthlyAnalysis}/>
+            
+            </div>
+          </div>
+        </div>
+
         {/** row for trables for products and branches */}
         <div className="row pr-3 pl-2" >
-          <div className="col-md-6  pl-2 pr-3 mb-3 " >
+          <div className="col-lg-6  pl-2 pr-3 mb-3 " >
             <div className="p-3 showBox table-responsive" style={tableStyle}>
             <h6 className="border border-top-0 border-right-0 border-left-0">Top Products</h6>
             <table className="table table-sm table-striped table-borderless">
@@ -275,7 +372,7 @@ class DashboardPage extends Component {
             </table>
             </div>
           </div>
-          <div className="col-md-6  pl-2 pr-3 mb-3 " >
+          <div className="col-lg-6  pl-2 pr-3 mb-3 " >
           <div className="p-3 showBox table-responsive" style={tableStyle}>
           <h6 className="border border-top-0 border-right-0 border-left-0">Top branches</h6>
           <table className="table table-sm table-striped table-borderless">
@@ -297,30 +394,15 @@ class DashboardPage extends Component {
         </div>
 
         {/** row for charts */}
-       <div className="row pr-3 pl-2" >
-          <div className="col-md-8  pl-2 pr-3 mb-3 " >
-            <div className="p-3 showBox" >
-            <div className="chart">
-              <LineChart/>
-            </div>
-            </div>
-          </div>
-          <div className="col-md-4  pl-2 pr-3 mb-3 " >
-          <div className="p-3  showBox " >
-            <MyCalendar />
-            </div>
-        </div>
-        </div>
-
-        {/** row for charts */}
+        {/*
        <div className="row mt-3 pr-4 pl-3 " >
         <div className="showBox">
           <div className="p-3 chart " >
-            <BarChart />
+            <BarChart data={this.state.monthlySales} />
           </div>
         </div>
         </div>
-        
+        */}
         
       </Fragment>
       )
@@ -335,6 +417,7 @@ const mapStateToProps = (state) => ({
   expenses: state.expenses.items,
   debts: state.debts.items,
   branch: state.branches.item,
+  branches: state.branches.items,
   company: state.companies.item,
 });
 

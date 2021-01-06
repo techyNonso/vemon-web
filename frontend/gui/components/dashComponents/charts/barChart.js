@@ -2,52 +2,70 @@ import React from 'react'
 import {Bar} from 'react-chartjs-2'
 
 
-function BarChart(){
+function BarChart(props){
+    
+    let  info;
+    
+    if(Object.keys(props.data).length > 0 && props.data.constructor === Object){
+       info = props.data
+
+    }else{
+        info = {
+            Jan:0,
+            Feb:0,
+            Mar: 0,
+            Apr:0,
+            May:0,
+            Jun:0,
+            Jul:0,
+            Aug:0,
+            Sep:0,
+            Oct:0,
+            Nov:0,
+            Dec:0
+          
+          }
+    }
+    
     const data = {
         labels: [
-            'jan',
-            'feb',
-            'mar',
-            'apr',
-            'may',
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
         ],
         datasets: [
             {
-               label: 'sales for 2020(m)',
-               data: [3,2,2,1,5],
-               borderColor:['rgba(255,206,86,0.2)','rgba(255,206,86,0.2)','rgba(255,206,86,0.2)','rgba(255,206,86,0.2)','rgba(255,206,86,0.2)'],
-               backgroundColor:['rgba(255,206,86,0.2)','rgba(255,206,86,0.2)','rgba(255,206,86,0.2)','rgba(255,206,86,0.2)','rgba(255,206,86,0.2)'],
+               label: 'All Sales Per Month',
+               data: [info.Jan,info.Feb,info.Mar,info.Apr,info.May,info.Jun,info.Jul,info.Aug,info.Sep,info.Oct,info.Nov,info.Dec],
+               borderColor:['#00c853','#00c853','#00c853','#00c853','#00c853','#00c853','#00c853','#00c853','#00c853','#00c853','#00c853','#00c853'],
+               backgroundColor:['#00c853','#00c853','#00c853','#00c853','#00c853','#00c853','#00c853','#00c853','#00c853','#00c853','#00c853','#00c853'],
                
              },
-             {
-                label: 'sales for 2019(m)',
-                data: [1,5,2,3,4],
-                borderDash:[5],
-                fill:false,
-                borderColor:['rgba(54,162,235,0.2)','rgba(54,162,235,0.2)','rgba(54,162,235,0.2)','rgba(54,162,235,0.2)','rgba(54,162,235,0.2)',],
-               backgroundColor:['rgba(54,162,235,0.2)','rgba(54,162,235,0.2)','rgba(54,162,235,0.2)','rgba(54,162,235,0.2)','rgba(54,162,235,0.2)',],
-               
-              }
+            
        ]
     }
 
     const options = {
         title: {
             display: true,
-            text: 'Bar Chart'
+            text: 'Revenue Generated'
         },
-        scales:{
-            yAxes:[{
-                ticks:{
-                    min:0,
-                    max: 6,
-                    stepSize: 1
-                }
-            }]
-        }
+        maintainAspectRatio: false
+        
     }
+
+   
     return (
-        <Bar data={data} options={options}/>
+        <Bar data={data} options={options} width={100}   />
     )
 }
 

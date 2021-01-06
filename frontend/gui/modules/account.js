@@ -25,6 +25,7 @@ export const extractSales = (dates, sales) => {
 };
 
 export const getTotalSalesDetails = (sales) => {
+  //console.table(sales)
   let total = 0;
   let paidSum = 0;
   sales.forEach((sale) => {
@@ -57,6 +58,7 @@ export const getExpenseSum = (expenses) => {
 };
 
 export const getClearanceDetails = (clearance) => {
+  
   let clearanceSum = 0;
 
   clearance.forEach((aClearance) => {
@@ -299,3 +301,274 @@ export const generateReport = (
 
   return reportArray;
 };
+
+//report for monthly sale
+export const getMonthlyAnalysis = (sales) => {
+  //console.table(sales)
+  let report = {
+    'Jan':{
+      'online':0,
+      'cash':0,
+      'credit':0
+    },
+    'Feb':{
+      online:0,
+      cash:0,
+      credit:0
+    },
+    'Mar': {
+      online:0,
+      cash:0,
+      credit:0
+    },
+    'Apr':{
+      online:0,
+      cash:0,
+      credit:0
+    },
+    'May':{
+      online:0,
+      cash:0,
+      credit:0
+    },
+    'Jun':{
+      online:0,
+      cash:0,
+      credit:0
+    },
+    'Jul':{
+      online:0,
+      cash:0,
+      credit:0
+    },
+    'Aug':{
+      online:0,
+      cash:0,
+      credit:0
+    },
+    'Sep':{
+      online:0,
+      cash:0,
+      credit:0
+    },
+    'Oct':{
+      online:0,
+      cash:0,
+      credit:0
+    },
+    'Nov':{
+      online:0,
+      cash:0,
+      credit:0
+    },
+    'Dec':{
+      online:0,
+      cash:0,
+      credit:0
+    }
+  
+  }
+
+   //loop through the sale
+   sales.forEach(sale =>{
+
+    //add sales for each month
+    switch (new Date(sale.date).getMonth()) {
+      case 0:
+        report.Jan = {
+          'online': sale.transactionType.toUpperCase() == 'ONLINE' ? report.Jan.online+ 1:report.Jan.online + 0,
+          'cash':sale.transactionType.toUpperCase() == 'CASH' ? report.Jan.cash+ 1:report.Jan.cash + 0,
+          'credit':sale.transactionType.toUpperCase() == 'CREDIT' ? report.Jan.credit+ 1:report.Jan.credit + 0
+        } 
+        break;
+      case 1:
+        report.Feb = {
+          'online': sale.transactionType.toUpperCase() == 'ONLINE' ? report.Feb.online+ 1:report.Feb.online + 0,
+          'cash':sale.transactionType.toUpperCase() == 'CASH' ? report.Feb.cash+ 1:report.Feb.cash + 0,
+          'credit':sale.transactionType.toUpperCase() == 'CREDIT' ? report.Feb.credit+ 1:report.Feb.credit + 0
+        }  
+        break;
+      case 2:
+        report.Mar = {
+          'online': sale.transactionType.toUpperCase() == 'ONLINE' ? report.Mar.online+ 1:report.Mar.online + 0,
+          'cash':sale.transactionType.toUpperCase() == 'CASH' ? report.Mar.cash+ 1:report.Mar.cash + 0,
+          'credit':sale.transactionType.toUpperCase() == 'CREDIT' ? report.Mar.credit+ 1:report.Mar.credit + 0
+        }
+        break;
+      case 3:
+        report.Apr = {
+          'online': sale.transactionType.toUpperCase() == 'ONLINE' ? report.Apr.online+ 1:report.Apr.online + 0,
+          'cash':sale.transactionType.toUpperCase() == 'CASH' ? report.Apr.cash+ 1:report.Apr.cash + 0,
+          'credit':sale.transactionType.toUpperCase() == 'CREDIT' ? report.Apr.credit+ 1:report.Apr.credit + 0
+        } 
+          break;
+      case 4:
+        report.May = {
+          'online': sale.transactionType.toUpperCase() == 'ONLINE' ? report.May.online+ 1:report.May.online + 0,
+          'cash':sale.transactionType.toUpperCase() == 'CASH' ? report.May.cash+ 1:report.May.cash + 0,
+          'credit':sale.transactionType.toUpperCase() == 'CREDIT' ? report.May.credit+ 1:report.May.credit + 0
+        }  
+        break;
+      case 5:
+        report.Jun = {
+          'online': sale.transactionType.toUpperCase() == 'ONLINE' ? report.Jun.online+ 1:report.Jun.online + 0,
+          'cash':sale.transactionType.toUpperCase() == 'CASH' ? report.Jun.cash+ 1:report.Jun.cash + 0,
+          'credit':sale.transactionType.toUpperCase() == 'CREDIT' ? report.Jun.credit+ 1:report.Jun.credit + 0
+        } 
+        break;
+      case 6:
+        report.Jul = {
+          'online': sale.transactionType.toUpperCase() == 'ONLINE' ? report.Jul.online+ 1:report.Jul.online + 0,
+          'cash':sale.transactionType.toUpperCase() == 'CASH' ? report.Jul.cash+ 1:report.Jul.cash + 0,
+          'credit':sale.transactionType.toUpperCase() == 'CREDIT' ? report.Jul.credit+ 1:report.Jul.credit + 0
+        } 
+        break;
+      case 7:
+        report.Aug = {
+          'online': sale.transactionType.toUpperCase() == 'ONLINE' ? report.Aug.online+ 1:report.Aug.online + 0,
+          'cash':sale.transactionType.toUpperCase() == 'CASH' ? report.Aug.cash+ 1:report.Aug.cash + 0,
+          'credit':sale.transactionType.toUpperCase() == 'CREDIT' ? report.Aug.credit+ 1:report.Aug.credit + 0
+        } 
+        break;
+      case 8:
+        report.Sep = {
+          'online': sale.transactionType.toUpperCase() == 'ONLINE' ? report.Sep.online+ 1:report.Sep.online + 0,
+          'cash':sale.transactionType.toUpperCase() == 'CASH' ? report.Sep.cash+ 1:report.Sep.cash + 0,
+          'credit':sale.transactionType.toUpperCase() == 'CREDIT' ? report.Sep.credit+ 1:report.Sep.credit + 0
+        } 
+        break;
+      case 9:
+        report.Oct = {
+          'online': sale.transactionType.toUpperCase() == 'ONLINE' ? report.Oct.online+ 1:report.Oct.online + 0,
+          'cash':sale.transactionType.toUpperCase() == 'CASH' ? report.Oct.cash+ 1:report.Oct.cash + 0,
+          'credit':sale.transactionType.toUpperCase() == 'CREDIT' ? report.Oct.credit+ 1:report.Oct.credit + 0
+        } 
+        break;
+      case 10:
+        report.Nov = {
+          'online': sale.transactionType.toUpperCase() == 'ONLINE' ? report.Nov.online+ 1:report.Nov.online + 0,
+          'cash':sale.transactionType.toUpperCase() == 'CASH' ? report.Nov.cash+ 1:report.Nov.cash + 0,
+          'credit':sale.transactionType.toUpperCase() == 'CREDIT' ? report.Nov.credit+ 1:report.Nov.credit + 0,
+        }
+        break;
+      case 11:
+        report.Dec = {
+          'online': sale.transactionType.toUpperCase() == 'ONLINE' ? report.Dec.online+ 1:report.Dec.online + 0,
+          'cash':sale.transactionType.toUpperCase() == 'CASH' ? report.Dec.cash+ 1:report.Dec.cash + 0,
+          'credit':sale.transactionType.toUpperCase() == 'CREDIT' ? report.Dec.credit+ 1:report.Dec.credit + 0
+        }  
+        break; 
+      default:
+        break;
+    }
+  })
+  return report
+}
+
+//report for monthly sale
+export const getMonthlySalesReport = (sales) => {
+  //console.table(sales)
+  let report = {
+    Jan:0,
+    Feb:0,
+    Mar: 0,
+    Apr:0,
+    May:0,
+    Jun:0,
+    Jul:0,
+    Aug:0,
+    Sep:0,
+    Oct:0,
+    Nov:0,
+    Dec:0
+  
+  }
+
+  //loop through the sale
+  sales.forEach(sale =>{
+
+    //add sales for each month
+    switch (new Date(sale.date).getMonth()) {
+      case 0:
+        report.Jan = report.Jan + sale.price 
+        break;
+      case 1:
+        report.Feb = report.Feb + sale.price 
+        break;
+      case 2:
+        report.Mar = report.Mar + sale.price 
+        break;
+      case 3:
+        report.Apr = report.Apr + sale.price 
+          break;
+      case 4:
+        report.May = report.May + sale.price 
+        break;
+      case 5:
+        report.Jun = report.Jun + sale.price 
+        break;
+      case 6:
+        report.Jul = report.Jul + sale.price 
+        break;
+      case 7:
+        report.Aug = report.Aug + sale.price 
+        break;
+      case 8:
+        report.Sep = report.Sep + sale.price 
+        break;
+      case 9:
+        report.Oct = report.Oct + sale.price 
+        break;
+      case 10:
+        report.Nov = report.Nov + sale.price 
+        break;
+      case 11:
+        report.Dec = report.Dec + sale.price 
+        break; 
+      default:
+        break;
+    }
+  })
+  return report
+}
+
+const getIds = branches => {
+  let ids = []
+  branches.forEach(branch => (
+    ids = [...ids, branch.branchId]
+  ))
+  return ids
+}
+
+/*
+const getObjectOfArray= (ids) => {
+  return ids.reduce((acc,curr) => (acc[curr]=0,acc),{})
+}
+*/
+const getBranchReport = (ids,sales)=> {
+
+  let report = []
+  
+  ids.forEach(id => {
+    //loop through sales
+    let totalSales = 0;
+    sales.forEach(sale => {
+      totalSales = sale.branchId.toUpperCase() == id.toUpperCase()? totalSales + sale.price : totalSales + 0
+    })
+
+    //add the branch to report
+    report = [...report,{id: id, total: totalSales}]
+  });
+
+  return report
+}
+
+//get branches performance
+export const getBranchPerformance = (branches,sales) => {
+  //get all the branch ids
+  let ids = getIds(branches)
+  
+  //get sales for each branch
+  let report = getBranchReport(ids,sales)
+  
+}

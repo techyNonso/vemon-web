@@ -10,10 +10,15 @@ const SingleDatePicker = (props) => {
       {value}
     </button>
   );**/}
+
+  const changeDate = date => {
+    setStartDate(date)
+    props.fxn(date)
+  }
   return (
     <DatePicker
       selected={startDate}
-      onChange={date => setStartDate(date)}
+      onChange={date => changeDate(date)}
       showYearPicker
       dateFormat="yyyy"
       //customInput={<ExampleCustomInput />}
