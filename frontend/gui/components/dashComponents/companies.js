@@ -3,7 +3,11 @@ import React, { Component, Fragment, useState } from "react";
 import propTypes from "prop-types";
 import { connect } from "react-redux";
 import Pagination from "Components/dashComponents/pagination";
-import { getCompanies, getCompany } from "Store/actions/companyAction";
+import {
+  getCompanies,
+  getCompany,
+  createCompany,
+} from "Store/actions/companyAction";
 import axios from "axios";
 import { getSearchResult, sortCompanies } from "Modules/company";
 
@@ -21,13 +25,12 @@ import {
 } from "react-paystack";
 
 //loading imports
-import {css} from '@emotion/core'
-import {BeatLoader} from 'react-spinners'
+import { css } from "@emotion/core";
+import { BeatLoader } from "react-spinners";
 
+import swal from "sweetalert";
 
-
-import swal from 'sweetalert'
-
+import Alerts from "Components/alerts";
 
 class Companies extends Component {
   constructor(props) {
@@ -51,6 +54,7 @@ class Companies extends Component {
 
     this.handleProps = this.handleProps.bind(this);
     this.getLength = this.getLength.bind(this);
+    this.hideLoading = this.hideLoading.bind(this);
   }
 
   handleProps(props) {
@@ -145,11 +149,12 @@ class Companies extends Component {
           loading: "none",
         });
 
-        swal({ title:"Company Deleted Successfully",
-        //text :" Name change successful",
-        icon:"success",
-        button:"OK",
-      })
+        swal({
+          title: "Company Deleted Successfully",
+          //text :" Name change successful",
+          icon: "success",
+          button: "OK",
+        });
 
         this.props.getCompanies();
       })
@@ -176,12 +181,12 @@ class Companies extends Component {
           loading: "none",
         });
 
-        swal({ title:"Company Updated Successfully",
-        //text :" Name change successful",
-        icon:"success",
-        button:"OK",
-      })
-
+        swal({
+          title: "Company Updated Successfully",
+          //text :" Name change successful",
+          icon: "success",
+          button: "OK",
+        });
 
         this.props.getCompanies();
       })
@@ -234,6 +239,7 @@ class Companies extends Component {
   proceedCreate({ name, plan }) {
     this.setState({
       displayModal: false,
+      loading: "block",
     });
 
     //generate company Id
@@ -258,20 +264,8 @@ class Companies extends Component {
       plan: plan,
     };
 
-    this.setState({
-        loading: "block",
-      });
-
-
-    axiosInstance
-      .post("http://127.0.0.1:8000/companies/", data)
-      .then((res) => {
-        this.props.getCompanies();
-        this.setState({
-          loading: "none",
-        });
-      })
-      .catch((err) => console.log(err.response.data));
+    //create company
+    this.props.createCompany(data);
   }
 
   //change modal state to false
@@ -334,9 +328,12 @@ class Companies extends Component {
     ) {
       //check if company has branches
       if (Number(this.props.company.branches) > 0 && this.state.deleteClick) {
-        console.log(
-          "you need to delete all branches associated with this company first"
-        );
+        swal({
+          title: "Warning",
+          text: " You need to delete all branches associated with this company",
+          icon: "warning",
+          button: "OK",
+        });
       } else {
         this.setState({ displayModal: true, company: this.props.company });
       }
@@ -357,26 +354,29 @@ class Companies extends Component {
 
   componentDidMount() {
     //check companies
-    if (this.props.companies.length > 0) {
-      this.handleProps(this.props);
-    } else {
-      this.props.getCompanies();
-      this.setState({
-        loading: "block",
-      });
-    }
+
+    this.props.getCompanies();
+    this.setState({
+      loading: "block",
+    });
+  }
+
+  //hide loading
+  hideLoading() {
+    this.setState({
+      loading: "none",
+    });
   }
 
   render() {
     const loaderStyle = {
-      "width":"200px",
-      "position":"fixed",
-      "zIndex":"1000",
-      "left":"50%",
-      "marginLeft":"-100px",
-      "display":this.state.loading
-    }
-
+      width: "200px",
+      position: "fixed",
+      zIndex: "1000",
+      left: "50%",
+      marginLeft: "-100px",
+      display: this.state.loading,
+    };
 
     //get current stocks
     const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
@@ -462,9 +462,12 @@ class Companies extends Component {
 
     return (
       <Fragment>
+        <Alerts hideLoading={this.hideLoading.bind(this)} />
         {modal}
-        <div className="row pr-4 mb-3" >
-          <div className="text-center  " style={loaderStyle} ><BeatLoader size={15} color="green" loading /></div>
+        <div className="row pr-4 mb-3">
+          <div className="text-center  " style={loaderStyle}>
+            <BeatLoader size={15} color="green" loading />
+          </div>
         </div>
         <div className="row mt-3 pl-3 pr-3">
           <div className="col-md-6 pb-2"></div>
@@ -494,9 +497,7 @@ class Companies extends Component {
                 <th colSpan="2">Action</th>
               </tr>
             </thead>
-            <tbody>
-              {companyList}
-            </tbody>
+            <tbody>{companyList}</tbody>
           </table>
         </div>
 
@@ -532,9 +533,11 @@ const mapStateToProps = (state) => ({
   company: state.companies.item,
 });
 
-export default connect(mapStateToProps, { getCompanies, getCompany })(
-  Companies
-);
+export default connect(mapStateToProps, {
+  getCompanies,
+  getCompany,
+  createCompany,
+})(Companies);
 
 //write modal for this app
 const ActMod = (props) => {

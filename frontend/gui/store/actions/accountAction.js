@@ -17,7 +17,7 @@ export const saveUser = (values) => {
 
 export const updateLimits = (values) => (dispatch) => {
   let data = {
-    expiration_limit: values.expiration_limit,
+    expiration_limit: values.expirationLimit,
     stock_limit: values.stockLimit,
   };
 
@@ -35,7 +35,13 @@ export const updateLimits = (values) => (dispatch) => {
         button:"OK",
       })
     })
-    .catch((err) => console.log(err.response.data));
+    .catch((err) => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    
+    });
 };
 
 export const updateDetails = (values) => (dispatch) => {
