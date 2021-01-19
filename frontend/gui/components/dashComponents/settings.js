@@ -8,6 +8,9 @@ import axiosInstance from "Modules/axiosInstance";
 import { css } from "@emotion/core";
 import { BeatLoader } from "react-spinners";
 
+//import forms
+import { Form } from "react-bootstrap";
+
 const Settings = (props) => {
   const [email, setEmail] = useState("");
   const [first_name, setFname] = useState("");
@@ -108,38 +111,34 @@ const Settings = (props) => {
               <h5>Stock settings</h5>
             </div>
 
-            <form action="" className="form mt-3">
-              <div className="form-field mb-3">
-                <input
+            <Form>
+              <Form.Group controlId="formStockPerc">
+                <Form.Control
                   type="number"
-                  id="stockPerc"
                   min="1"
-                  className="form-control"
                   placeholder="stock limit"
                   value={stockLimit}
                   onChange={changeStockLimit}
                 />
-                <span className="settingSpan">
+                <Form.Text className="settingSpan">
                   This is maximum percentage stock volume required to triger
                   stock exhaustion alert
-                </span>
-              </div>
+                </Form.Text>
+              </Form.Group>
 
-              <div className="form-field">
-                <input
+              <Form.Group controlId="formStockExp">
+                <Form.Control
                   type="number"
-                  id="stockExp"
                   min="1"
                   value={expirationLimit}
-                  className="form-control"
                   placeholder="expiration limit"
                   onChange={changeExpiration}
                 />
-                <span className="settingSpan">
+                <Form.Text className="settingSpan">
                   This is maximum number of days required to trigger stock
                   expiration alert
-                </span>
-              </div>
+                </Form.Text>
+              </Form.Group>
 
               <div className="border border-right-0 border-left-0 border-bottom-0 mt-3 text-right">
                 <a
@@ -150,7 +149,7 @@ const Settings = (props) => {
                   Save
                 </a>
               </div>
-            </form>
+            </Form>
           </div>
         </div>
 
@@ -160,28 +159,31 @@ const Settings = (props) => {
               <h5>User settings</h5>
             </div>
 
-            <form action="" className="form mt-3">
-              <div className="form-field mb-3">
-                <input
+            <Form action="" className=" mt-3">
+              <Form.Group controlId="lic" className=" mb-3">
+                <Form.Control
                   type="text"
-                  id="fname"
-                  className="form-control"
+                  readOnly={true}
+                  value="09280i8290928jbb"
+                />
+              </Form.Group>
+              <Form.Group controlId="fname" className="form-field mb-3">
+                <Form.Control
+                  type="text"
                   placeholder="Firstname"
                   value={first_name}
                   onChange={changeFname}
                 />
-              </div>
+              </Form.Group>
 
-              <div className="form-field mb-3">
-                <input
+              <Form.Group controlId="lname" className=" mb-3">
+                <Form.Control
                   type="text"
-                  id="lname"
-                  className="form-control"
                   placeholder="Lastname"
                   value={last_name}
                   onChange={changeLname}
                 />
-              </div>
+              </Form.Group>
 
               <br />
               <br />
@@ -206,7 +208,7 @@ const Settings = (props) => {
                   Save
                 </a>
               </div>
-            </form>
+            </Form>
           </div>
         </div>
       </div>
