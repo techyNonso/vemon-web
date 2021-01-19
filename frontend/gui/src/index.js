@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
+
 //import './froala/css/froala_blocks.min.css'
 //import './datepicker/style.css'
 //import './datePicker/picker.css'

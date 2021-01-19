@@ -8,6 +8,20 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
 
 
+
+#create view for company expenses
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def MyCompanyExpense(request,company,startyear,startmonth,startday,endyear,endmonth,endday):
+    start_date = "%d-%d-%d"%(startyear,startmonth,startday)
+    end_date = "%d-%d-%d"%(endyear,endmonth,endday)
+    
+    if request.method == "GET":
+        expenses = expense.objects.filter(companyId=company,date__range=[start_date, end_date])
+        serializer = ExpenseSerializer(expenses,many=True)
+        return Response(serializer.data)
+
+
 #create view for company expenses
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])

@@ -4,18 +4,27 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const SingleDatePicker = (props) => {
-  const [date, setDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date());
+  {/**const ExampleCustomInput = ({ value, onClick }) => (
+    <button className="" onClick={onClick}>
+      {value}
+    </button>
+  );**/}
 
+  const changeDate = date => {
+    setStartDate(date)
+    props.fxn(date)
+  }
   return (
     <DatePicker
-      selected={date}
-      dateFormat="yyyy-MM-dd"
-      onChange={(date) => {
-        props.func(date);
-        setDate(date);
-      }}
+      selected={startDate}
+      onChange={date => changeDate(date)}
+      showYearPicker
+      dateFormat="yyyy"
+      //customInput={<ExampleCustomInput />}
     />
   );
 };
 
 export default SingleDatePicker;
+

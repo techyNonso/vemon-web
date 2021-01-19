@@ -28,7 +28,6 @@ import Settings from "./dashComponents/settings";
 
 import { sortCompanies } from "Modules/company";
 
-
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -40,14 +39,12 @@ class Dashboard extends Component {
       selectedBranch: "",
       selectedBranchId: "",
       selectedCompanyId: "",
-      
+      altSideBar: "",
     };
     //this.handleProps = this.handleProps.bind(this);
   }
 
-  
   componentDidMount() {
-    
     //check if we have companies and branches in store
     if (this.props.companies.length == 0) {
       this.props.getCompanies();
@@ -87,10 +84,26 @@ class Dashboard extends Component {
     this.props.getBranch(event.target.value);
   }
 
+  //handle side bar show
+  showSideBar() {
+    this.setState({
+      altSideBar: "anonSideBar",
+    });
+  }
+
+  hideSideBar() {
+    this.setState({
+      altSideBar: "",
+    });
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.companies !== this.props.companies) {
       let sortedCompanies = sortCompanies(this.props.companies);
-      this.props.getCompany(sortedCompanies[0].id);
+      //check length for sortedCompanies
+      sortedCompanies.length > 0
+        ? this.props.getCompany(sortedCompanies[0].id)
+        : "";
 
       this.setState({
         companies: this.props.companies,
@@ -147,16 +160,16 @@ class Dashboard extends Component {
 
     return (
       <div>
-         
         <Header />
 
         <div className="wrapper ">
-          <nav id="sidebar">
-            <div className="mt-3 text-right pr-3">
+          <nav className={`sidebar ${this.state.altSideBar}`}>
+            <div className="mt-3 text-right pr-3 innerMenu">
               <button
                 type="button"
                 id="innerSidebarCollapse"
                 className="btn btn-sm btn-success hide"
+                onClick={this.hideSideBar.bind(this)}
               >
                 <span>
                   <i className="fa fa-bars"></i>
@@ -276,11 +289,11 @@ class Dashboard extends Component {
 
           <div id="content">
             <nav className=" pl-4 pb-3">
-              <div>
+              <div className="altMenu">
                 <button
                   type="button"
-                  id="sidebarCollapse"
-                  className="btn btn-sm btn-success"
+                  className="btn btn-sm btn-success "
+                  onClick={this.showSideBar.bind(this)}
                 >
                   <span>
                     <i className="fa fa-bars"></i>

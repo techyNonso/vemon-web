@@ -87,6 +87,7 @@ class AccountReport extends Component {
     this.ifPositive = this.ifPositive.bind(this);
   }
 
+  //work with date sent in
   handleDate(data) {
     this.setState({
       startDate: data.startDate,
