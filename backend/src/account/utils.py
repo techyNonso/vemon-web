@@ -10,11 +10,16 @@ class Util:
         """
 
         #send mail
-        send_mail(
-            data['email_subject'],
-            data['email_body'],
-            'williamikeji@gmail.com',
-            [data['to_email']],
-        )
+        try :
+            send_mail(
+                data['email_subject'],
+                data['email_body'],
+                'williamikeji@gmail.com',
+                [data['to_email']],
+                fail_silently=False
+            )
+            return True
+        except smtplib.SMTPException as error:
+            return False
 
         

@@ -5,11 +5,14 @@ import Auth from "Components/auth";
 import propTypes from "prop-types";
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
+  let path = window.location.pathname;
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (Auth.isAuthenticated()) {
+        if (Auth.isAuthenticated() && Auth.isNotCredentialPage(path)) {
+          return <Component {...props} />;
+        } else if (!Auth.isAuthenticated() && Auth.isCredentialPage(path)) {
           return <Component {...props} />;
         } else {
           return (

@@ -7,6 +7,36 @@ import Auth from "Components/auth";
 function Header(props) {
   const [online, setOnline] = useState("none");
   const [offline, setOffline] = useState("block");
+  //assign active to appropriate page
+  let about,
+    contact,
+    faq,
+    dashboard,
+    signin,
+    signup = "";
+  switch (props.location.split("/")[1]) {
+    case "about":
+      about = "active";
+      break;
+    case "contact":
+      contact = "active";
+      break;
+    case "faq":
+      faq = "active";
+      break;
+    case "dashboard":
+      dashboard = "active";
+      break;
+    case "signin":
+      signin = "active";
+      break;
+    case "signup":
+      signup = "active";
+      break;
+
+    default:
+      break;
+  }
 
   //user checker
   const isEmpty = (obj) => {
@@ -29,7 +59,6 @@ function Header(props) {
   }, []);
   return (
     <div>
-      
       <nav className="navbar navbar-expand-lg bg-dark navbar-dark shadow fixed-top navBar">
         <div className="container" style={{ backgroundColor: "inherit" }}>
           <Link className="navbar-brand" to="/">
@@ -55,33 +84,33 @@ function Header(props) {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link pl-2" to="/about" id="active">
+                <Link className="nav-link pl-2" to="/about" id={about}>
                   About
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link pl-2" to="/faq">
+                <Link className="nav-link pl-2" to="/faq" id={faq}>
                   FAQ
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link pl-2" to="/contact">
+                <Link className="nav-link pl-2" to="/contact" id={contact}>
                   Contact
                 </Link>
               </li>
               <li className="nav-item" style={{ display: online }}>
-                <Link className="nav-link pl-2" to="/dashboard">
+                <Link className="nav-link pl-2" to="/dashboard" id={dashboard}>
                   Dashboard
                 </Link>
               </li>
 
               <li className="nav-item" style={{ display: offline }}>
-                <Link className="nav-link pl-2" to="/signin">
+                <Link className="nav-link pl-2" to="/signin" id={signin}>
                   Sign in
                 </Link>
               </li>
               <li className="nav-item" style={{ display: offline }}>
-                <Link className="nav-link pl-2" to="/signup">
+                <Link className="nav-link pl-2" to="/signup" id={signup}>
                   Sign up
                 </Link>
               </li>

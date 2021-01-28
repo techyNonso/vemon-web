@@ -4,6 +4,7 @@ import propTypes from "prop-types";
 import { connect } from "react-redux";
 import Pagination from "Components/dashComponents/pagination";
 import { getDebts } from "Store/actions/debtsAction";
+import Formatter from "Components/dashComponents/Formatter";
 
 import {
   extractDates,
@@ -314,10 +315,10 @@ class Debts extends Component {
             </thead>
             <tbody>
               <tr>
-                <td>{this.state.total}</td>
+                <td>{Formatter.format(this.state.total)}</td>
 
-                <td>{this.state.paid} </td>
-                <td>{this.state.balance}</td>
+                <td>{Formatter.format(this.state.paid)} </td>
+                <td>{Formatter.format(this.state.balance)}</td>
               </tr>
             </tbody>
           </table>

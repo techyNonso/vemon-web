@@ -8,6 +8,7 @@ import { getStocks } from "Store/actions/stockAction";
 import { getClearance } from "Store/actions/clearanceAction";
 import { getExpenses } from "Store/actions/expenseAction";
 import { getDebts } from "Store/actions/debtsAction";
+import Formatter from "Components/dashComponents/Formatter";
 
 import { extractDates } from "Modules/sales";
 import { extractDebts } from "Modules/debts";
@@ -31,12 +32,9 @@ import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalFooter from "react-bootstrap/ModalFooter";
 import ModalTitle from "react-bootstrap/ModalTitle";
 
-
 //loading imports
-import {css} from '@emotion/core'
-import {BeatLoader} from 'react-spinners'
-
-
+import { css } from "@emotion/core";
+import { BeatLoader } from "react-spinners";
 
 class AccountReport extends Component {
   constructor(props) {
@@ -210,7 +208,7 @@ class AccountReport extends Component {
       prevProps.branch !== this.props.branch
     ) {
       //console.log(this.props.company.companyId, this.props.branch.branchId);
-      
+
       this.props.getSales(
         this.props.company.companyId,
         this.props.branch.branchId,
@@ -290,13 +288,13 @@ class AccountReport extends Component {
 
   render() {
     const loaderStyle = {
-      "width":"200px",
-      "position":"fixed",
-      "zIndex":"1000",
-      "left":"50%",
-      "marginLeft":"-100px",
-      "display":this.state.loading
-    }
+      width: "200px",
+      position: "fixed",
+      zIndex: "1000",
+      left: "50%",
+      marginLeft: "-100px",
+      display: this.state.loading,
+    };
 
     //get current stocks
     const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
@@ -374,8 +372,10 @@ class AccountReport extends Component {
     return (
       <Fragment>
         {modal}
-        <div className="row pr-4 mb-3" >
-          <div className="text-center  " style={loaderStyle} ><BeatLoader size={15} color="green" loading /></div>
+        <div className="row pr-4 mb-3">
+          <div className="text-center  " style={loaderStyle}>
+            <BeatLoader size={15} color="green" loading />
+          </div>
         </div>
         <div className="row mt-3 pl-3 pr-3">
           <div className="col-md-6 pb-2">
@@ -401,7 +401,7 @@ class AccountReport extends Component {
                   aria-hidden="true"
                   id="saleVol"
                 ></i>
-                <span id="span1">{this.state.total}</span>
+                <span id="span1">{Formatter.format(this.state.total)}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Total Amount</div>
@@ -413,7 +413,7 @@ class AccountReport extends Component {
             <div className="showBox">
               <div className="showChild showTop">
                 <i className="fa fa-money" aria-hidden="true" id="incVol"></i>
-                <span id="span4">{this.state.paidSum}</span>
+                <span id="span4">{Formatter.format(this.state.paidSum)}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Paid</div>
@@ -429,7 +429,7 @@ class AccountReport extends Component {
                   aria-hidden="true"
                   id="expVol"
                 ></i>
-                <span id="span2">{this.state.debtSum}</span>
+                <span id="span2">{Formatter.format(this.state.debtSum)}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Debt</div>
@@ -445,7 +445,9 @@ class AccountReport extends Component {
                   aria-hidden="true"
                   id="expenVol"
                 ></i>
-                <span id="span3">{this.state.expenseSum}</span>
+                <span id="span3">
+                  {Formatter.format(this.state.expenseSum)}
+                </span>
               </div>
               <div className="showChild">
                 <div className="showDown">Expenses</div>
@@ -463,7 +465,7 @@ class AccountReport extends Component {
                   aria-hidden="true"
                   id="invVol"
                 ></i>
-                <span id="span6">{this.state.debtPaid}</span>
+                <span id="span6">{Formatter.format(this.state.debtPaid)}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Debt Paid</div>
@@ -478,7 +480,7 @@ class AccountReport extends Component {
                   aria-hidden="true"
                   id="stockVol"
                 ></i>
-                <span id="span5">{this.state.balance}</span>
+                <span id="span5">{Formatter.format(this.state.balance)}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Balance</div>
@@ -502,9 +504,7 @@ class AccountReport extends Component {
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody>
-               {reportList}
-            </tbody>
+            <tbody>{reportList}</tbody>
           </table>
         </div>
 

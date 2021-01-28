@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Redirect } from "react";
 import { Link } from "react-router-dom";
 import Header from "./header";
 import { connect } from "react-redux";
@@ -25,6 +25,7 @@ import ExhaustedStock from "Components/dashComponents/exhaustedStock";
 import StockActivities from "./dashComponents/stockActivities";
 import DashboardPage from "./dashComponents/dashboardPage";
 import Settings from "./dashComponents/settings";
+import Formatter from "Components/dashComponents/Formatter";
 
 import { sortCompanies } from "Modules/company";
 
@@ -40,11 +41,36 @@ class Dashboard extends Component {
       selectedBranchId: "",
       selectedCompanyId: "",
       altSideBar: "",
+      allStock: "",
+      expired: "",
+      exhausted: "",
+      activities: "",
+      allSale: "",
+      cashSale: "",
+      creditSale: "",
+      onlineSale: "",
+      debts: "",
+      expenses: "",
+      companiesLink: "",
+      branchesLink: "",
+      staffList: "",
+      attendance: "",
+      account: "",
+      product: "",
+      setting: "",
+      dashboard: "",
+      stock: "",
+      sale: "",
+      staff: "",
+      report: "",
     };
     //this.handleProps = this.handleProps.bind(this);
   }
 
   componentDidMount() {
+    //fix link
+    this.organizeLinks();
+
     //check if we have companies and branches in store
     if (this.props.companies.length == 0) {
       this.props.getCompanies();
@@ -97,7 +123,181 @@ class Dashboard extends Component {
     });
   }
 
+  emptyLinks() {
+    this.setState({
+      allStock: "",
+      expired: "",
+      exhausted: "",
+      activities: "",
+      allSale: "",
+      cashSale: "",
+      creditSale: "",
+      onlineSale: "",
+      debts: "",
+      expenses: "",
+      companiesLink: "",
+      branchesLink: "",
+      staffList: "",
+      attendance: "",
+      account: "",
+      product: "",
+      setting: "",
+      dashboard: "",
+      stock: "",
+      sale: "",
+      staff: "",
+      report: "",
+    });
+  }
+
+  organizeLinks() {
+    if (this.props.location.pathname.split("/").length > 2) {
+      switch (this.props.location.pathname.split("/")[2].toUpperCase()) {
+        case "ALLSTOCK":
+          this.emptyLinks();
+          this.setState({
+            allStock: "active",
+            stock: "active",
+          });
+          break;
+
+        case "EXPIREDSTOCK":
+          this.emptyLinks();
+          this.setState({
+            expired: "active",
+            stock: "active",
+          });
+          break;
+
+        case "EXHAUSTEDSTOCK":
+          this.emptyLinks();
+          this.setState({
+            exhausted: "active",
+            stock: "active",
+          });
+          break;
+
+        case "STOCKACTIVITIES":
+          this.emptyLinks();
+          this.setState({
+            activities: "active",
+            stock: "active",
+          });
+          break;
+
+        case "ALLSALES":
+          this.emptyLinks();
+          this.setState({
+            allSale: "active",
+            sale: "active",
+          });
+          break;
+
+        case "CASHSALES":
+          this.emptyLinks();
+          this.setState({
+            cashSale: "active",
+            sale: "active",
+          });
+          break;
+
+        case "CREDITSALES":
+          this.emptyLinks();
+          this.setState({
+            creditSale: "active",
+            sale: "active",
+          });
+          break;
+
+        case "ONLINESALES":
+          this.emptyLinks();
+          this.setState({
+            onlineSale: "active",
+            sale: "active",
+          });
+          break;
+
+        case "DEBTS":
+          this.emptyLinks();
+          this.setState({
+            debts: "active",
+          });
+          break;
+
+        case "EXPENSES":
+          this.emptyLinks();
+          this.setState({
+            expenses: "active",
+          });
+          break;
+
+        case "COMPANIES":
+          this.emptyLinks();
+          this.setState({
+            companiesLink: "active",
+          });
+          break;
+
+        case "BRANCHES":
+          this.emptyLinks();
+          this.setState({
+            branchesLink: "active",
+          });
+          break;
+        case "STAFFLIST":
+          this.emptyLinks();
+          this.setState({
+            staffList: "active",
+            staff: "active",
+          });
+          break;
+
+        case "ATTENDANCE":
+          this.emptyLinks();
+          this.setState({
+            attendance: "active",
+            staff: "active",
+          });
+          break;
+
+        case "ACCOUNTREPORT":
+          this.emptyLinks();
+          this.setState({
+            account: "active",
+            report: "active",
+          });
+          break;
+
+        case "PRODUCTREPORT":
+          this.emptyLinks();
+          this.setState({
+            product: "active",
+            report: "active",
+          });
+          break;
+
+        case "SETTINGS":
+          this.emptyLinks();
+          this.setState({
+            setting: "active",
+          });
+          break;
+        default:
+          break;
+      }
+    } else {
+      this.emptyLinks();
+      this.setState({
+        dashboard: "active",
+      });
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
+    if (prevProps.location !== this.props.location) {
+      //fix link
+      this.organizeLinks();
+    }
     if (prevProps.companies !== this.props.companies) {
       let sortedCompanies = sortCompanies(this.props.companies);
       //check length for sortedCompanies
@@ -140,7 +340,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    //get child page if specified
+    //get  page if specified
     let childPage =
       this.props.match.params.page !== undefined
         ? this.props.match.params.page
@@ -158,9 +358,32 @@ class Dashboard extends Component {
       </option>
     ));
 
+    //array of child pages
+    let childPageArray = [
+      "ALLSALES",
+      "ACCOUNTREPORT",
+      "ALLSTOCK",
+      "ATTENDANCE",
+      "BRANCHES",
+      "CASHSALES",
+      "COMPANIES",
+      "CREDITSALES",
+      "DEBTS",
+      "EXHAUSTEDSTOCK",
+      "EXPENSES",
+      "EXPIREDSTOCK",
+      "ONLINESALES",
+      "STAFFLIST",
+      "PRODUCTREPORT",
+      "STOCKACTIVITIES",
+      "SETTINGS",
+    ];
+    if (childPageArray.indexOf(childPage.toUpperCase()) == -1) {
+      childPage = "";
+    }
     return (
       <div>
-        <Header />
+        <Header location={this.props.location.pathname} />
 
         <div className="wrapper ">
           <nav className={`sidebar ${this.state.altSideBar}`}>
@@ -178,11 +401,11 @@ class Dashboard extends Component {
             </div>
 
             <ul className="lisst-unstyled components">
-              <li className="active">
+              <li className={this.state.dashboard}>
                 <Link to="/dashboard">Dashboard</Link>
               </li>
 
-              <li>
+              <li className={this.state.stock}>
                 <a
                   href="#stockSubmenu"
                   data-toggle="collapse"
@@ -192,22 +415,22 @@ class Dashboard extends Component {
                   Stock
                 </a>
                 <ul className="collapse lisst-unstyled" id="stockSubmenu">
-                  <li>
+                  <li className={this.state.allStock}>
                     <Link to="/dashboard/allStock">All</Link>
                   </li>
-                  <li>
+                  <li className={this.state.expired}>
                     <Link to="/dashboard/expiredStock">Expired</Link>
                   </li>
-                  <li>
+                  <li className={this.state.exhausted}>
                     <Link to="/dashboard/exhaustedStock">Exhausted</Link>
                   </li>
-                  <li>
+                  <li className={this.state.activities}>
                     <Link to="/dashboard/stockActivities">Activities</Link>
                   </li>
                 </ul>
               </li>
 
-              <li>
+              <li className={this.state.sale}>
                 <a
                   href="#salesSubmenu"
                   data-toggle="collapse"
@@ -217,34 +440,34 @@ class Dashboard extends Component {
                   Sales
                 </a>
                 <ul className="collapse lisst-unstyled" id="salesSubmenu">
-                  <li>
+                  <li className={this.state.allSale}>
                     <Link to="/dashboard/allSales">All</Link>
                   </li>
-                  <li>
+                  <li className={this.state.cashSale}>
                     <Link to="/dashboard/cashSales">Cash</Link>
                   </li>
 
-                  <li>
+                  <li className={this.state.creditSale}>
                     <Link to="/dashboard/creditSales">Credit</Link>
                   </li>
-                  <li>
+                  <li className={this.state.onlineSale}>
                     <Link to="/dashboard/onlineSales">Online</Link>
                   </li>
                 </ul>
               </li>
-              <li>
+              <li className={this.state.debts}>
                 <Link to="/dashboard/debts">Debts</Link>
               </li>
-              <li>
+              <li className={this.state.expenses}>
                 <Link to="/dashboard/expenses">Expenses</Link>
               </li>
-              <li>
+              <li className={this.state.companiesLink}>
                 <Link to="/dashboard/companies">Companies</Link>
               </li>
-              <li>
+              <li className={this.state.branchesLink}>
                 <Link to="/dashboard/branches">Branches</Link>
               </li>
-              <li>
+              <li className={this.state.staff}>
                 <a
                   href="#staffSubmenu"
                   data-toggle="collapse"
@@ -254,16 +477,16 @@ class Dashboard extends Component {
                   Staff
                 </a>
                 <ul className="collapse lisst-unstyled" id="staffSubmenu">
-                  <li>
+                  <li className={this.state.staffList}>
                     <Link to="/dashboard/staffList">List</Link>
                   </li>
-                  <li>
+                  <li className={this.state.attendance}>
                     <Link to="/dashboard/attendance">Attendance</Link>
                   </li>
                 </ul>
               </li>
 
-              <li>
+              <li className={this.state.report}>
                 <a
                   href="#reportSubmenu"
                   data-toggle="collapse"
@@ -273,15 +496,15 @@ class Dashboard extends Component {
                   Reports
                 </a>
                 <ul className="collapse lisst-unstyled" id="reportSubmenu">
-                  <li>
+                  <li className={this.state.account}>
                     <Link to="/dashboard/accountReport">Account</Link>
                   </li>
-                  <li>
+                  <li className={this.state.product}>
                     <Link to="/dashboard/productReport">Product</Link>
                   </li>
                 </ul>
               </li>
-              <li>
+              <li className={this.state.setting}>
                 <Link to="/dashboard/settings">Settings</Link>
               </li>
             </ul>

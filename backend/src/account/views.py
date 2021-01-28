@@ -51,6 +51,31 @@ def registerUser(request):
         return Response(data)
 
 
+#@swagger_auto_schema(method='post',request_body=AttendanceSerializer)
+# Create your views here.
+@api_view(['POST',])
+@permission_classes([IsAuthenticated])
+def contactMessage(request, ):
+    
+    
+    
+    if request.method == 'POST':
+        data = request.data
+        
+        #'to' will take a value based on what department gets the mail
+        # the email sending should be on try and except
+        
+        email_to = "williamikeji@gmail.com"
+        email_body="From: "+data['fname']+" "+data['lname']+" "+"\n"+"Email: "+data['email']+"\n"+"Message: "+data['msg']+"\n"
+        message={'email_body':email_body,'to_email':email_to,'email_subject':'Customer message'}
+        #return message based on mail sending result
+        if Util.send_email(message):
+            return Response({'message':"Successfully sent"},status=status.HTTP_200_OK)
+        else:
+            return Response({'message':"Email not sent"},status=status.HTTP_502_BAD_GATEWAY)
+
+
+
 token_param_config=openapi.Parameter('token',in_=openapi.IN_QUERY,description='Description',type=openapi.TYPE_STRING)
 @swagger_auto_schema(method='get',manual_parameters=[token_param_config])
 @api_view(["GET"])
@@ -91,6 +116,7 @@ def userHandler(request,pk=None):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
 
 
 """

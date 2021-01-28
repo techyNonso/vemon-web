@@ -8,7 +8,7 @@ import Footer from "./footer";
 import axiosInstance from "Modules/axiosInstance";
 import { saveUser } from "Store/actions/accountAction";
 
-function Signin() {
+function Signin(props) {
   const history = useHistory();
   const initialFormData = Object.freeze({
     email: "",
@@ -73,7 +73,7 @@ function Signin() {
   };
   return (
     <div>
-      <Header />
+      <Header location={props.location.pathname} />
       <div className="main">
         <section className="sign-in">
           <div className="container formContainer">

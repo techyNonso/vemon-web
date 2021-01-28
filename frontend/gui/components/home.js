@@ -6,13 +6,13 @@ import { connect } from "react-redux";
 import propTypes from "prop-types";
 import Auth from "Components/auth";
 
-
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
       online: "none",
       offline: "block",
+      location: "",
     };
 
     this.isEmpty = this.isEmpty.bind(this);
@@ -28,6 +28,10 @@ class Home extends Component {
   }
 
   componentDidMount() {
+    //add color to link
+    this.setState({
+      location: this.props.location.pathname,
+    });
     //check if logged in
     if (Auth.isAuthenticated()) {
       this.setState({
@@ -45,8 +49,10 @@ class Home extends Component {
   render() {
     return (
       <div>
-        
-        <header style={{ backgroundImage: "url(/img/header3.jpg)" }}>
+        <header
+          style={{ backgroundImage: "url(/img/header3.jpg)" }}
+          location={this.state.location}
+        >
           <nav className="navbar navbar-expand-lg navbar-light  navBar">
             <div className="container" style={{ backgroundColor: "inherit" }}>
               <Link className="navbar-brand" to="/">
@@ -299,12 +305,13 @@ class Home extends Component {
                 <div className="bg-white p-3 text-center rounded sl-1 boxShadow">
                   <h3 className="font-weight-light">Standard</h3>
                   <strong className="h4">₦200,000.00</strong>
+                  <br />
                   <strong className="h6">₦0.00/Month</strong>
-                  <p className="text-center mt-4">
-                    <Link
-                      to="https://www.froala.com"
-                      className="btn btn-outline-success"
-                    >
+                  <p
+                    className="text-center mt-4"
+                    style={{ display: this.state.offline }}
+                  >
+                    <Link to="/signup" className="btn btn-outline-success">
                       Sign Up
                     </Link>
                   </p>
@@ -315,7 +322,7 @@ class Home extends Component {
                     <strike>Online Access</strike>
                   </p>
 
-                  <p>Subdomain</p>
+                  <p>1 Branch</p>
                 </div>
               </div>
 
@@ -323,12 +330,13 @@ class Home extends Component {
                 <div className="bg-white p-3 text-center rounded sl-1 boxShadow">
                   <h3 className="font-weight-light">Premium Pro</h3>
                   <strong className="h4">₦200,000.00</strong>
+                  <br />
                   <strong className="h6">₦3,000.00/Month</strong>
-                  <p className="text-center mt-4">
-                    <Link
-                      to="https://www.froala.com"
-                      className="btn btn-outline-success"
-                    >
+                  <p
+                    className="text-center mt-4"
+                    style={{ display: this.state.offline }}
+                  >
+                    <Link to="/signup" className="btn btn-outline-success">
                       Sign Up
                     </Link>
                   </p>
@@ -344,12 +352,13 @@ class Home extends Component {
                 <div className="bg-white p-3 text-center rounded sl-1 boxShadow">
                   <h3 className="font-weight-light">Premium Maxi</h3>
                   <strong className="h4">₦200,000.00</strong>
+                  <br />
                   <strong className="h6">₦7,000.00/Month</strong>
-                  <p className="text-center mt-4">
-                    <Link
-                      to="https://www.froala.com"
-                      className="btn btn-outline-success"
-                    >
+                  <p
+                    className="text-center mt-4"
+                    style={{ display: this.state.offline }}
+                  >
+                    <Link to="/signup" className="btn btn-outline-success">
                       Sign Up
                     </Link>
                   </p>
@@ -365,12 +374,13 @@ class Home extends Component {
                 <div className="bg-white p-3 text-center rounded sl-1 boxShadow">
                   <h3 className="font-weight-light">Premium Advance</h3>
                   <strong className="h4">₦200,000.00</strong>
+                  <br />
                   <strong className="h6">₦15,000.00/Month</strong>
-                  <p className="text-center mt-4">
-                    <Link
-                      to="https://www.froala.com"
-                      className="btn btn-outline-success"
-                    >
+                  <p
+                    className="text-center mt-4"
+                    style={{ display: this.state.offline }}
+                  >
+                    <Link to="/signup" className="btn btn-outline-success">
                       Sign Up
                     </Link>
                   </p>

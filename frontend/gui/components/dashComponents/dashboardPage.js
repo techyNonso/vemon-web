@@ -8,6 +8,7 @@ import { getDebtsPerCompany } from "Store/actions/debtsAction";
 import LineChart from "Components/dashComponents/Charts/lineChart";
 import BarChart from "Components/dashComponents/Charts/barChart";
 import MyCalendar from "Components/dashComponents/Charts/calendar";
+import Formatter from "Components/dashComponents/Formatter";
 
 import { extractDates } from "Modules/sales";
 import { extractDebts } from "Modules/debts";
@@ -259,7 +260,7 @@ class DashboardPage extends Component {
                   aria-hidden="true"
                   id="saleVol"
                 ></i>
-                <span id="span1">{this.state.total}</span>
+                <span id="span1">{Formatter.format(this.state.total)}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Total Sales</div>
@@ -271,7 +272,7 @@ class DashboardPage extends Component {
             <div className="showBox">
               <div className="showChild showTop">
                 <i className="fa fa-money" aria-hidden="true" id="incVol"></i>
-                <span id="span4">{this.state.balance}</span>
+                <span id="span4">{Formatter.format(this.state.balance)}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Total Cash</div>
@@ -287,7 +288,7 @@ class DashboardPage extends Component {
                   aria-hidden="true"
                   id="expVol"
                 ></i>
-                <span id="span2">{this.state.debtSum}</span>
+                <span id="span2">{Formatter.format(this.state.debtSum)}</span>
               </div>
               <div className="showChild">
                 <div className="showDown">Debt</div>
@@ -303,7 +304,9 @@ class DashboardPage extends Component {
                   aria-hidden="true"
                   id="expenVol"
                 ></i>
-                <span id="span3">{this.state.expenseSum}</span>
+                <span id="span3">
+                  {Formatter.format(this.state.expenseSum)}
+                </span>
               </div>
               <div className="showChild">
                 <div className="showDown">Expenses</div>

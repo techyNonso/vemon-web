@@ -34,9 +34,13 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
 
     if (
-      error.response.status === 401 &&
+      (error.response.status === 401 || error.response.status === 400) &&
       originalRequest.url === "http://127.0.0.1:8000/api/token/refresh/"
     ) {
+      //clear app data from local storage
+      localStorage.setItem("access_token", "");
+      localStorage.setItem("refresh_token", "");
+      localStorage.setItem("IsVemonOnline", false);
       window.location = "/signin";
       return Promise.reject(error);
     }

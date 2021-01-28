@@ -4,8 +4,10 @@ import { useState } from "react";
 import Header from "./header";
 import Footer from "./footer";
 import axiosInstance from "Modules/axiosInstance";
+import validate from "Components/formHandler/validateInfo";
+import useForm from "Components/formHandler/useForm";
 
-function Signup() {
+function Signup(props) {
   const history = useHistory();
   //handle states
   const [firstName, setFname] = useState("");
@@ -15,31 +17,14 @@ function Signup() {
   const [password, setFPassword] = useState("");
   const [password2, setSPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    //submit to api
-
-    axiosInstance
-      .post("register/", {
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-        phone: phone,
-        password: password,
-        password2: password2,
-      })
-      .then((res) => {
-        history.push("/signin");
-
-        console.log(res.data);
-      })
-      .catch((err) => console.log(err.message));
-  };
+  const { handleChange, values, errors, handleSubmit } = useForm(
+    validate,
+    history
+  );
 
   return (
     <div>
-      <Header />
+      <Header location={props.location.pathname} />
       <div className="main">
         <section className="signup">
           <div className="container formContainer">
@@ -58,26 +43,32 @@ function Signup() {
                     </label>
                     <input
                       type="text"
-                      name="name"
+                      name="firstname"
                       id="fname"
                       placeholder="First Name"
-                      value={firstName}
-                      onChange={(e) => setFname(e.target.value)}
+                      value={values.firstname}
+                      onChange={handleChange}
                     />
                   </div>
+                  {errors.firstname && (
+                    <p className="formError">{errors.firstname}</p>
+                  )}
                   <div className="form-group">
                     <label>
                       <i className="zmdi zmdi-account material-icons-name"></i>
                     </label>
                     <input
                       type="text"
-                      name="name"
+                      name="lastname"
                       id="/name"
                       placeholder="Last Name"
-                      value={lastName}
-                      onChange={(e) => setLname(e.target.value)}
+                      value={values.lastname}
+                      onChange={handleChange}
                     />
                   </div>
+                  {errors.lastname && (
+                    <p className="formError">{errors.lastname}</p>
+                  )}
                   <div className="form-group">
                     <label>
                       <i className="zmdi zmdi-email"></i>
@@ -87,11 +78,11 @@ function Signup() {
                       name="email"
                       id="email"
                       placeholder="Your Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={values.email}
+                      onChange={handleChange}
                     />
                   </div>
-
+                  {errors.email && <p className="formError">{errors.email}</p>}
                   <div className="form-group">
                     <label>
                       <i className="zmdi zmdi-email"></i>
@@ -101,36 +92,43 @@ function Signup() {
                       name="phone"
                       id="phone"
                       placeholder="Your phone number"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      value={values.phone}
+                      onChange={handleChange}
                     />
                   </div>
+                  {errors.phone && <p className="formError">{errors.phone}</p>}
                   <div className="form-group">
                     <label>
                       <i className="zmdi zmdi-lock"></i>
                     </label>
                     <input
                       type="password"
-                      name="pass"
+                      name="password"
                       id="pass"
                       placeholder="Password"
-                      value={password}
-                      onChange={(e) => setFPassword(e.target.value)}
+                      value={values.password}
+                      onChange={handleChange}
                     />
                   </div>
+                  {errors.password && (
+                    <p className="formError">{errors.password}</p>
+                  )}
                   <div className="form-group">
                     <label>
                       <i className="zmdi zmdi-lock-outline"></i>
                     </label>
                     <input
                       type="password"
-                      name="re_pass"
+                      name="password2"
                       id="re_pass"
                       placeholder="Repeat your password"
-                      value={password2}
-                      onChange={(e) => setSPassword(e.target.value)}
+                      value={values.password2}
+                      onChange={handleChange}
                     />
                   </div>
+                  {errors.password2 && (
+                    <p className="formError">{errors.password2}</p>
+                  )}
                   <div className="form-group">
                     <input
                       type="checkbox"

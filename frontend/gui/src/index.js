@@ -48,8 +48,8 @@ class App extends Component {
                 <Route path="/contact" exact component={Contact} />
                 <Route path="/faq" exact component={Faq} />
                 <Route path="/privacy" exact component={Privacy} />
-                <Route path="/signin" exact component={Signin} />
-                <Route path="/signup" exact component={Signup} />
+                <ProtectedRoute path="/signin" exact component={Signin} />
+                <ProtectedRoute path="/signup" exact component={Signup} />
                 <Route path="/terms" exact component={Terms} />
                 <ProtectedRoute path="/dashboard" exact component={Dashboard} />
                 <ProtectedRoute
