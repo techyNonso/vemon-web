@@ -19,7 +19,8 @@ function Signup(props) {
 
   const { handleChange, values, errors, handleSubmit } = useForm(
     validate,
-    history
+    history,
+    "signup"
   );
 
   return (
@@ -105,7 +106,7 @@ function Signup(props) {
                       type="password"
                       name="password"
                       id="pass"
-                      placeholder="Password"
+                      placeholder="Password eg. Smith12?"
                       value={values.password}
                       onChange={handleChange}
                     />

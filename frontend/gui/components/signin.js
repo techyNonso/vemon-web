@@ -7,6 +7,8 @@ import Header from "./header";
 import Footer from "./footer";
 import axiosInstance from "Modules/axiosInstance";
 import { saveUser } from "Store/actions/accountAction";
+import validate from "Components/formHandler/validateInfo";
+import useForm from "Components/formHandler/useForm";
 
 function Signin(props) {
   const history = useHistory();
@@ -15,62 +17,13 @@ function Signin(props) {
     password: "",
   });
 
-  const [formData, updateFormData] = useState(initialFormData);
+  const { handleChange, values, errors, handleSubmit } = useForm(
+    validate,
+    history,
+    "signin",
+    saveUser
+  );
 
-  const handleChange = (e) => {
-    updateFormData({
-      ...formData,
-      [e.target.name]: e.target.value.trim(),
-    });
-  };
-
-  const decode = (token) => {
-    let base64url = token.split(".")[1];
-    let base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
-    let jsonpayload = decodeURIComponent(
-      atob(base64)
-        .split("")
-        .map(function (c) {
-          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-        })
-        .join("")
-    );
-
-    let data = JSON.parse(jsonpayload);
-
-    let values = {
-      email: data.email,
-      expirationLimit: data.expirationLimit,
-      first_name: data.first_name,
-      last_name: data.last_name,
-      stockLimit: data.stockLimit,
-      user_id: data.user_id,
-    };
-
-    saveUser(values);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    axiosInstance
-      .post("login/", {
-        email: formData.email,
-        password: formData.password,
-      })
-      .then((res) => {
-        //decode access token
-        decode(res.data.access);
-
-        localStorage.setItem("access_token", res.data.access);
-        localStorage.setItem("refresh_token", res.data.refresh);
-        axiosInstance.defaults.headers["Authorization"] =
-          "JWT " + localStorage.getItem("access_token");
-
-        history.push("/");
-      })
-      .catch((err) => console.log(err));
-  };
   return (
     <div>
       <Header location={props.location.pathname} />
@@ -87,6 +40,9 @@ function Signin(props) {
               <div className="signin-form">
                 <h2 className="form-title">Sign in</h2>
                 <form method="POST" className="register-form" id="login-form">
+                  {errors.credentials && (
+                    <p className="formError">{errors.credentials}</p>
+                  )}
                   <div className="form-group">
                     <label>
                       <i className="zmdi zmdi-account material-icons-name"></i>
@@ -96,9 +52,11 @@ function Signin(props) {
                       name="email"
                       id="email"
                       placeholder="email"
+                      value={values.email}
                       onChange={handleChange}
                     />
                   </div>
+                  {errors.email && <p className="formError">{errors.email}</p>}
                   <div className="form-group">
                     <label>
                       <i className="zmdi zmdi-lock"></i>
@@ -108,9 +66,13 @@ function Signin(props) {
                       name="password"
                       id="your_pass"
                       placeholder="Password"
+                      value={values.password}
                       onChange={handleChange}
                     />
                   </div>
+                  {errors.password && (
+                    <p className="formError">{errors.password}</p>
+                  )}
                   <div className="form-group">
                     <input
                       type="checkbox"

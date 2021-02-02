@@ -46,9 +46,10 @@ def registerUser(request):
             message={'email_body':email_body,'to_email':account.email,'email_subject':'Verify your email account'}
             Util.send_email(message)
             #data["token"] = token
+            return Response(data)
         else:
-            data=serializer.errors
-        return Response(data)
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
 
 
 #@swagger_auto_schema(method='post',request_body=AttendanceSerializer)
@@ -145,6 +146,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['stockLimit'] = user.stock_limit
 
         # ...
+        
 
         return token
 

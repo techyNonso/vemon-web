@@ -41,7 +41,7 @@ export const getActivities = (company, branch, startDate, endDate) => (
 };
 
 export const getActivity = (id) => (dispatch) => {
-  axios
+  axiosInstance
     .get(`http://127.0.0.1:8000/stockactivity/${id}/`)
     .then((res) =>
       dispatch({
