@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import Header from "./header";
 import Footer from "./footer";
-import axiosInstance from "Modules/axiosInstance";
+import axios from "axios";
+import Alerts from "Components/alerts";
+import swal from "sweetalert";
+
+import validate from "Components/formHandler/validateInfo";
 
 //import forms
 import { Form } from "react-bootstrap";
@@ -15,6 +19,7 @@ class Contact extends Component {
       email: "",
       dept: "",
       msg: "",
+      errors: {},
     };
   }
 
@@ -50,17 +55,57 @@ class Contact extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
+    //set error state = the errors returned
+    this.setState({
+      errors: validate(
+        {
+          firstname: this.state.fname,
+          lastname: this.state.lname,
+          email: this.state.email,
+          message: this.state.msg,
+          department: this.state.dept,
+        },
+        "contact"
+      ),
+    });
 
-    axiosInstance
-      .post("http://127.0.0.1:8000/contact-us/", {
-        email: this.state.email,
-        fname: this.state.fname,
-        lname: this.state.lname,
-        msg: this.state.msg,
-        dept: this.state.dept,
-      })
-      .then((res) => {})
-      .catch((err) => console.log(err));
+    //check if errors is empty
+    if (
+      Object.keys(this.state.errors).length === 0 &&
+      this.state.errors.constructor === Object
+    ) {
+      axios
+        .post("http://127.0.0.1:8000/contact-us/", {
+          email: this.state.email,
+          fname: this.state.fname,
+          lname: this.state.lname,
+          msg: this.state.msg,
+          dept: this.state.dept,
+        })
+        .then((res) => {
+          this.setState({
+            fname: "",
+            lname: "",
+            email: "",
+            dept: "",
+            msg: "",
+          });
+          swal({
+            title: "Message",
+            text: " Message sent successfully",
+            icon: "success",
+            button: "OK",
+          });
+        })
+        .catch((err) => {
+          swal({
+            title: "Error",
+            text: "OOPs! an error occured occured, please try again later",
+            icon: "error",
+            button: "OK",
+          });
+        });
+    }
   };
 
   render() {
@@ -135,7 +180,13 @@ class Contact extends Component {
                         value={this.state.fname}
                         onChange={this.changeFname.bind(this)}
                       />
+                      {this.state.errors.firstname && (
+                        <div className="formError">
+                          {this.state.errors.firstname}
+                        </div>
+                      )}
                     </div>
+
                     <div className="col">
                       <Form.Control
                         name="lastname"
@@ -145,6 +196,11 @@ class Contact extends Component {
                         value={this.state.lname}
                         onChange={this.changeLname.bind(this)}
                       />
+                      {this.state.errors.lastname && (
+                        <div className="formError">
+                          {this.state.errors.lastname}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -158,6 +214,11 @@ class Contact extends Component {
                         placeholder="Email"
                         onChange={this.changeEmail.bind(this)}
                       />
+                      {this.state.errors.email && (
+                        <div className="formError">
+                          {this.state.errors.email}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -175,6 +236,11 @@ class Contact extends Component {
                         <option value="2">Sales</option>
                         <option value="3">Accounting</option>
                       </select>
+                      {this.state.errors.department && (
+                        <div className="formError">
+                          {this.state.errors.department}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="row mt-4">
@@ -187,6 +253,11 @@ class Contact extends Component {
                         value={this.state.msg}
                         onChange={this.changeMsg.bind(this)}
                       ></textarea>
+                      {this.state.errors.message && (
+                        <div className="formError">
+                          {this.state.errors.message}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="row mt-4">

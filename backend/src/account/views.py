@@ -55,7 +55,7 @@ def registerUser(request):
 #@swagger_auto_schema(method='post',request_body=AttendanceSerializer)
 # Create your views here.
 @api_view(['POST',])
-@permission_classes([IsAuthenticated])
+
 def contactMessage(request, ):
     
     
