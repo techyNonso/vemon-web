@@ -5,6 +5,7 @@ import Footer from "./footer";
 import { connect } from "react-redux";
 import propTypes from "prop-types";
 import Auth from "Components/auth";
+import logout from "../modules/logout";
 
 class Home extends Component {
   constructor(props) {
@@ -27,6 +28,10 @@ class Home extends Component {
     return true;
   }
 
+  //logout
+  myLogout = () => {
+    logout();
+  };
   componentDidMount() {
     //add color to link
     this.setState({
@@ -120,9 +125,10 @@ class Home extends Component {
                   <li
                     className="nav-item"
                     style={{ display: this.state.online }}
+                    onClick={this.myLogout.bind(this)}
                   >
                     <Link className="nav-link pl-2" to="#">
-                      Sign out
+                      Logout
                     </Link>
                   </li>
                 </ul>

@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import propTypes from "prop-types";
 import Auth from "Components/auth";
-
+import { useHistory } from "react-router-dom";
+import axios from "axios";
+import logout from "../modules/logout";
 function Header(props) {
+  const history = useHistory();
   const [online, setOnline] = useState("none");
   const [offline, setOffline] = useState("block");
   //assign active to appropriate page
@@ -45,6 +48,11 @@ function Header(props) {
     }
 
     return true;
+  };
+
+  //logout
+  const myLogout = () => {
+    logout();
   };
 
   useEffect(() => {
@@ -106,7 +114,7 @@ function Header(props) {
 
               <li className="nav-item" style={{ display: offline }}>
                 <Link className="nav-link pl-2" to="/signin" id={signin}>
-                  Sign in
+                  Login
                 </Link>
               </li>
               <li className="nav-item" style={{ display: offline }}>
@@ -114,9 +122,13 @@ function Header(props) {
                   Sign up
                 </Link>
               </li>
-              <li className="nav-item" style={{ display: online }}>
+              <li
+                className="nav-item"
+                style={{ display: online }}
+                onClick={myLogout}
+              >
                 <Link className="nav-link pl-2" to="#">
-                  Sign out
+                  Logout
                 </Link>
               </li>
             </ul>

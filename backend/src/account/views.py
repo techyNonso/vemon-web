@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from .models import Account
-from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer, LogoutSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status,views,generics
 from rest_framework.authtoken.models import Token
 from .utils import Util
 from django.contrib.sites.shortcuts import get_current_site
@@ -152,3 +152,17 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+
+#logout view
+class LogoutAPIView(generics.GenericAPIView):
+    serializer_class = LogoutSerializer
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

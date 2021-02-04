@@ -2,6 +2,7 @@ from rest_framework import serializers
 from account.models import Account
 from django.contrib import auth
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 #serializers for account 
 class RegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={"input_type": "password"},write_only=True)
@@ -86,3 +87,20 @@ class EmailVerificationSerializer(serializers.ModelSerializer):
         model=Account
         fields=['token']
 """
+
+
+# logout serializer
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+
+    def validate(self, attrs):
+        self.token = attrs['refresh']
+
+        return attrs
+
+    def save(self, **kwargs):
+        try:
+            RefreshToken(self.token).blacklist()
+        except TokenError:
+            self.fail('bad token')
