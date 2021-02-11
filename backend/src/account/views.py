@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Account
-from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer, LogoutSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, SetNewPasswordSerializer,UserSerializer, LogoutSerializer,RequestPasswordResetEmailSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status,views,generics
@@ -18,6 +18,11 @@ from drf_yasg import openapi
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.utils.encoding import smart_str, force_str, smart_bytes,DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
+
 # Create your views here.
 
 
@@ -52,6 +57,29 @@ def registerUser(request):
 
 
 
+
+token_param_config=openapi.Parameter('token',in_=openapi.IN_QUERY,description='Description',type=openapi.TYPE_STRING)
+@swagger_auto_schema(method='get',manual_parameters=[token_param_config])
+@api_view(["GET"])
+def VerifyEmail(request):
+    
+    if request.method == "GET":
+        token = request.GET.get('token')
+        try:
+            payload=jwt.decode(token,settings.SECRET_KEY)
+            user = Account.objects.get(id=payload['user_id'])
+            if not user.is_active:
+                user.is_active=True
+                user.save()
+            return Response({'email':"Successfully activated"},status=status.HTTP_200_OK)
+        except jwt.ExpiredSignatureError as identifier:
+            return Response({'error':"activation link expired"},status=status.HTTP_400_BAD_REQUEST)
+        except jwt.exceptions.DecodeError as identifier:
+            return Response({'error':"invalid activation link"},status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 #@swagger_auto_schema(method='post',request_body=AttendanceSerializer)
 # Create your views here.
 @api_view(['POST',])
@@ -74,27 +102,6 @@ def contactMessage(request, ):
             return Response({'message':"Successfully sent"},status=status.HTTP_200_OK)
         else:
             return Response({'message':"Email not sent"},status=status.HTTP_502_BAD_GATEWAY)
-
-
-
-token_param_config=openapi.Parameter('token',in_=openapi.IN_QUERY,description='Description',type=openapi.TYPE_STRING)
-@swagger_auto_schema(method='get',manual_parameters=[token_param_config])
-@api_view(["GET"])
-def VerifyEmail(request):
-    
-    if request.method == "GET":
-        token = request.GET.get('token')
-        try:
-            payload=jwt.decode(token,settings.SECRET_KEY)
-            user = Account.objects.get(id=payload['user_id'])
-            if not user.is_active:
-                user.is_active=True
-                user.save()
-            return Response({'email':"Successfully activated"},status=status.HTTP_200_OK)
-        except jwt.ExpiredSignatureError as identifier:
-            return Response({'error':"activation link expired"},status=status.HTTP_400_BAD_REQUEST)
-        except jwt.exceptions.DecodeError as identifier:
-            return Response({'error':"invalid activation link"},status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -166,3 +173,53 @@ class LogoutAPIView(generics.GenericAPIView):
         serializer.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+#password change
+class RequestPasswordResetEmail(generics.GenericAPIView):
+    serializer_class = RequestPasswordResetEmailSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        email = request.data['email']
+       
+        if Account.objects.filter(email=email).exists():
+            user = Account.objects.get(email=email)
+            
+            uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
+            token = PasswordResetTokenGenerator().make_token(user)
+            current_site = get_current_site(request=request).domain
+            relativeLink=reverse('password-reset-confirm',kwargs={'uidb64':uidb64,'token':token})
+            absurl='http://'+current_site+relativeLink
+            email_body="Hello, \n  Use link below to reset a new password \n"+absurl
+            message={'email_body':email_body,'to_email':user.email,'email_subject':'Password reset'}
+            Util.send_email(message)
+
+        
+        return Response({'success':'A password reset link has been sent to the email you provided, if it exists'},status=status.HTTP_200_OK)
+
+
+class PasswordTokenCheckAPI(generics.GenericAPIView):
+    def get(self,request, uidb64,token):
+        
+        try:
+            id = smart_str(urlsafe_base64_decode(uidb64))
+            user=Account.objects.get(id=id)
+
+            if not PasswordResetTokenGenerator().check_token(user,token):
+                return Response({'error':'Token is not valid, please request a new one'},status=status.HTTP_401_UNAUTHORIZED)
+            
+            return Response({'success':True,'message':'Credentials valid','uidb64':uidb64,'token':token},status=status.HTTP_200_OK)
+
+        except DjangoUnicodeDecodeError as identifier:
+            return Response({'error':'Token is not valid, please request a new one'},status=status.HTTP_401_UNAUTHORIZED)
+
+
+#setting the new password
+class SetNewPasswordApiView(generics.GenericAPIView):
+    serializer_class = SetNewPasswordSerializer
+
+    def patch(self, request):
+        serializer=self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({'success':True,'message':'password reset success'}, status=status.HTTP_200_OK)
