@@ -21,12 +21,17 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.utils.encoding import smart_str, force_str, smart_bytes,DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from decouple import config
+from django.shortcuts import redirect
+from django.http import HttpResponsePermanentRedirect
 
+
+#we specify our own redirect class because django only allows redirect to http or https
+class CustomRedirect(HttpResponsePermanentRedirect):
+    #remember to add scheme for desktop app
+    allowed_schemes = ['http','https']
 
 # Create your views here.
-
-
-
 @swagger_auto_schema(method='post',request_body=RegistrationSerializer)
 @api_view(['POST',])
 @permission_classes((AllowAny,))
@@ -57,29 +62,6 @@ def registerUser(request):
 
 
 
-
-token_param_config=openapi.Parameter('token',in_=openapi.IN_QUERY,description='Description',type=openapi.TYPE_STRING)
-@swagger_auto_schema(method='get',manual_parameters=[token_param_config])
-@api_view(["GET"])
-def VerifyEmail(request):
-    
-    if request.method == "GET":
-        token = request.GET.get('token')
-        try:
-            payload=jwt.decode(token,settings.SECRET_KEY)
-            user = Account.objects.get(id=payload['user_id'])
-            if not user.is_active:
-                user.is_active=True
-                user.save()
-            return Response({'email':"Successfully activated"},status=status.HTTP_200_OK)
-        except jwt.ExpiredSignatureError as identifier:
-            return Response({'error':"activation link expired"},status=status.HTTP_400_BAD_REQUEST)
-        except jwt.exceptions.DecodeError as identifier:
-            return Response({'error':"invalid activation link"},status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
 #@swagger_auto_schema(method='post',request_body=AttendanceSerializer)
 # Create your views here.
 @api_view(['POST',])
@@ -102,6 +84,35 @@ def contactMessage(request, ):
             return Response({'message':"Successfully sent"},status=status.HTTP_200_OK)
         else:
             return Response({'message':"Email not sent"},status=status.HTTP_502_BAD_GATEWAY)
+
+
+
+token_param_config=openapi.Parameter('token',in_=openapi.IN_QUERY,description='Description',type=openapi.TYPE_STRING)
+@swagger_auto_schema(method='get',manual_parameters=[token_param_config])
+@api_view(["GET"])
+def VerifyEmail(request):
+    
+    if request.method == "GET":
+        token = request.GET.get('token')
+        url = config('FRONTEND_URL')
+        try:
+            payload=jwt.decode(token,settings.SECRET_KEY)
+            user = Account.objects.get(id=payload['user_id'])
+            if not user.is_active:
+                user.is_active=True
+                user.save()
+                #redirect to verify-email page reply on react
+            return CustomRedirect(url+'/verify-email?verified=true&info=Email Validated')
+                
+                #return Response({'email':"Successfully activated"},status=status.HTTP_200_OK)
+        except jwt.ExpiredSignatureError as identifier:
+            return CustomRedirect(url+'/verify-email?verified=false&info=The activation link has expired')
+                
+            #return Response({'error':"activation link expired"},status=status.HTTP_400_BAD_REQUEST)
+        except jwt.exceptions.DecodeError as identifier:
+            return CustomRedirect(url+'/verify-email?verified=false&info=Invalid activation link')
+            
+            #return Response({'error':"invalid activation link"},status=status.HTTP_400_BAD_REQUEST)
 
 
 
