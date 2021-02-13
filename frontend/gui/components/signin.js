@@ -38,7 +38,7 @@ function Signin(props) {
               </div>
 
               <div className="signin-form">
-                <h2 className="form-title">Sign in</h2>
+                <h2 className="form-title">Login</h2>
                 <form method="POST" className="register-form" id="login-form">
                   {errors.credentials && (
                     <p className="formError">{errors.credentials}</p>
