@@ -88,6 +88,27 @@ export default function validate(values, formType) {
     if (!values.department.trim()) {
       errors.department = "Please select a department for this message.";
     }
+  } else if (formType == "emailValidation") {
+    if (
+      !/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(
+        values.email
+      )
+    ) {
+      errors.email = "Please enter a valid email address.";
+    }
+  } else if (formType == "passwordValidation") {
+    if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%#?=&])[A-Za-z\d@$!%*#?=&]{6,}$/.test(
+        values.password
+      )
+    ) {
+      errors.password =
+        "Password should have a minimum of 6 characters, an upper case, lower case and a special key";
+    }
+
+    if (values.password !== values.password2) {
+      errors.password2 = "Passwords do not match.";
+    }
   }
   return errors;
 }

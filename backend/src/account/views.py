@@ -61,6 +61,38 @@ def registerUser(request):
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 
+# Resend email validation link .
+@api_view(['POST',])
+@permission_classes((AllowAny,))
+def resendValidationEmail(request):
+    
+    if request.method == "POST":
+        email = request.data['email']
+        if Account.objects.filter(email=email).exists() and not Account.objects.get(email=email).is_active:
+            data = {}
+            account = Account.objects.get(email=email)
+            data["response"]="Mail sent successfully"
+            data["email"]=account.email
+            data["first_name"]=account.first_name
+            data["last_name"]=account.last_name
+            #token = Token.objects.get(user=account).key
+            token=RefreshToken.for_user(account).access_token
+            current_site = get_current_site(request).domain
+            relativeLink=reverse('email-verify')
+            absurl='http://'+current_site+relativeLink+'?token='+str(token)
+            email_body="Hello "+account.first_name+" Use link below to verify your email \n"+absurl
+            message={'email_body':email_body,'to_email':account.email,'email_subject':'Verify your email account'}
+            Util.send_email(message)
+            #data["token"] = token
+            return Response(data)
+        elif Account.objects.get(email=email).is_active:
+            print('oops')
+            return Response({'message':'This account has already been verified'},status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            return Response({'message':'Invalid credential'},status=status.HTTP_400_BAD_REQUEST)
+
+
 
 #@swagger_auto_schema(method='post',request_body=AttendanceSerializer)
 # Create your views here.
@@ -102,7 +134,7 @@ def VerifyEmail(request):
                 user.is_active=True
                 user.save()
                 #redirect to verify-email page reply on react
-            return CustomRedirect(url+'/verify-email?verified=true&info=Email Validated')
+            return CustomRedirect(url+'/verify-email?verified=true&info=Email verified')
                 
                 #return Response({'email':"Successfully activated"},status=status.HTTP_200_OK)
         except jwt.ExpiredSignatureError as identifier:
@@ -187,6 +219,7 @@ class LogoutAPIView(generics.GenericAPIView):
 
 #password change
 class RequestPasswordResetEmail(generics.GenericAPIView):
+    
     serializer_class = RequestPasswordResetEmailSerializer
 
     def post(self, request):
@@ -202,28 +235,30 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             current_site = get_current_site(request=request).domain
             relativeLink=reverse('password-reset-confirm',kwargs={'uidb64':uidb64,'token':token})
             absurl='http://'+current_site+relativeLink
-            email_body="Hello, \n  Use link below to reset a new password \n"+absurl
+            email_body="Hello, \n  Use link below to set a new password \n"+absurl
             message={'email_body':email_body,'to_email':user.email,'email_subject':'Password reset'}
             Util.send_email(message)
-
+            return Response({'success':'A password reset link has been sent to the email you provided.'},status=status.HTTP_200_OK)
+        else:
+            return Response({'error':'Invalid credential'},status=status.HTTP_400_BAD_REQUEST)
         
-        return Response({'success':'A password reset link has been sent to the email you provided, if it exists'},status=status.HTTP_200_OK)
-
 
 class PasswordTokenCheckAPI(generics.GenericAPIView):
     def get(self,request, uidb64,token):
+        url = config('FRONTEND_URL')
         
         try:
             id = smart_str(urlsafe_base64_decode(uidb64))
             user=Account.objects.get(id=id)
 
             if not PasswordResetTokenGenerator().check_token(user,token):
-                return Response({'error':'Token is not valid, please request a new one'},status=status.HTTP_401_UNAUTHORIZED)
-            
-            return Response({'success':True,'message':'Credentials valid','uidb64':uidb64,'token':token},status=status.HTTP_200_OK)
+                return CustomRedirect(url+'/reset-password?verified=false&info=This token is not valid, please request for a new one')
+
+            return CustomRedirect(url+'/reset-password?verified=true&info=Credentials valid&uidb64='+uidb64+'&token='+token)
 
         except DjangoUnicodeDecodeError as identifier:
-            return Response({'error':'Token is not valid, please request a new one'},status=status.HTTP_401_UNAUTHORIZED)
+            return CustomRedirect(url+'/reset-password?verified=false&info=Token is not valid, please request for a new one')
+            
 
 
 #setting the new password
@@ -233,4 +268,4 @@ class SetNewPasswordApiView(generics.GenericAPIView):
     def patch(self, request):
         serializer=self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        return Response({'success':True,'message':'password reset success'}, status=status.HTTP_200_OK)
+        return Response({'success':True,'message':'password reset successful. Proceed to login'}, status=status.HTTP_200_OK)
