@@ -97,7 +97,14 @@ function Signin(props) {
                       onClick={handleSubmit}
                     />
                     <br />
-
+                    <a
+                      href="#"
+                      className="signup-image-link"
+                      style={{ textDecoration: "underline" }}
+                    >
+                      Forgot pasword
+                    </a>
+                    <br />
                     <a
                       href="#"
                       className="signup-image-link"
