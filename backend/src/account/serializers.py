@@ -11,10 +11,11 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 #serializers for account 
 class RegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={"input_type": "password"},write_only=True)
+    rank = serializers.CharField(max_length=50)
 
     class Meta:
         model = Account
-        fields = ["email","first_name","last_name","phone","password","password2"]
+        fields = ["email","first_name","last_name","phone","password","password2","rank"]
         extra_kwargs = {
             "password": {"write_only":True}
         }
@@ -22,11 +23,22 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     #over write the save function
     def save(self):
+        user_rank = self.validated_data["rank"]
+        #check if user is admin or staff
+        if user_rank == "admin":
+            is_admin = True
+            is_staff = False
+        else:
+            is_staff = True
+            is_admin = False
+            #register user
         account = Account(
             email=self.validated_data["email"],
             first_name=self.validated_data["first_name"],
             last_name=self.validated_data["last_name"],
-            phone=self.validated_data["phone"]
+            phone=self.validated_data["phone"],
+            is_admin=is_admin,
+            is_staff=is_staff
         )
 
         password = self.validated_data["password"]

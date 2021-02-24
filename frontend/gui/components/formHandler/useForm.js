@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "Modules/axiosInstance";
-
+import swal from "sweetalert";
 import axios from "axios";
 
 export default function useForm(validate, history, formType, saveUser = false) {
-  const decode = (token) => {
+  const decode = (token, refresh) => {
     let base64url = token.split(".")[1];
     let base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
     let jsonpayload = decodeURIComponent(
@@ -18,16 +18,32 @@ export default function useForm(validate, history, formType, saveUser = false) {
 
     let data = JSON.parse(jsonpayload);
 
-    let values = {
-      email: data.email,
-      expirationLimit: data.expirationLimit,
-      first_name: data.first_name,
-      last_name: data.last_name,
-      stockLimit: data.stockLimit,
-      user_id: data.user_id,
-    };
+    if (data.user_type == "admin") {
+      localStorage.setItem("access_token", token);
+      localStorage.setItem("refresh_token", refresh);
+      axiosInstance.defaults.headers["Authorization"] =
+        "JWT " + localStorage.getItem("access_token");
 
-    saveUser(values);
+      let values = {
+        email: data.email,
+        expirationLimit: data.expirationLimit,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        stockLimit: data.stockLimit,
+        user_id: data.user_id,
+      };
+
+      saveUser(values);
+
+      history.push("/");
+    } else {
+      swal({
+        title: "Please login is with a business owner account",
+        //text :" Name change successful",
+        icon: "error",
+        button: "OK",
+      });
+    }
   };
 
   let initialValues;
@@ -71,6 +87,7 @@ export default function useForm(validate, history, formType, saveUser = false) {
             phone: values.phone,
             password: values.password,
             password2: values.password2,
+            rank: "admin",
           })
           .then((res) => {
             history.push("/signin");
@@ -98,14 +115,7 @@ export default function useForm(validate, history, formType, saveUser = false) {
           })
           .then((res) => {
             //decode access token
-            decode(res.data.access);
-
-            localStorage.setItem("access_token", res.data.access);
-            localStorage.setItem("refresh_token", res.data.refresh);
-            axiosInstance.defaults.headers["Authorization"] =
-              "JWT " + localStorage.getItem("access_token");
-
-            history.push("/");
+            decode(res.data.access, res.data.refresh);
           })
           .catch((err) => {
             setErrors({

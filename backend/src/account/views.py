@@ -194,6 +194,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['email'] = user.email
         token['expirationLimit'] = user.expiration_limit
         token['stockLimit'] = user.stock_limit
+        if user.is_admin:
+            token['user_type'] = 'admin'
+        else :
+            token['user_type'] = 'staff'
 
         # ...
         
