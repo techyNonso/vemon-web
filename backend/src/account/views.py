@@ -52,7 +52,7 @@ def registerUser(request):
             current_site = get_current_site(request).domain
             relativeLink=reverse('email-verify')
             absurl='http://'+current_site+relativeLink+'?token='+str(token)
-            email_body="Hello "+account.first_name+" Use link below to verify your email \n"+absurl
+            email_body="Hello "+account.first_name+" Use the link below to verify your email \n"+absurl
             message={'email_body':email_body,'to_email':account.email,'email_subject':'Verify your email account'}
             Util.send_email(message)
             #data["token"] = token
@@ -80,7 +80,7 @@ def resendValidationEmail(request):
             current_site = get_current_site(request).domain
             relativeLink=reverse('email-verify')
             absurl='http://'+current_site+relativeLink+'?token='+str(token)
-            email_body="Hello "+account.first_name+" Use link below to verify your email \n"+absurl
+            email_body="Hello "+account.first_name+" Use the link below to verify your email \n"+absurl
             message={'email_body':email_body,'to_email':account.email,'email_subject':'Verify your email account'}
             Util.send_email(message)
             #data["token"] = token
@@ -239,7 +239,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             current_site = get_current_site(request=request).domain
             relativeLink=reverse('password-reset-confirm',kwargs={'uidb64':uidb64,'token':token})
             absurl='http://'+current_site+relativeLink
-            email_body="Hello, \n  Use link below to set a new password \n"+absurl
+            email_body="Hello, \n  Use the link below to set a new password \n"+absurl
             message={'email_body':email_body,'to_email':user.email,'email_subject':'Password reset'}
             Util.send_email(message)
             return Response({'success':'A password reset link has been sent to the email you provided.'},status=status.HTTP_200_OK)
