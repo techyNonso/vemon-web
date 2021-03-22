@@ -38,13 +38,13 @@ def stockHandler(request,company,branch):
     elif request.method == "POST":
         #create stock or update existing stock
         obj,create = stock.objects.update_or_create(
-            company=company,
-            branchId=branch,
+            companyId=request.data.get('companyId'),
+            branchId=request.data.get('branchId'),
             batchId=request.data.get('batchId'),
             productId=request.data.get('productId'),
             defaults=request.data
         )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({"message": "done" }, status=status.HTTP_201_CREATED)
         
 
 #create your stock detail view
