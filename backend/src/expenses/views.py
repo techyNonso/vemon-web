@@ -38,6 +38,7 @@ def companyExpense(request,company,branch,startyear,startmonth,startday,endyear,
 # Create your views here.
 @swagger_auto_schema(method='post',request_body=ExpenseSerializer)
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def expenseHandler(request):
     if request.method == 'GET':
         expenses = expense.objects.all()
