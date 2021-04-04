@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'companies',
     'expenses',
     'debts',
+    'invoices',
     'sales',
     'staff',
     'stock',
