@@ -4,7 +4,7 @@ from django.db import models
 class debtClearance(models.Model):
      date = models.DateField()
      invoiceId = models.CharField(max_length=50,null=True)
-     paid = models.IntegerField()
+     paid = models.CharField(max_length=50,null=True)
      companyId = models.CharField(max_length=50,null=True)
      branchId = models.CharField(max_length=50,null=True)
    

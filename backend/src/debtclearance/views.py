@@ -40,6 +40,7 @@ def debtClearanceForCompany(request,company,branch,startyear,startmonth,startday
 # create view for clearance here
 @swagger_auto_schema(method='post',request_body=DebtClearanceSerializer)
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def debtClearanceHandler(request):
 
 
