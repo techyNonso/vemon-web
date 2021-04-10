@@ -6,6 +6,7 @@ class invoice(models.Model):
     customer_name = models.CharField(max_length=200,blank=True)
     customer_number = models.CharField(max_length=20,blank=True)
     customer_address = models.CharField(max_length=200,blank=True)
+    attender = models.CharField(max_length=200)
     total_price = models.CharField(max_length=20)
     net_price = models.CharField(max_length=20)
     paid = models.CharField(max_length=20)
