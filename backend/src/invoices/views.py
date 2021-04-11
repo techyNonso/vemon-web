@@ -20,7 +20,20 @@ def MyCompanyInvoices(request,company,startyear,startmonth,startday,endyear,endm
         serializer = InvoiceSerializer(invoices,many=True)
         return Response(serializer.data)
 
-# create view for per company 
+
+# create view for per company , filter credit invoices
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def MyCompanyCreditInvoices(request,company,startyear,startmonth,startday,endyear,endmonth,endday):
+    start_date = "%d-%d-%d"%(startyear,startmonth,startday)
+    end_date = "%d-%d-%d"%(endyear,endmonth,endday)
+
+    if request.method == "GET":
+        invoices = invoice.objects.filter(companyId=company,transactionType="credit",date__range=[start_date, end_date])
+        serializer = InvoiceSerializer(invoices,many=True)
+        return Response(serializer.data)
+
+# create view for per company and branch
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def companyInvoices(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
@@ -29,6 +42,19 @@ def companyInvoices(request,company,branch,startyear,startmonth,startday,endyear
 
     if request.method == "GET":
         invoices = invoice.objects.filter(companyId=company,branchId=branch,date__range=[start_date, end_date])
+        serializer = InvoiceSerializer(invoices,many=True)
+        return Response(serializer.data)
+
+
+# create view for per company and branch
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def companyCreditInvoices(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
+    start_date = "%d-%d-%d"%(startyear,startmonth,startday)
+    end_date = "%d-%d-%d"%(endyear,endmonth,endday)
+
+    if request.method == "GET":
+        invoices = invoice.objects.filter(companyId=company,branchId=branch,transactionType="credit",date__range=[start_date, end_date])
         serializer = InvoiceSerializer(invoices,many=True)
         return Response(serializer.data)
 

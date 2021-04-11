@@ -47,7 +47,7 @@ export const getOthers = (debts) => {
   let balance = 0;
 
   debts.forEach((debt) => {
-    total += Number(debt.amount);
+    total += Number(debt.net_price);
     paid += Number(debt.paid);
     balance += Number(debt.balance);
   });
