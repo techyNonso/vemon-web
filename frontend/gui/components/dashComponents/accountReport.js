@@ -14,7 +14,7 @@ import { extractDates } from "Modules/sales";
 import { extractDebts } from "Modules/debts";
 import { extractClearance } from "Modules/clearance";
 import {
-  getTotalSalesDetails,
+  getTotalInvoicesDetails,
   getDebtDetails,
   getExpenseSum,
   getClearanceDetails,
@@ -126,7 +126,7 @@ class AccountReport extends Component {
       let mainExpenses = props.expenses;
       let mainSales = props.sales;
       let mainClearance = props.clearance;
-      let [total, paidSum] = getTotalSalesDetails(mainSales);
+      let [total, paidSum] = getTotalInvoicesDetails(mainSales);
       let debtSum = getDebtDetails(mainDebts);
       let clearanceSum = getClearanceDetails(mainClearance);
       let expenseSum = getExpenseSum(mainExpenses);
