@@ -4,6 +4,7 @@ import propTypes from "prop-types";
 import { connect } from "react-redux";
 import Pagination from "Components/dashComponents/pagination";
 import { getSales } from "Store/actions/salesAction";
+import { getInvoices } from "Store/actions/invoicesAction";
 import { getStocks } from "Store/actions/stockAction";
 import { getClearance } from "Store/actions/clearanceAction";
 import { getExpenses } from "Store/actions/expenseAction";
@@ -126,7 +127,8 @@ class AccountReport extends Component {
       let mainExpenses = props.expenses;
       let mainSales = props.sales;
       let mainClearance = props.clearance;
-      let [total, paidSum] = getTotalInvoicesDetails(mainSales);
+      let mainInvoices = props.invoices;
+      let [total, paidSum] = getTotalInvoicesDetails(mainInvoices);
       let debtSum = getDebtDetails(mainDebts);
       let clearanceSum = getClearanceDetails(mainClearance);
       let expenseSum = getExpenseSum(mainExpenses);
@@ -140,6 +142,7 @@ class AccountReport extends Component {
         mainDebts,
         mainExpenses,
         mainSales,
+        mainInvoices,
         mainClearance,
         stocks
       );
@@ -182,6 +185,16 @@ class AccountReport extends Component {
 
     //check if clearance have arrived
     if (prevProps.clearance !== this.props.clearance) {
+      this.props.getInvoices(
+        this.props.company.companyId,
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
+      );
+    }
+
+    //check if invoices have arrived
+    if (prevProps.invoices !== this.props.invoices) {
       this.props.getDebts(
         this.props.company.companyId,
         this.props.branch.branchId,
@@ -538,6 +551,7 @@ const mapStateToProps = (state) => ({
   debts: state.debts.items,
   branch: state.branches.item,
   company: state.companies.item,
+  invoices: state.invoices.items,
 });
 
 export default connect(mapStateToProps, {
@@ -546,6 +560,7 @@ export default connect(mapStateToProps, {
   getClearance,
   getExpenses,
   getDebts,
+  getInvoices,
 })(AccountReport);
 
 //write modal for this app

@@ -76,9 +76,19 @@ const getSalePpmu = (id, stocks) => {
 };
 
 //get sales for this date
-const getCurrentSalesDetails = (sales, stocks, date) => {
+const getCurrentSalesDetails = (sales, invoices, stocks, date) => {
   let match = sales.filter((sale) => {
     let currentDate = new Date(sale.date);
+    return (
+      date.getDate() == currentDate.getDate() &&
+      date.getMonth() == currentDate.getMonth() &&
+      date.getFullYear() == currentDate.getFullYear()
+    );
+  });
+
+  //get invoices for this date
+  let invoiceMatch = invoices.filter((invoice) => {
+    let currentDate = new Date(invoice.date);
     return (
       date.getDate() == currentDate.getDate() &&
       date.getMonth() == currentDate.getMonth() &&
@@ -93,26 +103,40 @@ const getCurrentSalesDetails = (sales, stocks, date) => {
   let totalCp = 0;
   let totalSp = 0;
 
+  //get total money Paid from receipt
+  invoiceMatch.forEach((invoice) => {
+    paidSum += Number(invoice.paid);
+  });
+
   //match represents all sales for a particular day
   match.forEach((sale) => {
     let ppmu = getSalePpmu(sale.productId, stocks);
 
-    let cp = ppmu * sale.quantity;
-    let sp = sale.price;
-    totalSp += sp;
-    totalCp += cp;
+    let cp = Number(ppmu) * Number(sale.quantity);
+    let sp = Number(sale.price);
+    totalSp += Number(sp);
+    totalCp += Number(cp);
     currentGain += Number(sp - cp);
-    totalPrice += sale.price;
-    paidSum += sale.paid;
+    totalPrice += Number(sale.price);
   });
 
   return [totalPrice, paidSum, currentGain, totalCp, totalSp];
 };
 
 //get details for day 1 prev day
-const getPrevSalesDetails = (sales, stocks, date) => {
+const getPrevSalesDetails = (sales, invoices, stocks, date) => {
   let match = sales.filter((sale) => {
     let currentDate = new Date(sale.date);
+    return (
+      date.getDate() == currentDate.getDate() &&
+      date.getMonth() == currentDate.getMonth() &&
+      date.getFullYear() == currentDate.getFullYear()
+    );
+  });
+
+  //get invoices for this date
+  let invoiceMatch = invoices.filter((invoice) => {
+    let currentDate = new Date(invoice.date);
     return (
       date.getDate() == currentDate.getDate() &&
       date.getMonth() == currentDate.getMonth() &&
@@ -131,13 +155,17 @@ const getPrevSalesDetails = (sales, stocks, date) => {
   match.forEach((sale) => {
     let ppmu = getSalePpmu(sale.productId, stocks);
 
-    let cp = ppmu * sale.quantity;
-    let sp = sale.price;
-    prevTotalSp += sp;
-    prevTotalCp += cp;
+    let cp = Number(ppmu) * Number(sale.quantity);
+    let sp = Number(sale.price);
+    prevTotalSp += Number(sp);
+    prevTotalCp += Number(cp);
     prevCurrentGain += Number(sp - cp);
-    prevTotalPrice += sale.price;
-    prevPaidSum += sale.paid;
+    prevTotalPrice += Number(sale.price);
+  });
+
+  //get total money Paid from receipt
+  invoiceMatch.forEach((invoice) => {
+    prevPaidSum += Number(invoice.paid);
   });
 
   return [
@@ -164,7 +192,7 @@ const getCurrentDebtsPaidIn = (allClearance, date) => {
   let debtPaid = 0;
 
   match.forEach((clearance) => {
-    debtPaid += clearance.paid;
+    debtPaid += Number(clearance.paid);
   });
 
   return debtPaid;
@@ -185,7 +213,7 @@ const getCurrentDebt = (debts, date) => {
   let debt = 0;
 
   match.forEach((myDebt) => {
-    debt += myDebt.balance;
+    debt += Number(myDebt.balance);
   });
 
   return debt;
@@ -206,7 +234,7 @@ const getCurrentExpense = (expenses, date) => {
   let expense = 0;
 
   match.forEach((myExpense) => {
-    expense += myExpense.amount;
+    expense += Number(myExpense.amount);
   });
 
   return expense;
@@ -217,6 +245,7 @@ export const generateReport = (
   debts,
   expenses,
   sales,
+  invoices,
   allClearance,
   stocks
 ) => {
@@ -231,7 +260,7 @@ export const generateReport = (
     prevCurrentGain,
     prevTotalCp,
     prevTotalSp,
-  ] = getPrevSalesDetails(sales, stocks, prevDay);
+  ] = getPrevSalesDetails(sales, invoices, stocks, prevDay);
 
   let reportArray = [];
   let id = 0;
@@ -255,7 +284,7 @@ export const generateReport = (
       currentGain,
       totalCp,
       totalSp,
-    ] = getCurrentSalesDetails(sales, stocks, date);
+    ] = getCurrentSalesDetails(sales, invoices, stocks, date);
 
     let gainPercent = isNaN(Number(((currentGain - lastGain) / lastGain) * 100))
       ? 0
@@ -294,6 +323,7 @@ export const generateReport = (
     lastDate = `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`;
     lastSale = totalSp;
     lastCost = totalCp;
+
     //add to array
     reportArray = [...reportArray, obj];
   });

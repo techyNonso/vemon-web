@@ -5,6 +5,7 @@ import axiosInstance from "Modules/axiosInstance";
 
 const getLength = (num) => num.toString().length;
 
+//get invoices per branch
 export const getInvoices = (company, branch, startDate, endDate) => (
   dispatch
 ) => {
@@ -41,6 +42,7 @@ export const getInvoices = (company, branch, startDate, endDate) => (
     .catch((err) => console.error(err));
 };
 
+//get invoices per company
 export const getInvoicesPerCompany = (company, startDate, endDate) => (
   dispatch
 ) => {
