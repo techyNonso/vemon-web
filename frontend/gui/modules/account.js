@@ -124,9 +124,18 @@ const getCurrentSalesDetails = (sales, invoices, stocks, date) => {
 };
 
 //get details for day 1 prev day
-const getPrevSalesDetails = (sales, invoices, stocks, date) => {
+const getPrevSalesDetails = (
+  sales,
+  invoices,
+  stocks,
+  date,
+  prevInvoices,
+  prevSales
+) => {
+  console.log(sales);
   let match = sales.filter((sale) => {
     let currentDate = new Date(sale.date);
+
     return (
       date.getDate() == currentDate.getDate() &&
       date.getMonth() == currentDate.getMonth() &&
@@ -135,14 +144,16 @@ const getPrevSalesDetails = (sales, invoices, stocks, date) => {
   });
 
   //get invoices for this date
-  let invoiceMatch = invoices.filter((invoice) => {
+  /*let invoiceMatch = invoices.filter((invoice) => {
     let currentDate = new Date(invoice.date);
     return (
       date.getDate() == currentDate.getDate() &&
       date.getMonth() == currentDate.getMonth() &&
       date.getFullYear() == currentDate.getFullYear()
     );
-  });
+  });*/
+
+  let invoiceMatch = prevInvoices;
 
   //get values
   let prevTotalPrice = 0;
@@ -151,8 +162,8 @@ const getPrevSalesDetails = (sales, invoices, stocks, date) => {
   let prevTotalCp = 0;
   let prevTotalSp = 0;
 
-  //match represents all sales for a particular day
-  match.forEach((sale) => {
+  //match represents all sales from yesterday
+  prevSales.forEach((sale) => {
     let ppmu = getSalePpmu(sale.productId, stocks);
 
     let cp = Number(ppmu) * Number(sale.quantity);
@@ -167,7 +178,7 @@ const getPrevSalesDetails = (sales, invoices, stocks, date) => {
   invoiceMatch.forEach((invoice) => {
     prevPaidSum += Number(invoice.paid);
   });
-
+  console.log(prevTotalSp);
   return [
     prevTotalPrice,
     prevPaidSum,
@@ -247,7 +258,9 @@ export const generateReport = (
   sales,
   invoices,
   allClearance,
-  stocks
+  stocks,
+  previousInvoices,
+  prevSales
 ) => {
   //get previous day from first day details
   let firstDay = new Date(dates[0]);
@@ -260,7 +273,14 @@ export const generateReport = (
     prevCurrentGain,
     prevTotalCp,
     prevTotalSp,
-  ] = getPrevSalesDetails(sales, invoices, stocks, prevDay);
+  ] = getPrevSalesDetails(
+    sales,
+    invoices,
+    stocks,
+    prevDay,
+    previousInvoices,
+    prevSales
+  );
 
   let reportArray = [];
   let id = 0;

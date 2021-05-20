@@ -1,6 +1,7 @@
-import { GET_INVOICES } from "../actions/types";
+import { GET_INVOICES, GET_PREV_INVOICES } from "../actions/types";
 
 const initialState = {
+  prevItems: [],
   items: [],
   item: {},
 };
@@ -12,6 +13,12 @@ export default function invoicesReducer(state = initialState, action) {
         ...state,
         items: action.payload,
       };
+    case GET_PREV_INVOICES: {
+      return {
+        ...state,
+        prevItems: action.payload,
+      };
+    }
     default:
       return state;
   }

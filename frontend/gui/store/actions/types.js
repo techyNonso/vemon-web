@@ -15,3 +15,5 @@ export const GET_ALL_CLEARANCE = "GET_ALL_CLEARANCE";
 export const GET_USER = "GET_USER";
 export const GET_ERRORS = "GET_ERRORS";
 export const GET_INVOICES = "GET_INVOICES";
+export const GET_PREV_INVOICES = "GET_PREV_INVOICES";
+export const GET_PREV_SALES = "GET_PREV_SALES";
