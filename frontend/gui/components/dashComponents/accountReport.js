@@ -624,6 +624,8 @@ const ActMod = (props) => {
                 {ifPositive(props.percentDiff) && (
                   <th style={{ color: "green" }}>+{props.percentDiff} %</th>
                 )}
+                <th></th>
+                <th></th>
               </tr>
             </tfoot>
           </table>
