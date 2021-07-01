@@ -24,6 +24,7 @@ export const getStockArray = (ids, stock) => {
       batches: "",
       bought: "",
       sold: "",
+      unit: "",
     };
     let ppmu = 0;
     let counter = 0;
@@ -35,7 +36,7 @@ export const getStockArray = (ids, stock) => {
         obj.id = product.productId;
         //assign name
         obj.name = product.productName;
-
+        obj.unit = product.unit;
         //assign quantity
         obj.qty = Number(obj.qty) + Number(product.quantity);
         //assign batch

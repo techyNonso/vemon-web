@@ -75,6 +75,13 @@ const getSalePpmu = (id, stocks) => {
   })[0].bought;
 };
 
+//get unit sold
+const getProductUnit = (stocks, id) => {
+  return stocks.filter((stock) => {
+    return id.toUpperCase() == stock.id.toUpperCase();
+  })[0].unit;
+};
+
 //get sales for this date
 const getCurrentSalesDetails = (sales, invoices, stocks, date) => {
   let match = sales.filter((sale) => {
@@ -111,11 +118,14 @@ const getCurrentSalesDetails = (sales, invoices, stocks, date) => {
   //match represents all sales for a particular day
   match.forEach((sale) => {
     let ppmu = getSalePpmu(sale.productId, stocks);
-
-    let cp = Number(ppmu) * Number(sale.quantity);
+    //get product unit
+    let productUnit = getProductUnit(stocks, sale.productId);
+    let unitSold = Number(sale.quantity / productUnit);
+    let cp = Number(ppmu) * Number(unitSold);
     let sp = Number(sale.price);
     totalSp += Number(sp);
     totalCp += Number(cp);
+    console.log(totalCp, date);
     currentGain += Number(sp - cp);
     totalPrice += Number(sale.price);
   });
@@ -309,7 +319,7 @@ export const generateReport = (
     let gainPercent = isNaN(Number(((currentGain - lastGain) / lastGain) * 100))
       ? 0
       : isFinite(Number(((currentGain - lastGain) / lastGain) * 100))
-      ? Number(((currentGain - lastGain) / lastGain) * 100).toFixed(2)
+      ? Number(((currentGain - lastGain) / lastGain) * 100).toFixed(1)
       : currentGain;
     let debtPaid = getCurrentDebtsPaidIn(allClearance, date);
     let debt = getCurrentDebt(debts, date);

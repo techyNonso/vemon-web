@@ -65,7 +65,8 @@ export const getOthers = (sales) => {
 
   sales.forEach((sale) => {
     total += Number(sale.price);
-    discounts += Number(sale.disccount);
+
+    discounts += Number(sale.discount);
     if (sale.transactionType.toUpperCase() == "CASH") {
       cashs += Number(sale.price);
     } else if (sale.transactionType.toUpperCase() == "ONLINE") {
@@ -75,7 +76,7 @@ export const getOthers = (sales) => {
     }
   });
 
-  discount = discounts != 0 ? Math.ceil(discounts / sales.length) : 0;
+  discount = discounts != 0 ? discounts / sales.length : 0;
 
   balance =
     discount != 0 && total != 0

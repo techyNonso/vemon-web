@@ -295,16 +295,16 @@ class CashSales extends Component {
               <tr>
                 <th>Total</th>
 
-                <th>Disccount</th>
-                <th>Balance</th>
+                {/**<th>Disccount</th>
+                <th>Balance</th>**/}
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>{Formatter.format(this.state.cashSales)}</td>
 
-                <td>{this.state.discount} %</td>
-                <td>{Formatter.format(this.state.balance)}</td>
+                {/**<td>{this.state.discount} %</td>
+                <td>{Formatter.format(this.state.balance)}</td>**/}
               </tr>
             </tbody>
           </table>

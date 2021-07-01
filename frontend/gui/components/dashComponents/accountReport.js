@@ -529,7 +529,7 @@ class AccountReport extends Component {
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Total</th>
+                <th>Total(+discounts)</th>
                 <th>Amount Paid</th>
                 <th>Debt Paid</th>
                 <th>Debt To Pay</th>
