@@ -38,7 +38,7 @@ export default function useForm(validate, history, formType, saveUser = false) {
       history.push("/");
     } else {
       swal({
-        title: "Please login is with a business owner account",
+        title: "Please login with a business owner account",
         //text :" Name change successful",
         icon: "error",
         button: "OK",
