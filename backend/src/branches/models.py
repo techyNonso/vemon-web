@@ -7,6 +7,7 @@ class branch(models.Model):
     state = models.CharField(max_length=20,blank=True)
     street = models.CharField(max_length=20,blank=True)
     town = models.CharField(max_length=20,blank=True)
+    address = models.CharField(max_length=300)
     phone = models.CharField(max_length=20,blank=True)
     companyId = models.CharField(max_length=20)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True)

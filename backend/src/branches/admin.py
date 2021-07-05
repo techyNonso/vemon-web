@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 #set your admin page listing
 class BranchesAdmin(admin.ModelAdmin):
     ordering= ('id',)
-    list_display = ('branchId','state','street','town','phone','companyId','owner')
+    list_display = ('branchId','address','state','street','town','phone','companyId','owner')
     search_fields = ('state','town','street','companyId','owner')
     readonly_fields = ()
 
