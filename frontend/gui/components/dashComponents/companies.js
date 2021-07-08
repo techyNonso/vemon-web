@@ -163,34 +163,74 @@ class Companies extends Component {
 
   //proceed to update
   proceedUpdate({ id, plan, name }) {
-    this.setState({
-      loading: "block",
-      editClick: false,
-    });
+    if (!plan.length == 0) {
+      let branchLength = this.props.company.branches;
 
-    let data = {
-      companyName: name,
-      plan: plan,
-    };
-
-    axiosInstance
-      .put(`http://127.0.0.1:8000/companies/${id}/`, data)
-      .then((res) => {
-        this.setState({
-          displayModal: false,
-          loading: "none",
-        });
-
+      //verify length of branches
+      if (plan.toUpperCase() == "STANDARD" && branchLength > 1) {
         swal({
-          title: "Company Updated Successfully",
+          title: "You have more branches than permitted for this plan",
           //text :" Name change successful",
-          icon: "success",
+          icon: "error",
           button: "OK",
         });
+      } else if (plan.toUpperCase() == "PREMIUM PRO" && branchLength > 3) {
+        swal({
+          title: "You have more branches than permitted for this plan",
+          //text :" Name change successful",
+          icon: "error",
+          button: "OK",
+        });
+      } else if (plan.toUpperCase() == "PREMIUM MAXI" && branchLength > 5) {
+        swal({
+          title: "You have more branches than permitted for this plan",
+          //text :" Name change successful",
+          icon: "error",
+          button: "OK",
+        });
+      } else {
+        this.setState({
+          loading: "block",
+          editClick: false,
+        });
 
-        this.props.getCompanies();
-      })
-      .catch((err) => console.log(err));
+        let data = {
+          companyName: name,
+          plan: plan,
+        };
+
+        axiosInstance
+          .put(`http://127.0.0.1:8000/companies/${id}/`, data)
+          .then((res) => {
+            this.setState({
+              displayModal: false,
+              loading: "none",
+            });
+
+            swal({
+              title: "Company Updated Successfully",
+              //text :" Name change successful",
+              icon: "success",
+              button: "OK",
+            });
+
+            this.props.getCompanies();
+          })
+          .catch((err) => console.log(err));
+      }
+    } else {
+      this.setState({
+        displayModal: false,
+        loading: "none",
+        editClick: false,
+      });
+      swal({
+        title: "Please select a plan",
+        //text :" Name change successful",
+        icon: "error",
+        button: "OK",
+      });
+    }
   }
 
   getLength(num) {
@@ -354,7 +394,6 @@ class Companies extends Component {
 
   componentDidMount() {
     //check companies
-
     this.props.getCompanies();
     this.setState({
       loading: "block",
@@ -633,8 +672,10 @@ const ActMod = (props) => {
 
         <div className="form-group">
           <select className="form-control" value={plan} onChange={changeSelect}>
-            <option value="">select</option>
+            <option value="">select plan</option>
             <option value="standard">Standard</option>
+            <option value="premium pro">Premium pro</option>
+            <option value="premium maxi">Premium maxi</option>
             <option value="premium advance">Premium advance</option>
           </select>
         </div>
@@ -680,8 +721,10 @@ const ActMod = (props) => {
             value={companyplan}
             onChange={changeCompPlan}
           >
-            <option value="">select</option>
+            <option value="">select plan</option>
             <option value="standard">Standard</option>
+            <option value="premium pro">Premium pro</option>
+            <option value="premium maxi">Premium maxi</option>
             <option value="premium advance">Premium advance</option>
           </select>
         </div>

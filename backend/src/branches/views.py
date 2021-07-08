@@ -41,6 +41,7 @@ def remoteBranch(request,company,branchId):
 @swagger_auto_schema(method='post',request_body=BranchesSerializer)
 # Create your views here.
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def branchHandler(request):
     if request.method == "GET":
         branches = branch.objects.all()

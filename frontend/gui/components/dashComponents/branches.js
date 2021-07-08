@@ -10,6 +10,7 @@ import {
   sortBranches,
   generateBranchId,
 } from "Modules/branch";
+import axiosInstance from "Modules/axiosInstance";
 
 //import bootstrap component
 import Modal from "react-bootstrap/Modal";
@@ -57,10 +58,35 @@ class Branches extends Component {
   addBranch() {
     //check branch maximum
     if (
-      this.props.company.plan.toUpperCase() == "PREMIUM ADVANCE" &&
-      this.state.branches.length > 5
+      this.props.company.plan.toUpperCase() == "STANDARD" &&
+      this.state.branches.length >= 1
     ) {
-      console.log("Maximum branch reached");
+      swal({
+        title: "You have reached the maximum number of branches for this plan",
+        //text :" Name change successful",
+        icon: "error",
+        button: "OK",
+      });
+    } else if (
+      this.props.company.plan.toUpperCase() == "PREMIUM PRO" &&
+      this.state.branches.length >= 3
+    ) {
+      swal({
+        title: "You have reached the maximum number of branches for this plan",
+        //text :" Name change successful",
+        icon: "error",
+        button: "OK",
+      });
+    } else if (
+      this.props.company.plan.toUpperCase() == "PREMIUM MAXI" &&
+      this.state.branches.length >= 5
+    ) {
+      swal({
+        title: "You have reached the maximum number of branches for this plan",
+        //text :" Name change successful",
+        icon: "error",
+        button: "OK",
+      });
     } else {
       let id = generateBranchId(this.state.branches);
 
@@ -73,19 +99,27 @@ class Branches extends Component {
         loading: "block",
       });
 
-      axios
+      axiosInstance
         .post(
           `http://127.0.0.1:8000/branches/${this.props.company.companyId}/`,
           data
         )
         .then((res) => {
-          this.props.getCompanyBranches(this.props.company.companyId);
+          //update company branch count
 
-          this.setState({
-            loading: "block",
-          });
+          axiosInstance
+            .put(`http://127.0.0.1:8000/companies/${this.props.company.id}/`, {
+              branches: this.props.branches.length + 1,
+            })
+            .then((res) => {
+              this.props.getCompanyBranches(this.props.company.companyId);
+              this.setState({
+                loading: "block",
+              });
+            })
+            .catch((err) => console.log(err));
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err.response.data));
     }
   }
 
@@ -105,13 +139,21 @@ class Branches extends Component {
       deleteClick: false,
     });
 
-    axios
+    axiosInstance
       .delete(`http://127.0.0.1:8000/branches/branch/${id}/`)
       .then((res) => {
-        this.setState({
-          displayModal: false,
-          loading: "none",
-        });
+        //update company with new length
+        axiosInstance
+          .put(`http://127.0.0.1:8000/companies/${this.props.company.id}/`, {
+            branches: this.props.branches.length - 1,
+          })
+          .then((res) => {
+            this.setState({
+              displayModal: false,
+              loading: "none",
+            });
+          });
+
         swal({
           title: "Branch Deleted Successfully",
           //text :" Name change successful",
