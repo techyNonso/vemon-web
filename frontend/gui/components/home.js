@@ -310,9 +310,10 @@ class Home extends Component {
               <div className="col-12 col-sm-10 col-md-6 col-lg-5 m-auto col-xl-3 text-left">
                 <div className="bg-white p-3 text-center rounded sl-1 boxShadow">
                   <h3 className="font-weight-light">Standard</h3>
-                  <strong className="h4">₦200,000.00</strong>
+                  <strong className="h4">₦50,000.00</strong>
                   <br />
-                  <strong className="h6">₦0.00/Month</strong>
+                  <br />
+                  <strong className="h6 text-success">₦0.00 / Month</strong>
                   <p
                     className="text-center mt-4"
                     style={{ display: this.state.offline }}
@@ -327,7 +328,7 @@ class Home extends Component {
                   <p>
                     <strike>Online Access</strike>
                   </p>
-
+                  <p>Desktop Application</p>
                   <p>1 Branch</p>
                 </div>
               </div>
@@ -335,9 +336,10 @@ class Home extends Component {
               <div className="col-12 col-sm-10 col-md-6 col-lg-5 m-auto col-xl-3 text-left pt-5 pt-md-0">
                 <div className="bg-white p-3 text-center rounded sl-1 boxShadow">
                   <h3 className="font-weight-light">Premium Pro</h3>
-                  <strong className="h4">₦200,000.00</strong>
+                  <strong className="h4">₦50,000.00</strong>
                   <br />
-                  <strong className="h6">₦3,000.00/Month</strong>
+                  <br />
+                  <strong className="h6 text-success">₦3,000.00 / Month</strong>
                   <p
                     className="text-center mt-4"
                     style={{ display: this.state.offline }}
@@ -350,16 +352,18 @@ class Home extends Component {
                   <hr className="mt-5 mb-5" />
 
                   <p>Online Access</p>
-                  <p>1 Branch</p>
+                  <p>Desktop Application</p>
+                  <p>3 Branches</p>
                 </div>
               </div>
 
               <div className="col-12 col-sm-10 col-md-6 col-lg-5 m-auto col-xl-3 text-left pt-5 pt-xl-0">
                 <div className="bg-white p-3 text-center rounded sl-1 boxShadow">
                   <h3 className="font-weight-light">Premium Maxi</h3>
-                  <strong className="h4">₦200,000.00</strong>
+                  <strong className="h4">₦50,000.00</strong>
                   <br />
-                  <strong className="h6">₦7,000.00/Month</strong>
+                  <br />
+                  <strong className="h6 text-success">₦7,000.00 / Month</strong>
                   <p
                     className="text-center mt-4"
                     style={{ display: this.state.offline }}
@@ -372,6 +376,7 @@ class Home extends Component {
                   <hr className="mt-5 mb-5" />
 
                   <p>Online Access</p>
+                  <p>Desktop Application</p>
                   <p>5 Branches</p>
                 </div>
               </div>
@@ -379,9 +384,12 @@ class Home extends Component {
               <div className="col-12 col-sm-10 col-md-6 col-lg-5 m-auto col-xl-3 text-left pt-5 pt-xl-0">
                 <div className="bg-white p-3 text-center rounded sl-1 boxShadow">
                   <h3 className="font-weight-light">Premium Advance</h3>
-                  <strong className="h4">₦200,000.00</strong>
+                  <strong className="h4">₦50,000.00</strong>
                   <br />
-                  <strong className="h6">₦15,000.00/Month</strong>
+                  <br />
+                  <strong className="h6 text-success">
+                    ₦15,000.00 / Month
+                  </strong>
                   <p
                     className="text-center mt-4"
                     style={{ display: this.state.offline }}
@@ -394,6 +402,7 @@ class Home extends Component {
                   <hr className="mt-5 mb-5" />
 
                   <p>Online Access</p>
+                  <p>Desktop Application</p>
                   <p>Unlimited Branches</p>
                 </div>
               </div>

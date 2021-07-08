@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'attendance',
     'stockActivities',
     'debtclearance',
+    'pricing',
     'rest_framework.authtoken',
     'drf_yasg'
     
