@@ -8,8 +8,11 @@ import {
   getCompany,
   createCompany,
 } from "Store/actions/companyAction";
+import { getPriceList, getPrice } from "Store/actions/pricingAction";
+
 import axios from "axios";
 import { getSearchResult, sortCompanies } from "Modules/company";
+import { getCodeDetail, getAmount } from "Modules/pricing";
 
 //import bootstrap component
 import Modal from "react-bootstrap/Modal";
@@ -50,6 +53,11 @@ class Companies extends Component {
       editClick: false,
       addCompanyClick: false,
       display: "",
+      standard: {},
+      pro: {},
+      maxi: {},
+      advance: {},
+      amount: 0,
     };
 
     this.handleProps = this.handleProps.bind(this);
@@ -60,9 +68,16 @@ class Companies extends Component {
   handleProps(props) {
     //sort companies
     let sortedList = sortCompanies(props.companies);
+    //sort plan code
+    let { standard, pro, maxi, advance } = getCodeDetail(props.priceList);
+
     this.setState({
       companies: sortedList,
       originalCompanies: sortedList,
+      standard,
+      pro,
+      maxi,
+      advance,
       loading: "none",
     });
   }
@@ -167,21 +182,42 @@ class Companies extends Component {
       let branchLength = this.props.company.branches;
 
       //verify length of branches
-      if (plan.toUpperCase() == "STANDARD" && branchLength > 1) {
+      if (
+        plan.toUpperCase() == "STANDARD" &&
+        branchLength > this.state.standard.branches_allowed
+      ) {
+        this.setState({
+          displayModal: false,
+          loading: "none",
+        });
         swal({
           title: "You have more branches than permitted for this plan",
           //text :" Name change successful",
           icon: "error",
           button: "OK",
         });
-      } else if (plan.toUpperCase() == "PREMIUM PRO" && branchLength > 3) {
+      } else if (
+        plan.toUpperCase() == "PREMIUM PRO" &&
+        branchLength > this.state.pro.branches_allowed
+      ) {
+        this.setState({
+          displayModal: false,
+          loading: "none",
+        });
         swal({
           title: "You have more branches than permitted for this plan",
           //text :" Name change successful",
           icon: "error",
           button: "OK",
         });
-      } else if (plan.toUpperCase() == "PREMIUM MAXI" && branchLength > 5) {
+      } else if (
+        plan.toUpperCase() == "PREMIUM MAXI" &&
+        branchLength > this.state.maxi.branches_allowed
+      ) {
+        this.setState({
+          displayModal: false,
+          loading: "none",
+        });
         swal({
           title: "You have more branches than permitted for this plan",
           //text :" Name change successful",
@@ -191,7 +227,6 @@ class Companies extends Component {
       } else {
         this.setState({
           loading: "block",
-          editClick: false,
         });
 
         let data = {
@@ -205,6 +240,7 @@ class Companies extends Component {
             this.setState({
               displayModal: false,
               loading: "none",
+              editClick: false,
             });
 
             swal({
@@ -356,6 +392,11 @@ class Companies extends Component {
   //wait for when our props arrive
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.companies !== this.props.companies) {
+      //get pricing
+      this.props.getPriceList();
+    }
+
+    if (prevProps.priceList !== this.props.priceList) {
       this.handleProps(this.props);
     }
 
@@ -366,6 +407,16 @@ class Companies extends Component {
         this.state.editClick ||
         this.state.activateClick)
     ) {
+      let amount = getAmount(
+        this.props.company.plan,
+        this.state.standard,
+        this.state.pro,
+        this.state.maxi,
+        this.state.advance
+      );
+      this.setState({
+        amount,
+      });
       //check if company has branches
       if (Number(this.props.company.branches) > 0 && this.state.deleteClick) {
         swal({
@@ -373,6 +424,9 @@ class Companies extends Component {
           text: " You need to delete all branches associated with this company",
           icon: "warning",
           button: "OK",
+        });
+        this.setState({
+          deleteClick: false,
         });
       } else {
         this.setState({ displayModal: true, company: this.props.company });
@@ -495,6 +549,7 @@ class Companies extends Component {
           proceedActivation={this.proceedActivation.bind(this)}
           company={this.state.company}
           display={this.state.display}
+          amount={this.state.amount}
         />
       );
     }
@@ -565,17 +620,23 @@ Companies.propTypes = {
   getCompanies: propTypes.func.isRequired,
   getCompany: propTypes.func.isRequired,
   companies: propTypes.array.isRequired,
+  getPriceList: propTypes.func.isRequired,
+  getPrice: propTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   companies: state.companies.items,
   company: state.companies.item,
+  priceList: state.pricing.items,
+  price: state.pricing.item,
 });
 
 export default connect(mapStateToProps, {
   getCompanies,
   getCompany,
   createCompany,
+  getPriceList,
+  getPrice,
 })(Companies);
 
 //write modal for this app
@@ -585,7 +646,7 @@ const ActMod = (props) => {
   const [name, setName] = useState(props.company.companyName);
   const [companyname, addName] = useState("");
   const [companyplan, addPlan] = useState("");
-  const amount = 1000000;
+  let amount = props.amount;
   const [email, setEmail] = useState("");
   const [firstname, setFName] = useState("");
   const [lastname, setLName] = useState("");
@@ -739,6 +800,24 @@ const ActMod = (props) => {
   } else {
     displayBody = displayBody = (
       <form className="form">
+        <div className="form-group">
+          <input
+            placeholder="Firstname"
+            className="form-control"
+            value={props.company.plan}
+            readOnly
+          />
+        </div>
+
+        <div className="form-group">
+          <input
+            placeholder="Firstname"
+            className="form-control"
+            value={props.amount}
+            readOnly
+          />
+        </div>
+
         <div className="form-group">
           <input
             placeholder="Firstname"

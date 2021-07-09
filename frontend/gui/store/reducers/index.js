@@ -12,6 +12,7 @@ import attendanceReducer from "./attendanceReducer";
 import errorReducer from "./errorReducer";
 import accountReducer from "./accountReducer";
 import invoicesReducer from "./invoicesReducer";
+import pricingReducer from "./pricingReducer";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
@@ -35,6 +36,7 @@ const rootReducer = combineReducers({
   account: accountReducer,
   error: errorReducer,
   invoices: invoicesReducer,
+  pricing: pricingReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);

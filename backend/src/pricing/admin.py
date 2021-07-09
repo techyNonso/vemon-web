@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 
 class PricingAdmin(admin.ModelAdmin):
     ordering = ('id',)
-    list_display = ('plan','price','branches_allowed')
+    list_display = ('plan','price','branches_allowed','code')
     search_fields = ('plan',)
     readonly_fields = ()
 

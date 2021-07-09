@@ -17,3 +17,5 @@ export const GET_ERRORS = "GET_ERRORS";
 export const GET_INVOICES = "GET_INVOICES";
 export const GET_PREV_INVOICES = "GET_PREV_INVOICES";
 export const GET_PREV_SALES = "GET_PREV_SALES";
+export const GET_PRICE_LIST = "GET_PRICE_LIST";
+export const GET_PRICE = "GET_PRICE";
