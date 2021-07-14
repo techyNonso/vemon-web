@@ -12,7 +12,7 @@ import { getPriceList, getPrice } from "Store/actions/pricingAction";
 
 import axios from "axios";
 import { getSearchResult, sortCompanies } from "Modules/company";
-import { getCodeDetail, getAmount } from "Modules/pricing";
+import { getCodeDetail, getAmount, updateCondition } from "Modules/pricing";
 
 //import bootstrap component
 import Modal from "react-bootstrap/Modal";
@@ -177,7 +177,7 @@ class Companies extends Component {
   }
 
   //proceed to update
-  proceedUpdate({ id, plan, name }) {
+  proceedUpdate({ id, plan, name }, newExp = false) {
     if (!plan.length == 0) {
       let branchLength = this.props.company.branches;
 
@@ -229,10 +229,33 @@ class Companies extends Component {
           loading: "block",
         });
 
-        let data = {
-          companyName: name,
-          plan: plan,
-        };
+        //check if new expiry date was specified
+        let data;
+        if (newExp) {
+          //generate new expiry date
+          let date = newExp;
+
+          let year = date.getFullYear();
+          let month =
+            this.getLength(date.getMonth() + 1) == 1
+              ? "0" + Number(date.getMonth() + 1)
+              : date.getMonth() + 1;
+          let day =
+            this.getLength(date.getDate()) == 1
+              ? "0" + date.getDate()
+              : date.getDate();
+
+          data = {
+            companyName: name,
+            plan: plan,
+            expiryDate: `${year}-${month}-${day}`,
+          };
+        } else {
+          data = {
+            companyName: name,
+            plan: plan,
+          };
+        }
 
         axiosInstance
           .put(`http://127.0.0.1:8000/companies/${id}/`, data)
@@ -550,6 +573,10 @@ class Companies extends Component {
           company={this.state.company}
           display={this.state.display}
           amount={this.state.amount}
+          standard={this.state.standard}
+          pro={this.state.pro}
+          maxi={this.state.maxi}
+          advance={this.state.advance}
         />
       );
     }
@@ -684,9 +711,65 @@ const ActMod = (props) => {
     props.proceedDelete(event.target.dataset.id);
   };
 
+  const notExpired = (date) => {
+    let oldDate = new Date(date);
+    let now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    if (oldDate > now) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const hideModalWithUpdate = (event) => {
-    setIsOpen(false);
-    props.proceedUpdate({ id: event.target.dataset.id, name, plan });
+    let id = event.target.dataset.id;
+    //prevent move to standard if subscription is still active
+    if (
+      notExpired(props.company.expiryDate) &&
+      plan.toUpperCase() == "STANDARD"
+    ) {
+      swal({
+        text: ` Sorry, you can only change to standard plan when the current subscription for this company has expired.`,
+        icon: "warning",
+        button: true,
+      });
+    } else {
+      //continue normal process
+      //if plan was not changed
+      if (plan.toUpperCase() == props.company.plan.toUpperCase()) {
+        //just proceed
+        setIsOpen(false);
+        props.proceedUpdate({ id, name, plan });
+      } else {
+        let conditionValue = updateCondition(
+          plan,
+          props.company,
+          props.standard,
+          props.pro,
+          props.maxi,
+          props.advance
+        );
+        if (!conditionValue) {
+          setIsOpen(false);
+          props.proceedUpdate({ id, name, plan });
+        } else {
+          swal({
+            text: ` Changing to this plan will leave you with a ${conditionValue.daysValue} day worth of service based on your balance with us`,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          }).then((value) => {
+            if (value) {
+              //if user clicks ok
+              setIsOpen(false);
+              props.proceedUpdate({ id, name, plan }, conditionValue.newExp);
+            }
+          });
+        }
+      }
+    }
   };
 
   const hideModalWithCreate = (event) => {

@@ -363,7 +363,7 @@ class Home extends Component {
                   <strong className="h4">₦50,000.00</strong>
                   <br />
                   <br />
-                  <strong className="h6 text-success">₦7,000.00 / Month</strong>
+                  <strong className="h6 text-success">₦5,550.00 / Month</strong>
                   <p
                     className="text-center mt-4"
                     style={{ display: this.state.offline }}
@@ -388,7 +388,7 @@ class Home extends Component {
                   <br />
                   <br />
                   <strong className="h6 text-success">
-                    ₦15,000.00 / Month
+                    ₦12,000.00 / Month
                   </strong>
                   <p
                     className="text-center mt-4"
