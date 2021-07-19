@@ -84,14 +84,14 @@ const getProductUnit = (stocks, id) => {
 
 //get sales for this date
 const getCurrentSalesDetails = (sales, invoices, stocks, date) => {
-  let match = sales.filter((sale) => {
+  /*let match = sales.filter((sale) => {
     let currentDate = new Date(sale.date);
     return (
       date.getDate() == currentDate.getDate() &&
       date.getMonth() == currentDate.getMonth() &&
       date.getFullYear() == currentDate.getFullYear()
     );
-  });
+  });*/
 
   //get invoices for this date
   let invoiceMatch = invoices.filter((invoice) => {
@@ -113,22 +113,27 @@ const getCurrentSalesDetails = (sales, invoices, stocks, date) => {
   //get total money Paid from receipt
   invoiceMatch.forEach((invoice) => {
     paidSum += Number(invoice.paid);
+    let cp = Number(invoice.cost_price);
+    let sp = Number(invoice.selling_price);
+    totalSp += Number(sp);
+    totalCp += Number(cp);
+    currentGain += Number(sp - cp);
+    totalPrice += Number(invoice.total_price);
   });
 
   //match represents all sales for a particular day
-  match.forEach((sale) => {
+  /* match.forEach((sale) => {
     let ppmu = getSalePpmu(sale.productId, stocks);
     //get product unit
     let productUnit = getProductUnit(stocks, sale.productId);
-    let unitSold = Number(sale.quantity / productUnit);
-    let cp = Number(ppmu) * Number(unitSold);
-    let sp = Number(sale.price);
+    //let unitSold = Number(sale.quantity / productUnit);
+    let cp = Number(sale.cost_price)
+    let sp = Number(sale.selling_price);
     totalSp += Number(sp);
     totalCp += Number(cp);
-    console.log(totalCp, date);
     currentGain += Number(sp - cp);
     totalPrice += Number(sale.price);
-  });
+  });*/
 
   return [totalPrice, paidSum, currentGain, totalCp, totalSp];
 };
@@ -142,8 +147,7 @@ const getPrevSalesDetails = (
   prevInvoices,
   prevSales
 ) => {
-  console.log(sales);
-  let match = sales.filter((sale) => {
+  /*let match = sales.filter((sale) => {
     let currentDate = new Date(sale.date);
 
     return (
@@ -151,7 +155,7 @@ const getPrevSalesDetails = (
       date.getMonth() == currentDate.getMonth() &&
       date.getFullYear() == currentDate.getFullYear()
     );
-  });
+  });*/
 
   //get invoices for this date
   /*let invoiceMatch = invoices.filter((invoice) => {
@@ -173,22 +177,24 @@ const getPrevSalesDetails = (
   let prevTotalSp = 0;
 
   //match represents all sales from yesterday
-  prevSales.forEach((sale) => {
+  /*prevSales.forEach((sale) => {
     let ppmu = getSalePpmu(sale.productId, stocks);
 
-    let cp = Number(ppmu) * Number(sale.quantity);
-    let sp = Number(sale.price);
-    prevTotalSp += Number(sp);
-    prevTotalCp += Number(cp);
+    prevTotalSp += Number(sale.selling_price);
+    prevTotalCp += Number(sale.cost_price);
     prevCurrentGain += Number(sp - cp);
     prevTotalPrice += Number(sale.price);
-  });
+  });*/
 
-  //get total money Paid from receipt
+  //get total money Paid from receipt and analysis
   invoiceMatch.forEach((invoice) => {
     prevPaidSum += Number(invoice.paid);
+    prevTotalSp += Number(invoice.selling_price);
+    prevTotalCp += Number(invoice.cost_price);
+    prevCurrentGain += Number(prevTotalSp - prevTotalCp);
+    prevTotalPrice += Number(invoice.total_price);
   });
-  console.log(prevTotalSp);
+
   return [
     prevTotalPrice,
     prevPaidSum,
@@ -272,6 +278,7 @@ export const generateReport = (
   previousInvoices,
   prevSales
 ) => {
+  //console.log(sales);
   //get previous day from first day details
   let firstDay = new Date(dates[0]);
 

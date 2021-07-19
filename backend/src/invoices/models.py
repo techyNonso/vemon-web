@@ -12,6 +12,8 @@ class invoice(models.Model):
     paid = models.CharField(max_length=20)
     balance = models.CharField(max_length=20)
     discount = models.CharField(max_length=20)
+    selling_price = models.IntegerField(default=0)
+    cost_price = models.IntegerField(default=0)
     transactionType = models.CharField(max_length=20)
     companyId = models.CharField(max_length=50,null=True)
     branchId = models.CharField(max_length=50,null=True)

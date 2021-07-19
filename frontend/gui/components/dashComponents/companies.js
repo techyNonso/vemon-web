@@ -673,14 +673,16 @@ const ActMod = (props) => {
   const [name, setName] = useState(props.company.companyName);
   const [companyname, addName] = useState("");
   const [companyplan, addPlan] = useState("");
-  let amount = props.amount;
+  const amount = props.amount * 100;
   const [email, setEmail] = useState("");
   const [firstname, setFName] = useState("");
   const [lastname, setLName] = useState("");
   const [phone, setPhone] = useState("");
+
   const publicKey = "pk_test_f8fb957ddc9b7a92212008bccc1a4dfe63ce3e3f";
   //pay stack settings
   const componentProps = {
+    reference: new Date().getTime(),
     email,
     amount,
     firstname: firstname.charAt(0).toUpperCase() + firstname.slice(1),

@@ -51,7 +51,12 @@ class OnlineSales extends Component {
       endDate: data.endDate,
     });
 
-    if (data.startDate == null && data.endDate !== null) {
+    if (data.startDate == null && data.endDate == null) {
+      this.setState({
+        startDate: new Date(),
+        endDate: new Date(),
+      });
+    } else if (data.startDate == null && data.endDate !== null) {
       this.setState({
         initialStartDate: data.endDate,
         initialEndDate: data.endDate,

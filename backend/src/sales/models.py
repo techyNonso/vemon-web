@@ -10,6 +10,8 @@ class sale(models.Model):
     #paid = models.IntegerField(default=0)
     #toPay = models.IntegerField(default=0)
     discount = models.CharField(max_length=20)
+    selling_price = models.IntegerField(default=0)
+    cost_price = models.IntegerField(default=0)
     transactionType = models.CharField(max_length=20)
     companyId = models.CharField(max_length=50,null=True)
     branchId = models.CharField(max_length=50,null=True)
