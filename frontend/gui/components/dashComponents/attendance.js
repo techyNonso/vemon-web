@@ -204,7 +204,7 @@ class Attendance extends Component {
           <td>{attendance.staffId}</td>
           <td>{attendance.staffName}</td>
           <td>{attendance.arrivalTime}</td>
-          <td>{attendance.exitTime}</td>
+          <td>{!attendance.exitTime ? "--" : attendance.exitTime}</td>
         </tr>
       ));
     } else {

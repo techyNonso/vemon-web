@@ -167,10 +167,12 @@ class StaffList extends Component {
           <td>{staff.staffId}</td>
           <td>{staff.staffName}</td>
           <td>{staff.email}</td>
-          <td>{staff.position}</td>
+          <td>
+            {staff.position.charAt(0).toUpperCase() + staff.position.slice(1)}
+          </td>
           <td>{staff.phone}</td>
           <td>
-            {staff.street},{staff.street}, {staff.state}
+            {staff.street},{staff.town}, {staff.state}
           </td>
           <td>{staff.permission}</td>
           <td>{staff.registered}</td>

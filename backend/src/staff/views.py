@@ -21,18 +21,22 @@ def companyStaff(request,company,branch):
 # Create your views here.
 @swagger_auto_schema(method='post',request_body=StaffSerializer)
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def allStaffHandler(request):
     if request.method == "GET":
         allStaff = staff.objects.all()
         serializer = StaffSerializer(allStaff, many=True)
         return Response(serializer.data)
     elif request.method == "POST":
-        serializer = StaffSerializer(data=request.data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        #create staff or update existing staff
+        obj,create = staff.objects.update_or_create(
+            companyId=request.data.get('companyId'),
+            branchId=request.data.get('branchId'),
+            email=request.data.get('email'),
+            defaults=request.data
+        )
+        return Response({"message": "done" }, status=status.HTTP_201_CREATED)
+        
 
 
 #create your staff detail view

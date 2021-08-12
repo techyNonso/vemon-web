@@ -36,8 +36,7 @@ def attendanceHandler(request):
         obj,create = attendance.objects.update_or_create(
             companyId=request.data.get('companyId'),
             branchId=request.data.get('branchId'),
-            staffId=request.data.get('staffId'),
-            arrivalTime=request.data.get('arrivalTime'),
+            storageId=request.data.get('storageId'),
             defaults=request.data
         )
         return Response({"message": "done" }, status=status.HTTP_201_CREATED)

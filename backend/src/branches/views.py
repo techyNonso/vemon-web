@@ -36,7 +36,8 @@ def remoteBranch(request,company,branchId):
         branches = branch.objects.filter(companyId=company,branchId=branchId)
         serializer = BranchesSerializer(branches, many=True)
         return Response(serializer.data)
-    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @swagger_auto_schema(method='post',request_body=BranchesSerializer)
 # Create your views here.
