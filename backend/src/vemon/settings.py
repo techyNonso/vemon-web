@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     'stockActivities',
     'debtclearance',
     'pricing',
+    'channels',
     'rest_framework.authtoken',
     'drf_yasg'
     
@@ -103,8 +105,15 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'account.Account'
 
 WSGI_APPLICATION = 'vemon.wsgi.application'
-
-
+ASGI_APPLICATION = "vemon.asgi.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
