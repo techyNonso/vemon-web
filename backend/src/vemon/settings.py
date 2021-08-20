@@ -1,3 +1,4 @@
+
 """
 Django settings for vemon project.
 
@@ -12,6 +13,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
+
 
 from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,10 +25,9 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '8lomtzq15w(yzpqg&n6f(9i##33ckm*i1)xgof@s16!*z)m-6n'
-
+SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG',cast=bool,default=True)
 
 ALLOWED_HOSTS = []
 
@@ -33,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,12 +50,15 @@ INSTALLED_APPS = [
     'companies',
     'expenses',
     'debts',
+    'invoices',
     'sales',
     'staff',
     'stock',
     'attendance',
     'stockActivities',
     'debtclearance',
+    'pricing',
+    'channels',
     'rest_framework.authtoken',
     'drf_yasg'
     
@@ -99,8 +105,15 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'account.Account'
 
 WSGI_APPLICATION = 'vemon.wsgi.application'
-
-
+ASGI_APPLICATION = "vemon.asgi.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 

@@ -1,8 +1,9 @@
-import { GET_SALES } from "../actions/types";
+import { GET_SALES, GET_PREV_SALES } from "../actions/types";
 
 const initialState = {
   items: [],
   item: {},
+  prevItems: [],
 };
 
 export default function salesReducer(state = initialState, action) {
@@ -11,6 +12,12 @@ export default function salesReducer(state = initialState, action) {
       return {
         ...state,
         items: action.payload,
+      };
+
+    case GET_PREV_SALES:
+      return {
+        ...state,
+        prevItems: action.payload,
       };
     default:
       return state;

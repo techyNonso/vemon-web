@@ -1,10 +1,11 @@
 import salesReducer from "../reducers/salesReducer";
-import { GET_SALES } from "./types";
+import { GET_SALES, GET_PREV_SALES } from "./types";
 import axios from "axios";
 import axiosInstance from "Modules/axiosInstance";
 
 const getLength = (num) => num.toString().length;
 
+//get sales by branch
 export const getSales = (company, branch, startDate, endDate) => (dispatch) => {
   let startYear = startDate.getFullYear();
   let startMonth =
@@ -39,9 +40,49 @@ export const getSales = (company, branch, startDate, endDate) => (dispatch) => {
     .catch((err) => console.error(err));
 };
 
+//get previous sales by branch
+export const getPrevSales = (company, branch, startDate, endDate) => (
+  dispatch
+) => {
+  let d = new Date(startDate);
+  let prevDay = new Date(d.setDate(d.getDate() - 1));
 
-export const getSalesPerCompany = (company,  startDate, endDate) => (dispatch) => {
-  
+  let startYear = prevDay.getFullYear();
+  let startMonth =
+    getLength(prevDay.getMonth() + 1) == 1
+      ? "0" + Number(prevDay.getMonth() + 1)
+      : prevDay.getMonth() + 1;
+  let startDay =
+    getLength(prevDay.getDate()) == 1
+      ? "0" + prevDay.getDate()
+      : prevDay.getDate();
+
+  let endYear = prevDay.getFullYear();
+  let endMonth =
+    getLength(prevDay.getMonth() + 1) == 1
+      ? "0" + Number(prevDay.getMonth() + 1)
+      : prevDay.getMonth() + 1;
+  let endDay =
+    getLength(prevDay.getDate()) == 1
+      ? "0" + prevDay.getDate()
+      : prevDay.getDate();
+
+  axiosInstance
+    .get(
+      `http://127.0.0.1:8000/sales/company/${company}/${branch}/${startYear}/${startMonth}/${startDay}/${endYear}/${endMonth}/${endDay}/`
+    )
+    .then((res) =>
+      dispatch({
+        type: GET_PREV_SALES,
+        payload: res.data,
+      })
+    )
+    .catch((err) => console.error(err));
+};
+
+export const getSalesPerCompany = (company, startDate, endDate) => (
+  dispatch
+) => {
   let startYear = startDate.getFullYear();
   let startMonth =
     getLength(startDate.getMonth() + 1) == 1

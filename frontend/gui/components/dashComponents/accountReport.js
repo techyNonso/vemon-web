@@ -3,7 +3,8 @@ import DateRangeSelect from "Components/dashComponents/dateRangeSelect";
 import propTypes from "prop-types";
 import { connect } from "react-redux";
 import Pagination from "Components/dashComponents/pagination";
-import { getSales } from "Store/actions/salesAction";
+import { getSales, getPrevSales } from "Store/actions/salesAction";
+import { getInvoices, getPrevInvoices } from "Store/actions/invoicesAction";
 import { getStocks } from "Store/actions/stockAction";
 import { getClearance } from "Store/actions/clearanceAction";
 import { getExpenses } from "Store/actions/expenseAction";
@@ -14,7 +15,7 @@ import { extractDates } from "Modules/sales";
 import { extractDebts } from "Modules/debts";
 import { extractClearance } from "Modules/clearance";
 import {
-  getTotalSalesDetails,
+  getTotalInvoicesDetails,
   getDebtDetails,
   getExpenseSum,
   getClearanceDetails,
@@ -91,8 +92,12 @@ class AccountReport extends Component {
       startDate: data.startDate,
       endDate: data.endDate,
     });
-
-    if (data.startDate == null && data.endDate !== null) {
+    if (data.startDate == null && data.endDate == null) {
+      this.setState({
+        startDate: new Date(),
+        endDate: new Date(),
+      });
+    } else if (data.startDate == null && data.endDate !== null) {
       this.setState({
         initialStartDate: data.endDate,
         initialEndDate: data.endDate,
@@ -126,7 +131,8 @@ class AccountReport extends Component {
       let mainExpenses = props.expenses;
       let mainSales = props.sales;
       let mainClearance = props.clearance;
-      let [total, paidSum] = getTotalSalesDetails(mainSales);
+      let mainInvoices = props.invoices;
+      let [total, paidSum] = getTotalInvoicesDetails(mainInvoices);
       let debtSum = getDebtDetails(mainDebts);
       let clearanceSum = getClearanceDetails(mainClearance);
       let expenseSum = getExpenseSum(mainExpenses);
@@ -140,8 +146,11 @@ class AccountReport extends Component {
         mainDebts,
         mainExpenses,
         mainSales,
+        mainInvoices,
         mainClearance,
-        stocks
+        stocks,
+        this.props.prevInvoices,
+        this.props.prevSales
       );
 
       //set state of activities
@@ -162,6 +171,16 @@ class AccountReport extends Component {
   componentDidUpdate(prevProps, prevState) {
     //now check if sales have arrived
     if (prevProps.sales !== this.props.sales) {
+      this.props.getPrevSales(
+        this.props.company.companyId,
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
+      );
+    }
+
+    //now check if previous sales have arrived
+    if (prevProps.prevSales !== this.props.prevSales) {
       this.props.getExpenses(
         this.props.company.companyId,
         this.props.branch.branchId,
@@ -182,6 +201,26 @@ class AccountReport extends Component {
 
     //check if clearance have arrived
     if (prevProps.clearance !== this.props.clearance) {
+      this.props.getPrevInvoices(
+        this.props.company.companyId,
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
+      );
+    }
+
+    //check if previous invoices have arrived
+    if (prevProps.prevInvoices !== this.props.prevInvoices) {
+      this.props.getInvoices(
+        this.props.company.companyId,
+        this.props.branch.branchId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
+      );
+    }
+
+    //check if invoices have arrived
+    if (prevProps.invoices !== this.props.invoices) {
       this.props.getDebts(
         this.props.company.companyId,
         this.props.branch.branchId,
@@ -494,7 +533,7 @@ class AccountReport extends Component {
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Total</th>
+                <th>Total(+discounts)</th>
                 <th>Amount Paid</th>
                 <th>Debt Paid</th>
                 <th>Debt To Pay</th>
@@ -538,6 +577,9 @@ const mapStateToProps = (state) => ({
   debts: state.debts.items,
   branch: state.branches.item,
   company: state.companies.item,
+  invoices: state.invoices.items,
+  prevInvoices: state.invoices.prevItems,
+  prevSales: state.sales.prevItems,
 });
 
 export default connect(mapStateToProps, {
@@ -546,6 +588,9 @@ export default connect(mapStateToProps, {
   getClearance,
   getExpenses,
   getDebts,
+  getInvoices,
+  getPrevInvoices,
+  getPrevSales,
 })(AccountReport);
 
 //write modal for this app
@@ -609,6 +654,8 @@ const ActMod = (props) => {
                 {ifPositive(props.percentDiff) && (
                   <th style={{ color: "green" }}>+{props.percentDiff} %</th>
                 )}
+                <th></th>
+                <th></th>
               </tr>
             </tfoot>
           </table>

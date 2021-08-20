@@ -14,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 
 @swagger_auto_schema(method='post',request_body=StockActivitySerializer)
 @api_view(['GET','POST'])
+@permission_classes((IsAuthenticated,))
 def stockActivityHandler(request):
     if request.method == "GET":
         allActivity = stockActivity.objects.all()
@@ -29,16 +30,17 @@ def stockActivityHandler(request):
 
 
 #create view for particular company and branch view
-@api_view(['GET'])
+@api_view(['GET',"POST"])
 @permission_classes((IsAuthenticated,))
 def companyStockActivity(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
     start_date = "%d-%d-%d"%(startyear,startmonth,startday)
     end_date = "%d-%d-%d"%(endyear,endmonth,endday)
-    print(start_date)
+    
     if request.method == "GET":
         allActivity = stockActivity.objects.filter(companyId=company,branchId=branch,date__range=[start_date, end_date])
         serializer = StockActivitySerializer(allActivity,many=True)
         return Response(serializer.data)
+       
 
 #create your staff detail view
 

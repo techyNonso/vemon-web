@@ -37,19 +37,23 @@ def companySales(request,company,branch,startyear,startmonth,startday,endyear,en
 # Create your views here.
 @swagger_auto_schema(method='post',request_body=SalesSerializer)
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def salesHandler(request):
     if request.method == "GET":
         sales = sale.objects.all()
         serializer = SalesSerializer(sales, many=True)
         return Response(serializer.data)
     elif request.method == "POST":
-        serializer = SalesSerializer(data=request.data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        #create sales or update existing sales
+        obj,create = sale.objects.update_or_create(
+            companyId=request.data.get('companyId'),
+            branchId=request.data.get('branchId'),
+            invoiceId=request.data.get('invoiceId'),
+            productId=request.data.get('productId'),
+            defaults=request.data
+        )
+        return Response({"message": "done" }, status=status.HTTP_201_CREATED)
+        
 
 #create your sale detail view
 @swagger_auto_schema(method='put',request_body=SalesSerializer)

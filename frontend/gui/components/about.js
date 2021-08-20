@@ -35,11 +35,51 @@ class About extends Component {
                   </strong>
                 </p>
 
-                <p className="h1 text-muted">
-                  <i className="fab fa-chrome mr-3"></i>
-                  <i className="fab fa-safari mr-3"></i>
-                  <i className="fab fa-firefox mr-3"></i>
-                  <i className="fab fa-edge"></i>
+                <p className="h1">
+                  <a
+                    href="https://web.facebook.com/profile.php?id=100009564907771"
+                    target="_blank"
+                    style={{
+                      color: "	#4267B2",
+                      display: "inline-block",
+                      padding: "10px",
+                    }}
+                  >
+                    {" "}
+                    <i className="fa fa-facebook-square" aria-hidden="true"></i>
+                  </a>
+                  <a
+                    href="#"
+                    style={{
+                      color: "	#1DA1F2",
+                      display: "inline-block",
+                      padding: "10px",
+                    }}
+                  >
+                    <i className="fa fa-twitter" aria-hidden="true"></i>
+                  </a>
+                  <a
+                    href="https://www.github.com/techynonso"
+                    target="_blank"
+                    style={{
+                      display: "inline-block",
+                      padding: "10px",
+                      color: "black",
+                    }}
+                  >
+                    <i className="fa fa-github-square" aria-hidden="true"></i>
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/chukwunonso-ikeji-040519205/"
+                    target="_blank"
+                    style={{
+                      color: "	#0E76A8",
+                      display: "inline-block",
+                      padding: "10px",
+                    }}
+                  >
+                    <i className="fa fa-linkedin-square" aria-hidden="true"></i>
+                  </a>
                 </p>
               </div>
               <div className="col-12 col-md-8 m-auto ml-lg-auto mr-lg-0 col-lg-6 pt-5 pt-lg-0">

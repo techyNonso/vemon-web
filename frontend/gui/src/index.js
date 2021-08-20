@@ -21,6 +21,8 @@ import Privacy from "Components/privacy";
 import Signin from "Components/signin";
 import Signup from "Components/signup";
 import Terms from "Components/terms";
+import EmailVerification from "Components/emailVerification";
+import PasswordReset from "Components/passwordReset";
 import ProtectedRoute from "Components/protectedRoute";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -48,6 +50,8 @@ class App extends Component {
                 <Route path="/contact" exact component={Contact} />
                 <Route path="/faq" exact component={Faq} />
                 <Route path="/privacy" exact component={Privacy} />
+                <Route path="/verify-email" component={EmailVerification} />
+                <Route path="/reset-password" component={PasswordReset} />
                 <ProtectedRoute path="/signin" exact component={Signin} />
                 <ProtectedRoute path="/signup" exact component={Signup} />
                 <Route path="/terms" exact component={Terms} />

@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 #set your admin page listing
 class AttendanceAdmin(admin.ModelAdmin):
     ordering= ('id',)
-    list_display = ('staffName','staffId','arrivalTime','exitTime')
+    list_display = ('date','staffName','staffId','arrivalTime','exitTime','companyId','branchId','storageId')
     search_fields = ('staffName','staffId')
     readonly_fields = ('arrivalTime','exitTime')
 

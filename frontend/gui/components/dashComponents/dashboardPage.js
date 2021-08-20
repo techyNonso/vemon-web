@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { getSalesPerCompany } from "Store/actions/salesAction";
 import { getStocks } from "Store/actions/stockAction";
+import { getInvoicesPerCompany } from "Store/actions/invoicesAction";
 import { getClearancePerCompany } from "Store/actions/clearanceAction";
 import { getExpensesPerCompany } from "Store/actions/expenseAction";
 import { getDebtsPerCompany } from "Store/actions/debtsAction";
@@ -14,7 +15,7 @@ import { extractDates } from "Modules/sales";
 import { extractDebts } from "Modules/debts";
 import { extractClearance } from "Modules/clearance";
 import {
-  getTotalSalesDetails,
+  getTotalInvoicesDetails,
   getDebtDetails,
   getExpenseSum,
   getClearanceDetails,
@@ -96,7 +97,8 @@ class DashboardPage extends Component {
       let mainExpenses = props.expenses;
       let mainSales = props.sales;
       let mainClearance = props.clearance;
-      let [total, paidSum] = getTotalSalesDetails(mainSales);
+      let mainInvoices = props.invoices;
+      let [total, paidSum] = getTotalInvoicesDetails(mainInvoices);
       let debtSum = getDebtDetails(mainDebts);
       let clearanceSum = getClearanceDetails(mainClearance);
       let expenseSum = getExpenseSum(mainExpenses);
@@ -161,6 +163,15 @@ class DashboardPage extends Component {
 
     //check if clearance have arrived
     if (prevProps.clearance !== this.props.clearance) {
+      this.props.getInvoicesPerCompany(
+        this.props.company.companyId,
+        this.state.initialStartDate,
+        this.state.initialEndDate
+      );
+    }
+
+    //check if invoices has arrived
+    if (prevProps.invoices !== this.props.invoices) {
       this.props.getDebtsPerCompany(
         this.props.company.companyId,
         this.state.initialStartDate,
@@ -407,6 +418,7 @@ const mapStateToProps = (state) => ({
   branch: state.branches.item,
   branches: state.branches.items,
   company: state.companies.item,
+  invoices: state.invoices.items,
 });
 
 export default connect(mapStateToProps, {
@@ -415,4 +427,5 @@ export default connect(mapStateToProps, {
   getClearancePerCompany,
   getExpensesPerCompany,
   getDebtsPerCompany,
+  getInvoicesPerCompany,
 })(DashboardPage);

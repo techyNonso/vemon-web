@@ -16,8 +16,8 @@ import {
 } from "Modules/stock";
 
 //loading imports
-import {css} from '@emotion/core'
-import {BeatLoader} from 'react-spinners'
+import { css } from "@emotion/core";
+import { BeatLoader } from "react-spinners";
 
 class ProductReport extends Component {
   constructor(props) {
@@ -52,7 +52,12 @@ class ProductReport extends Component {
       endDate: data.endDate,
     });
 
-    if (data.startDate == null && data.endDate !== null) {
+    if (data.startDate == null && data.endDate == null) {
+      this.setState({
+        startDate: new Date(),
+        endDate: new Date(),
+      });
+    } else if (data.startDate == null && data.endDate !== null) {
       this.setState({
         initialStartDate: data.endDate,
         initialEndDate: data.endDate,
@@ -159,7 +164,7 @@ class ProductReport extends Component {
       prevProps.branch !== this.props.branch
     ) {
       //console.log(this.props.company.companyId, this.props.branch.branchId);
-      
+
       this.props.getStocks(
         this.props.company.companyId,
         this.props.branch.branchId
@@ -200,13 +205,13 @@ class ProductReport extends Component {
 
   render() {
     const loaderStyle = {
-      "width":"200px",
-      "position":"fixed",
-      "zIndex":"1000",
-      "left":"50%",
-      "marginLeft":"-100px",
-      "display":this.state.loading
-    }
+      width: "200px",
+      position: "fixed",
+      zIndex: "1000",
+      left: "50%",
+      marginLeft: "-100px",
+      display: this.state.loading,
+    };
 
     //get current stocks
     const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
@@ -241,8 +246,10 @@ class ProductReport extends Component {
 
     return (
       <Fragment>
-        <div className="row pr-4 mb-3" >
-          <div className="text-center  " style={loaderStyle} ><BeatLoader size={15} color="green" loading /></div>
+        <div className="row pr-4 mb-3">
+          <div className="text-center  " style={loaderStyle}>
+            <BeatLoader size={15} color="green" loading />
+          </div>
         </div>
         <div className="row mt-3 pl-3 pr-3">
           <div className="col-md-6 pb-2">
@@ -285,9 +292,7 @@ class ProductReport extends Component {
                 <th>Percentage Profit</th>
               </tr>
             </thead>
-            <tbody>
-              {reportList}
-            </tbody>
+            <tbody>{reportList}</tbody>
           </table>
         </div>
 

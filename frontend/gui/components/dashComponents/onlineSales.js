@@ -51,7 +51,12 @@ class OnlineSales extends Component {
       endDate: data.endDate,
     });
 
-    if (data.startDate == null && data.endDate !== null) {
+    if (data.startDate == null && data.endDate == null) {
+      this.setState({
+        startDate: new Date(),
+        endDate: new Date(),
+      });
+    } else if (data.startDate == null && data.endDate !== null) {
       this.setState({
         initialStartDate: data.endDate,
         initialEndDate: data.endDate,
@@ -296,16 +301,16 @@ class OnlineSales extends Component {
               <tr>
                 <th>Total</th>
 
-                <th>Disccount</th>
-                <th>Balance</th>
+                {/**<th>Disccount</th>
+                <th>Balance</th>**/}
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>{Formatter.format(this.state.onlineSales)}</td>
 
-                <td>{this.state.discount} %</td>
-                <td>{Formatter.format(this.state.balance)}</td>
+                {/**<td>{this.state.discount} %</td>
+                <td>{Formatter.format(this.state.balance)}</td>**/}
               </tr>
             </tbody>
           </table>

@@ -10,6 +10,7 @@ import {
   sortBranches,
   generateBranchId,
 } from "Modules/branch";
+import axiosInstance from "Modules/axiosInstance";
 
 //import bootstrap component
 import Modal from "react-bootstrap/Modal";
@@ -19,11 +20,10 @@ import ModalFooter from "react-bootstrap/ModalFooter";
 import ModalTitle from "react-bootstrap/ModalTitle";
 
 //loading imports
-import {css} from '@emotion/core'
-import {BeatLoader} from 'react-spinners'
+import { css } from "@emotion/core";
+import { BeatLoader } from "react-spinners";
 
-import swal from 'sweetalert'
-
+import swal from "sweetalert";
 
 class Branches extends Component {
   constructor(props) {
@@ -58,10 +58,35 @@ class Branches extends Component {
   addBranch() {
     //check branch maximum
     if (
-      this.props.company.plan.toUpperCase() == "PREMIUM ADVANCE" &&
-      this.state.branches.length > 5
+      this.props.company.plan.toUpperCase() == "STANDARD" &&
+      this.state.branches.length >= 1
     ) {
-      console.log("Maximum branch reached");
+      swal({
+        title: "You have reached the maximum number of branches for this plan",
+        //text :" Name change successful",
+        icon: "error",
+        button: "OK",
+      });
+    } else if (
+      this.props.company.plan.toUpperCase() == "PREMIUM PRO" &&
+      this.state.branches.length >= 3
+    ) {
+      swal({
+        title: "You have reached the maximum number of branches for this plan",
+        //text :" Name change successful",
+        icon: "error",
+        button: "OK",
+      });
+    } else if (
+      this.props.company.plan.toUpperCase() == "PREMIUM MAXI" &&
+      this.state.branches.length >= 5
+    ) {
+      swal({
+        title: "You have reached the maximum number of branches for this plan",
+        //text :" Name change successful",
+        icon: "error",
+        button: "OK",
+      });
     } else {
       let id = generateBranchId(this.state.branches);
 
@@ -74,17 +99,27 @@ class Branches extends Component {
         loading: "block",
       });
 
-      axios
-        .post(`http://127.0.0.1:8000/branches/${this.props.company.companyId}/`, data)
-        .then((res) =>{
-          this.props.getCompanyBranches(this.props.company.companyId)
-
-          this.setState({
-            loading: "block",
-          });
-        }
+      axiosInstance
+        .post(
+          `http://127.0.0.1:8000/branches/${this.props.company.companyId}/`,
+          data
         )
-        .catch((err) => console.log(err));
+        .then((res) => {
+          //update company branch count
+
+          axiosInstance
+            .put(`http://127.0.0.1:8000/companies/${this.props.company.id}/`, {
+              branches: this.props.branches.length + 1,
+            })
+            .then((res) => {
+              this.props.getCompanyBranches(this.props.company.companyId);
+              this.setState({
+                loading: "block",
+              });
+            })
+            .catch((err) => console.log(err));
+        })
+        .catch((err) => console.log(err.response.data));
     }
   }
 
@@ -99,24 +134,32 @@ class Branches extends Component {
 
   //proceed to display
   proceedDelete(id) {
-   
     this.setState({
       loading: "block",
       deleteClick: false,
     });
 
-    axios
+    axiosInstance
       .delete(`http://127.0.0.1:8000/branches/branch/${id}/`)
       .then((res) => {
-        this.setState({
-          displayModal: false,
-          loading: "none",
+        //update company with new length
+        axiosInstance
+          .put(`http://127.0.0.1:8000/companies/${this.props.company.id}/`, {
+            branches: this.props.branches.length - 1,
+          })
+          .then((res) => {
+            this.setState({
+              displayModal: false,
+              loading: "none",
+            });
+          });
+
+        swal({
+          title: "Branch Deleted Successfully",
+          //text :" Name change successful",
+          icon: "success",
+          button: "OK",
         });
-        swal({ title:"Branch Deleted Successfully",
-        //text :" Name change successful",
-        icon:"success",
-        button:"OK",
-      })
         this.props.getCompanyBranches(this.props.company.companyId);
       })
       .catch((err) => console.log(err));
@@ -175,7 +218,7 @@ class Branches extends Component {
 
     if (prevProps.company !== this.props.company) {
       //console.log(this.props.company.companyId, this.props.branch.branchId);
-      
+
       this.props.getCompanyBranches(this.props.company.companyId);
       this.setState({
         loading: "block",
@@ -195,23 +238,21 @@ class Branches extends Component {
     } else {
       this.props.getCompanyBranches(this.props.company.companyId);
 
-        this.setState({
-          loading: "block",
-        });
+      this.setState({
+        loading: "block",
+      });
     }
-    
   }
 
   render() {
     const loaderStyle = {
-      "width":"200px",
-      "position":"fixed",
-      "zIndex":"1000",
-      "left":"50%",
-      "marginLeft":"-100px",
-      "display":this.state.loading
-    }
-
+      width: "200px",
+      position: "fixed",
+      zIndex: "1000",
+      left: "50%",
+      marginLeft: "-100px",
+      display: this.state.loading,
+    };
 
     //get current stocks
     const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
@@ -227,9 +268,10 @@ class Branches extends Component {
       branchList = currentPosts.map((branch) => (
         <tr key={branch.id}>
           <td>{branch.branchId}</td>
-          <td>{branch.state}</td>
+          {/*<td>{branch.state}</td>
           <td>{branch.town}</td>
-          <td>{branch.street}</td>
+      <td>{branch.street}</td>*/}
+          <td>{branch.address}</td>
           <td>{branch.phone}</td>
           <td>
             <button
@@ -267,8 +309,10 @@ class Branches extends Component {
     return (
       <Fragment>
         {modal}
-        <div className="row pr-4 mb-3" >
-          <div className="text-center  " style={loaderStyle} ><BeatLoader size={15} color="green" loading /></div>
+        <div className="row pr-4 mb-3">
+          <div className="text-center  " style={loaderStyle}>
+            <BeatLoader size={15} color="green" loading />
+          </div>
         </div>
         <div className="row mt-3 pl-3 pr-3">
           <div className="col-md-6 pb-2">
@@ -297,17 +341,16 @@ class Branches extends Component {
             <thead>
               <tr>
                 <th>Branch Id</th>
-                <th>State</th>
+                {/*<th>State</th>
                 <th>Town</th>
-                <th>Street</th>
+                <th>Street</th>*/}
+                <th>Address</th>
                 <th>Phone</th>
 
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody>
-              {branchList}
-            </tbody>
+            <tbody>{branchList}</tbody>
           </table>
         </div>
 

@@ -24,6 +24,7 @@ export const getStockArray = (ids, stock) => {
       batches: "",
       bought: "",
       sold: "",
+      unit: "",
     };
     let ppmu = 0;
     let counter = 0;
@@ -35,7 +36,7 @@ export const getStockArray = (ids, stock) => {
         obj.id = product.productId;
         //assign name
         obj.name = product.productName;
-
+        obj.unit = product.unit;
         //assign quantity
         obj.qty = Number(obj.qty) + Number(product.quantity);
         //assign batch
@@ -236,10 +237,10 @@ const calcTotal = (salesList, priceBought) => {
   let cp = 0;
   salesList.forEach((sale) => {
     total += Number(sale.quantity);
-    totalPrice += Number(sale.price);
+    cp += Number(sale.cost_price);
+    totalPrice += Number(sale.selling_price);
   });
 
-  cp = total * Number(priceBought);
   gain = totalPrice - cp;
   return [total, gain];
 };
@@ -247,9 +248,9 @@ const calcTotal = (salesList, priceBought) => {
 //calculate percentage gain
 const calcGainPercs = (reports, totalGain) => {
   reports.forEach((report) => {
-    report.gain = isNaN(Math.ceil((report.gain / totalGain) * 100))
+    report.gain = isNaN((report.gain / totalGain) * 100)
       ? 0
-      : Math.ceil((report.gain / totalGain) * 100);
+      : ((report.gain / totalGain) * 100).toFixed(2);
   });
 
   return reports;
@@ -271,9 +272,9 @@ export const generateProductReport = (stocks, sales) => {
       obj.productId = product.id;
       obj.total = total;
       obj.gain = isNaN(gain) ? 0 : gain;
-      obj.percVolume = isNaN(Math.ceil((total / allTotal) * 100))
+      obj.percVolume = isNaN((total / allTotal) * 100)
         ? 0
-        : Math.ceil((total / allTotal) * 100);
+        : ((total / allTotal) * 100).toFixed(2);
 
       reports = [...reports, obj];
     });

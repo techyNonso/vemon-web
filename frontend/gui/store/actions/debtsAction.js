@@ -28,7 +28,7 @@ export const getDebts = (company, branch, startDate, endDate) => (dispatch) => {
 
   axiosInstance
     .get(
-      `http://127.0.0.1:8000/debts/company/${company}/${branch}/${startYear}/${startMonth}/${startDay}/${endYear}/${endMonth}/${endDay}/`
+      `http://127.0.0.1:8000/credit-invoices/company/${company}/${branch}/${startYear}/${startMonth}/${startDay}/${endYear}/${endMonth}/${endDay}/`
     )
     .then((res) =>
       dispatch({
@@ -39,8 +39,9 @@ export const getDebts = (company, branch, startDate, endDate) => (dispatch) => {
     .catch((err) => console.error(err));
 };
 
-
-export const getDebtsPerCompany = (company,startDate, endDate) => (dispatch) => {
+export const getDebtsPerCompany = (company, startDate, endDate) => (
+  dispatch
+) => {
   let startYear = startDate.getFullYear();
   let startMonth =
     getLength(startDate.getMonth() + 1) == 1
@@ -63,7 +64,7 @@ export const getDebtsPerCompany = (company,startDate, endDate) => (dispatch) => 
 
   axiosInstance
     .get(
-      `http://127.0.0.1:8000/debts/company/${company}/${startYear}/${startMonth}/${startDay}/${endYear}/${endMonth}/${endDay}/`
+      `http://127.0.0.1:8000/credit-invoices/company/${company}/${startYear}/${startMonth}/${startDay}/${endYear}/${endMonth}/${endDay}/`
     )
     .then((res) =>
       dispatch({
@@ -73,7 +74,6 @@ export const getDebtsPerCompany = (company,startDate, endDate) => (dispatch) => 
     )
     .catch((err) => console.error(err));
 };
-
 
 /*
 export const getActivity = (id) => (dispatch) => {

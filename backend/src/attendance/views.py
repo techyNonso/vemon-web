@@ -24,6 +24,7 @@ def companyAttendance(request, company,branch,startyear,startmonth,startday,endy
 @swagger_auto_schema(method='post',request_body=AttendanceSerializer)
 # Create your views here.
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def attendanceHandler(request):
 
     if request.method == 'GET':
@@ -31,13 +32,15 @@ def attendanceHandler(request):
         serializer = AttendanceSerializer(allAttendance, many=True)
         return Response(serializer.data)
     elif request.method == "POST":
-        serializer = AttendanceSerializer(data=request.data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
+        #create attendance or update existing attendance
+        obj,create = attendance.objects.update_or_create(
+            companyId=request.data.get('companyId'),
+            branchId=request.data.get('branchId'),
+            storageId=request.data.get('storageId'),
+            defaults=request.data
+        )
+        return Response({"message": "done" }, status=status.HTTP_201_CREATED)
+        
 
 #Create view for put , delete and detail
 @swagger_auto_schema(method='put',request_body=AttendanceSerializer)
