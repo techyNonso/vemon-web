@@ -6,6 +6,7 @@ import Pagination from "Components/dashComponents/pagination";
 import { getAllStaff, getStaff } from "Store/actions/staffAction";
 import axios from "axios";
 import { getSearchResult, sortStaff } from "Modules/staff";
+import WebSocketInstance from "Modules/websocket";
 
 class StaffList extends Component {
   constructor(props) {
@@ -92,6 +93,12 @@ class StaffList extends Component {
       prevProps.company !== this.props.company ||
       prevProps.branch !== this.props.branch
     ) {
+      //connect to web socket staff room
+      WebSocketInstance.connect(
+        this.props.company.companyId,
+        this.props.branch.branchId
+      );
+
       //console.log(this.props.company.companyId, this.props.branch.branchId);
       this.setState({
         loading: true,
@@ -104,6 +111,12 @@ class StaffList extends Component {
   }
 
   componentDidMount() {
+    //connect to web socket staff room
+    WebSocketInstance.connect(
+      this.props.company.companyId,
+      this.props.branch.branchId
+    );
+
     this.props.getAllStaff(
       this.props.company.companyId,
       this.props.branch.branchId
@@ -115,6 +128,7 @@ class StaffList extends Component {
 
   changeAccess(event) {
     let id = event.target.dataset.staff;
+    let staffId = event.target.dataset.staffid;
     let command = event.target.dataset.command;
 
     let data = {
@@ -126,12 +140,17 @@ class StaffList extends Component {
     });
     axios
       .put(`http://127.0.0.1:8000/staff/${id}/`, data)
-      .then((res) =>
+      .then((res) => {
+        //send access message
+        WebSocketInstance.sendMessage({
+          staffId,
+          access: data.access,
+        });
         this.props.getAllStaff(
           this.props.company.companyId,
           this.props.branch.branchId
-        )
-      )
+        );
+      })
       .catch((err) => {
         this.setState({
           loading: false,
@@ -183,6 +202,7 @@ class StaffList extends Component {
                 className="btn btn-sm btn-danger"
                 data-command="block"
                 data-staff={staff.id}
+                data-staffid={staff.staffId}
                 onClick={this.changeAccess.bind(this)}
               >
                 Block
@@ -196,6 +216,7 @@ class StaffList extends Component {
                 className="btn btn-sm btn-success w-100"
                 data-command="activate"
                 data-staff={staff.id}
+                data-staffid={staff.staffId}
                 onClick={this.changeAccess.bind(this)}
               >
                 Activate
