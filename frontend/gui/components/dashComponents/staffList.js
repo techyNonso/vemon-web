@@ -145,6 +145,7 @@ class StaffList extends Component {
         WebSocketInstance.sendMessage({
           staffId,
           access: data.access,
+          section: "staff_update",
         });
         this.props.getAllStaff(
           this.props.company.companyId,
