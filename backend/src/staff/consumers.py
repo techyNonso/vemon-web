@@ -2,8 +2,68 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from .models import staff_updates
 
 class StaffConsumer(WebsocketConsumer):
+    def fetch_messages(self,data):
+        
+        company = data['companyId']
+        branch = data['branchId']
+        updates = staff_updates.objects.filter(companyId=company,branchId=branch)
+        content = {
+            'messages': self.messages_to_json(updates)
+        }
+        self.send_message(content)
+
+    def new_message(self, data):
+        
+        update,create = staff_updates.objects.update_or_create(
+            companyId=data['companyId'],
+            branchId=data['branchId'],
+            staffId = data['staffId'],
+            defaults={
+            'staffId' : data['staffId'],
+            'companyId' : data['companyId'],
+            'branchId' : data['branchId'],
+            'permission' : data['permission']
+            }
+        )
+        
+        controll = {
+            'staffId' : data['staffId'],
+            'companyId' : data['companyId'],
+            'branchId' : data['branchId'],
+            'permission' : data['permission']
+         }
+       
+
+        content = {
+            'command': 'new_message',
+            'message': self.message_to_json(controll)
+        }
+        return self.send_chat_message(content)
+
+    def messages_to_json(self, updates):
+        result = []
+        for update in updates:
+            result.append(self.message_to_json(update))
+        return result
+
+    def message_to_json(self, update):
+        return {
+            'staffId' : update['staffId'],
+            'company': update['companyId'],
+            'branch': update['branchId'],
+            'permission': update['permission'],
+            
+        }
+
+    commands = {
+        'fetch_messages': fetch_messages,
+        'new_message': new_message
+    }
+
+    
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         
@@ -26,9 +86,11 @@ class StaffConsumer(WebsocketConsumer):
 
     # Receive message from WebSocket
     def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        data = json.loads(text_data)
+        self.commands[data['command']](self, data)
 
+
+    def send_chat_message(self,message):
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
@@ -37,12 +99,15 @@ class StaffConsumer(WebsocketConsumer):
                 'message': message
             }
         )
+    
+    def send_message(self,message):
+        self.send(text_data=json.dumps({message}))
 
     # Receive message from room group
     def chat_message(self, event):
+        
         message = event['message']
-
-        # Send message to WebSocket
-        self.send(text_data=json.dumps({
-            'message': message
-        }))
+        message['message']['command'] = message['command']
+        message['message']['section'] = 'staff_update'
+        main = json.dumps(message['message'])
+        self.send(text_data=main)

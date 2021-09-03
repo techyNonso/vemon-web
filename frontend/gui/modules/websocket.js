@@ -12,9 +12,16 @@ class WebSocketService {
   }
 
   connect(company, branch) {
-    const path = `ws://127.0.0.1:8000/ws/chat/${company}${branch}/`;
+    const path = `ws://127.0.0.1:8000/ws/staff/${company}${branch}/`;
     this.socketRef = new WebSocket(path);
     this.socketRef.onopen = () => {
+      /*this.socketNewMessage(
+        JSON.stringify({
+          command: "fetch_messages",
+          companyId: company,
+          branchId: branch,
+        })
+      );*/
       console.log("socket opened");
     };
 
@@ -33,16 +40,32 @@ class WebSocketService {
     };
   }
 
+  disconnect() {
+    this.socketRef.close();
+  }
+
   socketNewMessage(data) {
     //message received
     const parseData = JSON.parse(data);
+    const command = parseData.command;
     console.log(parseData);
   }
 
-  newMessage(message) {
+  fetchMessages(data) {
     this.sendMessage({
-      from: message.from,
-      message: message.content,
+      command: "fetch_messages",
+      companyId: data.companyId,
+      branchId: data.branchId,
+    });
+  }
+
+  newChatMessage(message) {
+    this.sendMessage({
+      command: "new_message",
+      staffId: message.staffId,
+      companyId: message.companyId,
+      branchId: message.branchId,
+      permission: message.permission,
     });
   }
 
@@ -50,7 +73,7 @@ class WebSocketService {
     try {
       this.socketRef.send(
         JSON.stringify({
-          message: data,
+          ...data,
         })
       );
     } catch (error) {

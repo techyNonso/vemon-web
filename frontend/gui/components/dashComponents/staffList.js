@@ -38,6 +38,14 @@ class StaffList extends Component {
     });
   }
 
+  setMessages(messages) {
+    console.log(messages, "set");
+  }
+
+  addMessage(message) {
+    console.log(message, "add");
+  }
+
   //search starting from first page
   searchList(event) {
     this.setState({
@@ -143,9 +151,12 @@ class StaffList extends Component {
       .then((res) => {
         //send access message
         WebSocketInstance.sendMessage({
+          command: "new_message",
           staffId,
-          access: data.access,
+          permission: data.access,
           section: "staff_update",
+          companyId: this.props.company.companyId,
+          branchId: this.props.branch.branchId,
         });
         this.props.getAllStaff(
           this.props.company.companyId,

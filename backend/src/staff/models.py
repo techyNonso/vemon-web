@@ -15,4 +15,11 @@ class staff(models.Model):
     street = models.CharField(max_length=50)
     companyId = models.CharField(max_length=50,null=True)
     branchId = models.CharField(max_length=50,null=True)
-    
+
+
+class staff_updates(models.Model):
+    staffId = models.CharField(max_length=10)
+    companyId = models.CharField(max_length=50,null=True)
+    branchId = models.CharField(max_length=50,null=True)
+    permission = models.CharField(max_length=30)
+    updated = models.DateTimeField(verbose_name="updated", auto_now_add=True)
