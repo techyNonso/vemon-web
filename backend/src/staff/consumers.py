@@ -7,8 +7,8 @@ from .models import staff_updates
 class StaffConsumer(WebsocketConsumer):
     def fetch_messages(self,data):
         
-        company = data['companyId']
-        branch = data['branchId']
+        company = data.get('companyId')
+        branch = data.get('branchId')
         updates = staff_updates.objects.filter(companyId=company,branchId=branch)
         content = {
             'messages': self.messages_to_json(updates)
@@ -46,8 +46,17 @@ class StaffConsumer(WebsocketConsumer):
     def messages_to_json(self, updates):
         result = []
         for update in updates:
-            result.append(self.message_to_json(update))
+            result.append(self.message_list_to_json(update))
         return result
+
+    def message_list_to_json(self, update):
+        return {
+            'staffId' : update.staffId,
+            'company': update.companyId,
+            'branch': update.branchId,
+            'permission': update.permission,
+            
+        }
 
     def message_to_json(self, update):
         return {
@@ -101,7 +110,13 @@ class StaffConsumer(WebsocketConsumer):
         )
     
     def send_message(self,message):
-        self.send(text_data=json.dumps({message}))
+        messageList = {
+            'list': message['messages'],
+            'command': 'fetch_messages',
+            'section': 'staff_update'
+        }
+        main = json.dumps(messageList)
+        self.send(text_data=main)
 
     # Receive message from room group
     def chat_message(self, event):
