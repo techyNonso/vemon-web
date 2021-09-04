@@ -5,6 +5,9 @@ from channels.generic.websocket import WebsocketConsumer
 from .models import staff_updates
 
 class StaffConsumer(WebsocketConsumer):
+    def delete_query_set(self,company,branch):
+       staff_updates.objects.filter(companyId=company,branchId=branch).delete()
+
     def fetch_messages(self,data):
         
         company = data.get('companyId')
@@ -13,6 +16,8 @@ class StaffConsumer(WebsocketConsumer):
         content = {
             'messages': self.messages_to_json(updates)
         }
+        #delete query set
+        self.delete_query_set(company,branch)
         self.send_message(content)
 
     def new_message(self, data):
