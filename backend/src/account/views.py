@@ -53,7 +53,7 @@ def registerUser(request):
             relativeLink=reverse('email-verify')
             absurl='http://'+current_site+relativeLink+'?token='+str(token)
             email_body="Hello "+account.first_name+" Use the link below to verify your email \n"+absurl
-            message={'email_body':email_body,'to_email':account.email,'email_subject':'Verify your email account'}
+            message={'email_body':email_body,'to_email':[account.email],'email_subject':'Verify your email account'}
             Util.send_email(message)
             #data["token"] = token
             return Response(data)
@@ -81,7 +81,7 @@ def resendValidationEmail(request):
             relativeLink=reverse('email-verify')
             absurl='http://'+current_site+relativeLink+'?token='+str(token)
             email_body="Hello "+account.first_name+" Use the link below to verify your email \n"+absurl
-            message={'email_body':email_body,'to_email':account.email,'email_subject':'Verify your email account'}
+            message={'email_body':email_body,'to_email':[account.email],'email_subject':'Verify your email account'}
             Util.send_email(message)
             #data["token"] = token
             return Response(data)
@@ -110,7 +110,7 @@ def contactMessage(request, ):
         
         email_to = "williamikeji@gmail.com"
         email_body="From: "+data['fname']+" "+data['lname']+" "+"\n"+"Email: "+data['email']+"\n"+"Message: "+data['msg']+"\n"
-        message={'email_body':email_body,'to_email':email_to,'email_subject':'Customer message'}
+        message={'email_body':email_body,'to_email':[email_to],'email_subject':'Customer message'}
         #return message based on mail sending result
         if Util.send_email(message):
             return Response({'message':"Successfully sent"},status=status.HTTP_200_OK)
@@ -240,7 +240,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             relativeLink=reverse('password-reset-confirm',kwargs={'uidb64':uidb64,'token':token})
             absurl='http://'+current_site+relativeLink
             email_body="Hello, \n  Use the link below to set a new password \n"+absurl
-            message={'email_body':email_body,'to_email':user.email,'email_subject':'Password reset'}
+            message={'email_body':email_body,'to_email':[user.email],'email_subject':'Password reset'}
             Util.send_email(message)
             return Response({'success':'A password reset link has been sent to the email you provided.'},status=status.HTTP_200_OK)
         else:

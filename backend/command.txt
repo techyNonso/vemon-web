@@ -1,0 +1,3 @@
+celery -A vemon worker -l info --pool=solo
+
+rabbitmq-server.bat
