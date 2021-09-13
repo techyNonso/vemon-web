@@ -16,6 +16,7 @@ import {
 //loading imports
 import { css } from "@emotion/core";
 import { BeatLoader } from "react-spinners";
+import swal from "sweetalert";
 
 class AllSales extends Component {
   constructor(props) {
@@ -104,6 +105,18 @@ class AllSales extends Component {
     }
   }
 
+  checkDateStatus(date) {
+    let oldDate = new Date(date);
+    let now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    if (oldDate < now) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   //search starting from first page
   searchList(event) {
     this.setState({
@@ -152,7 +165,16 @@ class AllSales extends Component {
       prevProps.branch !== this.props.branch
     ) {
       //console.log(this.props.company.companyId, this.props.branch.branchId);
+      if (this.checkDateStatus(this.props.company.expiryDate)) {
+        swal({
+          title: "Data error",
+          text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+          icon: "error",
+          button: "OK",
+        });
 
+        return;
+      }
       this.props.getSales(
         this.props.company.companyId,
         this.props.branch.branchId,
@@ -170,6 +192,17 @@ class AllSales extends Component {
       prevState.startDate !== this.state.startDate ||
       prevState.endDate !== this.state.endDate
     ) {
+      if (this.checkDateStatus(this.props.company.expiryDate)) {
+        swal({
+          title: "Data error",
+          text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+          icon: "error",
+          button: "OK",
+        });
+
+        return;
+      }
+
       this.props.getSales(
         this.props.company.companyId,
         this.props.branch.branchId,
@@ -184,6 +217,17 @@ class AllSales extends Component {
   }
 
   componentDidMount() {
+    if (this.checkDateStatus(this.props.company.expiryDate)) {
+      swal({
+        title: "Data error",
+        text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+        icon: "error",
+        button: "OK",
+      });
+
+      return;
+    }
+
     this.props.getSales(
       this.props.company.companyId,
       this.props.branch.branchId,

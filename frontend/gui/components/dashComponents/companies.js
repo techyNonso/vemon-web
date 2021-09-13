@@ -322,7 +322,7 @@ class Companies extends Component {
 
     //update data base
     axiosInstance
-      .put(`http://127.0.0.1:8000/companies/${id}/`, data)
+      .put(`http://127.0.0.1:8000/companies/payment/${id}/`, data)
       .then((res) => {
         // get companies
         this.props.getCompanies();

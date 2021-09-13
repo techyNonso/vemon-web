@@ -6,7 +6,9 @@ from rest_framework.response import Response
 from .serializers import ExpenseSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
-
+from vemon.utils import Util
+from account.models import Account
+from companies.models import company as company_model
 
 
 #create view for company expenses
@@ -15,6 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 def MyCompanyExpense(request,company,startyear,startmonth,startday,endyear,endmonth,endday):
     start_date = "%d-%d-%d"%(startyear,startmonth,startday)
     end_date = "%d-%d-%d"%(endyear,endmonth,endday)
+
     
     if request.method == "GET":
         expenses = expense.objects.filter(companyId=company,date__range=[start_date, end_date])
@@ -28,6 +31,13 @@ def MyCompanyExpense(request,company,startyear,startmonth,startday,endyear,endmo
 def companyExpense(request,company,branch,startyear,startmonth,startday,endyear,endmonth,endday):
     start_date = "%d-%d-%d"%(startyear,startmonth,startday)
     end_date = "%d-%d-%d"%(endyear,endmonth,endday)
+
+    account = Account.objects.get(email=request.user)
+    theCompany = company_model.objects.get(companyId = company)
+    """
+    if not account.is_admin and not Util.checkExpiration(theCompany.expiryDate):
+        return Response({"rejection":"You need to clear all bills associated with "+theCompany.companyId +" before you can access this data."})
+    """
     
     if request.method == "GET":
         expenses = expense.objects.filter(companyId=company,branchId=branch,date__range=[start_date, end_date])

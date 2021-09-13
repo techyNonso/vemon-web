@@ -41,8 +41,6 @@ export const getExpenses = (company, branch, startDate, endDate) => (
     .catch((err) => console.error(err));
 };
 
-
-
 export const getExpensesPerCompany = (company, startDate, endDate) => (
   dispatch
 ) => {
@@ -78,7 +76,6 @@ export const getExpensesPerCompany = (company, startDate, endDate) => (
     )
     .catch((err) => console.error(err));
 };
-
 
 /*
 export const getActivity = (id) => (dispatch) => {

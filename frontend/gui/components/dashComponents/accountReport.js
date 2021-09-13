@@ -25,7 +25,7 @@ import {
 import { extractProductId, getStockArray } from "Modules/stock";
 
 import { extractExpenses } from "Modules/expenses";
-
+import swal from "sweetalert";
 //import bootstrap component
 import Modal from "react-bootstrap/Modal";
 import ModalBody from "react-bootstrap/ModalBody";
@@ -167,6 +167,18 @@ class AccountReport extends Component {
     }
   }
 
+  checkDateStatus(date) {
+    let oldDate = new Date(date);
+    let now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    if (oldDate < now) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   //wait for when our props arrive
   componentDidUpdate(prevProps, prevState) {
     //now check if sales have arrived
@@ -247,7 +259,16 @@ class AccountReport extends Component {
       prevProps.branch !== this.props.branch
     ) {
       //console.log(this.props.company.companyId, this.props.branch.branchId);
+      if (this.checkDateStatus(this.props.company.expiryDate)) {
+        swal({
+          title: "Data error",
+          text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+          icon: "error",
+          button: "OK",
+        });
 
+        return;
+      }
       this.props.getSales(
         this.props.company.companyId,
         this.props.branch.branchId,
@@ -265,6 +286,16 @@ class AccountReport extends Component {
       prevState.startDate !== this.state.startDate ||
       prevState.endDate !== this.state.endDate
     ) {
+      if (this.checkDateStatus(this.props.company.expiryDate)) {
+        swal({
+          title: "Data error",
+          text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+          icon: "error",
+          button: "OK",
+        });
+
+        return;
+      }
       this.props.getSales(
         this.props.company.companyId,
         this.props.branch.branchId,
@@ -279,6 +310,16 @@ class AccountReport extends Component {
   }
 
   componentDidMount() {
+    if (this.checkDateStatus(this.props.company.expiryDate)) {
+      swal({
+        title: "Data error",
+        text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+        icon: "error",
+        button: "OK",
+      });
+
+      return;
+    }
     this.props.getSales(
       this.props.company.companyId,
       this.props.branch.branchId,

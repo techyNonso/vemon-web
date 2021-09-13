@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status,views,generics
 from rest_framework.authtoken.models import Token
-from .utils import Util
+from vemon.utils import Util
 from django.contrib.sites.shortcuts import get_current_site
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.urls import reverse

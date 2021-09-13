@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -9,38 +10,35 @@ function Footer() {
             <div className="col-12 col-sm-6 col-md-4 col-lg-3 text-sm-left">
               <strong>Quick Link</strong>
               <nav className="nav flex-column">
-                <a className="nav-link active" href="https://www.froala.com">
+                <Link className="nav-link active" to="/">
                   Home
-                </a>
+                </Link>
 
-                <a className="nav-link" href="https://www.froala.com">
+                <a className="nav-link" href="#features">
                   Features
                 </a>
-                <a className="nav-link" href="https://www.froala.com">
+                <a className="nav-link" href="#pricing">
                   Pricing
                 </a>
 
-                <a className="nav-link" href="https://www.froala.com">
+                <Link className="nav-link" to="/contact">
                   Contact Us
-                </a>
+                </Link>
               </nav>
             </div>
 
             <div className="col-12 col-sm-6 col-md-4 col-lg-3 mt-5 mt-sm-0 text-sm-left">
               <strong>Other Links</strong>
               <nav className="nav flex-column">
-                <a className="nav-link active" href="https://www.froala.com">
+                <Link className="nav-link active" to="/privacy">
                   Privacy Policy
-                </a>
-                <a className="nav-link" href="https://www.froala.com">
+                </Link>
+                <Link className="nav-link" to="/terms">
                   Terms
-                </a>
-                <a className="nav-link" href="https://www.froala.com">
+                </Link>
+                <Link className="nav-link" to="faq">
                   FAQ
-                </a>
-                <a className="nav-link" href="https://www.froala.com">
-                  Support
-                </a>
+                </Link>
               </nav>
             </div>
 
@@ -55,20 +53,27 @@ function Footer() {
             <div className="col-12 col-lg-2 ml-auto text-lg-left mt-4 mt-lg-0">
               <strong>Follow Us</strong>
               <p className="lead">
-                <a href="https://www.froala.com" className="mx-2">
-                  <i className="fab fa-twitter" aria-hidden="true"></i>
+                <a
+                  href="https://web.facebook.com/profile.php?id=100009564907771"
+                  target="_blank"
+                  style={{
+                    color: "	#4267B2",
+                    display: "inline-block",
+                    padding: "10px",
+                  }}
+                >
+                  {" "}
+                  <i className="fa fa-facebook-square" aria-hidden="true"></i>
                 </a>
-                <a href="https://www.froala.com" className="mx-2">
-                  <i className="fab fa-facebook" aria-hidden="true"></i>
-                </a>
-                <a href="https://www.froala.com" className="mx-2">
-                  <i className="fab fa-instagram" aria-hidden="true"></i>
-                </a>
-                <a href="https://www.froala.com" className="mx-2">
-                  <i className="fab fa-pinterest" aria-hidden="true"></i>
-                </a>
-                <a href="https://www.froala.com" className="mx-2">
-                  <i className="fab fa-google" aria-hidden="true"></i>
+                <a
+                  href="#"
+                  style={{
+                    color: "	#1DA1F2",
+                    display: "inline-block",
+                    padding: "10px",
+                  }}
+                >
+                  <i className="fa fa-twitter" aria-hidden="true"></i>
                 </a>
               </p>
             </div>

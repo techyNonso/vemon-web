@@ -2,7 +2,8 @@ from django.core.mail import EmailMessage
 from django.core.mail import send_mail
 import threading
 import smtplib
-from .tasks import send_email_task
+from account.tasks import send_email_task
+from datetime import date,datetime
 
 class EmailThread(threading.Thread):
 
@@ -17,25 +18,24 @@ class EmailThread(threading.Thread):
 class Util:
     @staticmethod
     def send_email(data):
-        """
-        email=EmailMessage(data['email_subject'],data['email_body'],to=[data['to_email']])
-        email.send()
-        """
+        
 
         #send mail
         try :
-            """
-            send_mail(
-                data['email_subject'],
-                data['email_body'],
-                'williamikeji@gmail.com',
-                [data['to_email']],
-                fail_silently=False
-            )
-            """
             send_email_task.delay(data)
             return True
         except smtplib.SMTPException as error:
             return False
 
+    @staticmethod
+    def checkExpiration(value):
+        today = datetime.today()
+        old = date(value.year,value.month,value.day)
+        current = date(today.year,today.month,today.day)
+        diff = old - current
+        days = diff.days
         
+        if days > 0:
+            return True
+        else:
+            return False

@@ -1,5 +1,5 @@
 from celery.decorators import  task
-from.email import send_email_to
+from vemon.email import send_email_to
 from celery.utils.log import get_task_logger
 from celery import shared_task
 

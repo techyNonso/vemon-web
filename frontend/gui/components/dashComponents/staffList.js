@@ -7,6 +7,7 @@ import { getAllStaff, getStaff } from "Store/actions/staffAction";
 import axios from "axios";
 import { getSearchResult, sortStaff } from "Modules/staff";
 import WebSocketInstance from "Modules/websocket";
+import swal from "sweetalert";
 
 class StaffList extends Component {
   constructor(props) {
@@ -44,6 +45,18 @@ class StaffList extends Component {
 
   addMessage(message) {
     console.log(message, "add");
+  }
+
+  checkDateStatus(date) {
+    let oldDate = new Date(date);
+    let now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    if (oldDate < now) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   //search starting from first page
@@ -101,6 +114,16 @@ class StaffList extends Component {
       prevProps.company !== this.props.company ||
       prevProps.branch !== this.props.branch
     ) {
+      if (this.checkDateStatus(this.props.company.expiryDate)) {
+        swal({
+          title: "Data error",
+          text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+          icon: "error",
+          button: "OK",
+        });
+
+        return;
+      }
       //connect to web socket staff room
       WebSocketInstance.connect(
         this.props.company.companyId,
@@ -119,6 +142,16 @@ class StaffList extends Component {
   }
 
   componentDidMount() {
+    if (this.checkDateStatus(this.props.company.expiryDate)) {
+      swal({
+        title: "Data error",
+        text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+        icon: "error",
+        button: "OK",
+      });
+
+      return;
+    }
     //connect to web socket staff room
     WebSocketInstance.connect(
       this.props.company.companyId,

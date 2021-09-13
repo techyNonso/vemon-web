@@ -12,9 +12,9 @@ import {
 } from "Modules/stock";
 
 //loading imports
-import {css} from '@emotion/core'
-import {BeatLoader} from 'react-spinners'
-
+import { css } from "@emotion/core";
+import { BeatLoader } from "react-spinners";
+import swal from "sweetalert";
 
 class ExhaustedStock extends Component {
   constructor(props) {
@@ -71,6 +71,18 @@ class ExhaustedStock extends Component {
     }
   }
 
+  checkDateStatus(date) {
+    let oldDate = new Date(date);
+    let now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    if (oldDate < now) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   //wait for when our props arrive
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.stocks !== this.props.stocks) {
@@ -82,6 +94,16 @@ class ExhaustedStock extends Component {
       prevProps.branch !== this.props.branch
     ) {
       //console.log(this.props.company.companyId, this.props.branch.branchId);
+      if (this.checkDateStatus(this.props.company.expiryDate)) {
+        swal({
+          title: "Data error",
+          text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+          icon: "error",
+          button: "OK",
+        });
+
+        return;
+      }
       this.setState({
         loading: "block",
       });
@@ -110,6 +132,16 @@ class ExhaustedStock extends Component {
 
   componentDidMount() {
     //console.log(this.props.company.companyId, this.props.branch.branchId);
+    if (this.checkDateStatus(this.props.company.expiryDate)) {
+      swal({
+        title: "Data error",
+        text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+        icon: "error",
+        button: "OK",
+      });
+
+      return;
+    }
     this.props.getStocks(
       this.props.company.companyId,
       this.props.branch.branchId
@@ -121,13 +153,13 @@ class ExhaustedStock extends Component {
 
   render() {
     const loaderStyle = {
-      "width":"200px",
-      "position":"fixed",
-      "zIndex":"1000",
-      "left":"50%",
-      "marginLeft":"-100px",
-      "display":this.state.loading
-    }
+      width: "200px",
+      position: "fixed",
+      zIndex: "1000",
+      left: "50%",
+      marginLeft: "-100px",
+      display: this.state.loading,
+    };
 
     //get current stocks
     const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
@@ -159,8 +191,10 @@ class ExhaustedStock extends Component {
     const paginate = (pageNumber) => this.setState({ currentPage: pageNumber });
     return (
       <Fragment>
-        <div className="row pr-4 mb-3" >
-          <div className="text-center  " style={loaderStyle} ><BeatLoader size={15} color="green" loading /></div>
+        <div className="row pr-4 mb-3">
+          <div className="text-center  " style={loaderStyle}>
+            <BeatLoader size={15} color="green" loading />
+          </div>
         </div>
 
         <div className="row mt-3 pl-3 pr-3">
@@ -193,10 +227,7 @@ class ExhaustedStock extends Component {
                 <th>Quantity</th>
               </tr>
             </thead>
-            <tbody>
-              
-              {lowStockList}
-            </tbody>
+            <tbody>{lowStockList}</tbody>
           </table>
         </div>
 

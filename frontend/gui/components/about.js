@@ -176,14 +176,14 @@ class About extends Component {
 
             <div className="row text-center justify-content-center">
               <div className="col-sm-3 m-sm-auto">
-                <img
+                {/**<img
                   alt="image"
                   className="img-fluid rounded-circle"
                   src="../src/froala/imgs/people/4.jpg"
                 />
 
                 <h4>Sara Doe</h4>
-                <p>Technical Adviser</p>
+                <p>Technical Adviser</p>*/}
               </div>
 
               <div className="col-sm-3 m-sm-auto">
@@ -198,7 +198,7 @@ class About extends Component {
               </div>
 
               <div className="col-sm-3 m-sm-auto">
-                <img
+                {/**<img
                   alt="image"
                   className="img-fluid rounded-circle"
                   src="../src/froala/imgs/people/7.jpg"
@@ -206,7 +206,7 @@ class About extends Component {
 
                 <h4>Sara Doe</h4>
 
-                <p>Technical Adviser</p>
+                <p>Technical Adviser</p>*/}
               </div>
             </div>
           </div>

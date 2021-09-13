@@ -233,7 +233,9 @@ class Home extends Component {
 
         <section className="fdb-block block-top-adjust">
           <div className="container">
-            <h2 className="pb-3">Features</h2>
+            <h2 className="pb-3" id="features">
+              Features
+            </h2>
             <div className="row text-left">
               <div className="col-12 col-md-8 m-auto col-lg-4">
                 <div className="fdb-box fdb-touch">
@@ -301,7 +303,7 @@ class Home extends Component {
         >
           <div className="container">
             <div className="row text-center">
-              <div className="col">
+              <div className="col" id="pricing">
                 <h1>Pricing Plans</h1>
               </div>
             </div>

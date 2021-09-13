@@ -6,11 +6,11 @@ import propTypes from "prop-types";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
 //loading imports
-import {css} from '@emotion/core'
-import {BeatLoader} from 'react-spinners'
+import { css } from "@emotion/core";
+import { BeatLoader } from "react-spinners";
 //alert
-import SweetAlert from 'sweetalert2-react'
-import swal from 'sweetalert'
+import SweetAlert from "sweetalert2-react";
+import swal from "sweetalert";
 
 import {
   extractProductId,
@@ -19,7 +19,6 @@ import {
   getTotalBatches,
   getSearchResult,
 } from "Modules/stock";
-
 
 class AllStock extends Component {
   constructor(props) {
@@ -34,19 +33,15 @@ class AllStock extends Component {
       currentPage: 1,
       postsPerPage: 100,
       searchValue: "",
-      show:false
+      show: false,
     };
-
-   
 
     //handle props received
     this.handleProps = this.handleProps.bind(this);
-    this.showLoading = this.showLoading.bind(this)
-    this.hideLoading = this.hideLoading.bind(this)
-    
+    this.showLoading = this.showLoading.bind(this);
+    this.hideLoading = this.hideLoading.bind(this);
   }
 
- 
   //search item in list starting from first page
   searchList(event) {
     this.setState({
@@ -81,16 +76,28 @@ class AllStock extends Component {
     }
   }
 
-  showLoading(){
-    this.setState({
-      loading:"block"
-    })
+  checkStatus(date) {
+    let oldDate = new Date(date);
+    let now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    if (oldDate < now) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  hideLoading(){
+  showLoading() {
     this.setState({
-      loading:"none"
-    })
+      loading: "block",
+    });
+  }
+
+  hideLoading() {
+    this.setState({
+      loading: "none",
+    });
   }
 
   //wait for when our props arrive
@@ -104,6 +111,16 @@ class AllStock extends Component {
       prevProps.branch !== this.props.branch
     ) {
       //console.log(this.props.company.companyId, this.props.branch.branchId);
+      if (this.checkStatus(this.props.company.expiryDate)) {
+        swal({
+          title: "Data error",
+          text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+          icon: "error",
+          button: "OK",
+        });
+
+        return;
+      }
       this.setState({
         loading: "block",
       });
@@ -132,9 +149,18 @@ class AllStock extends Component {
     });
   }
 
-
   componentDidMount() {
     //console.log(this.props.company.companyId, this.props.branch.branchId);
+    if (this.checkStatus(this.props.company.expiryDate)) {
+      swal({
+        title: "Data error",
+        text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+        icon: "error",
+        button: "OK",
+      });
+
+      return;
+    }
     this.props.getStocks(
       this.props.company.companyId,
       this.props.branch.branchId
@@ -144,19 +170,16 @@ class AllStock extends Component {
     });
   }
 
- 
-
   render() {
-
     const loaderStyle = {
-      "width":"200px",
-      "position":"fixed",
-      "zIndex":"1000",
-      "left":"50%",
-      "marginLeft":"-100px",
-      "display":this.state.loading
-    }
-    
+      width: "200px",
+      position: "fixed",
+      zIndex: "1000",
+      left: "50%",
+      marginLeft: "-100px",
+      display: this.state.loading,
+    };
+
     //get current stocks
     const indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
     const indexOfFirstPost = indexOfLastPost - this.state.postsPerPage;
@@ -189,8 +212,10 @@ class AllStock extends Component {
     }
     return (
       <Fragment>
-        <div className="row pr-4 mb-3" >
-          <div className="text-center  " style={loaderStyle} ><BeatLoader size={15} color="green" loading /></div>
+        <div className="row pr-4 mb-3">
+          <div className="text-center  " style={loaderStyle}>
+            <BeatLoader size={15} color="green" loading />
+          </div>
         </div>
 
         <div className="row mt-3 pl-3 pr-3">
@@ -227,10 +252,7 @@ class AllStock extends Component {
                 <th>Sold</th>
               </tr>
             </thead>
-            <tbody>
-            
-              {stockList}
-            </tbody>
+            <tbody>{stockList}</tbody>
             <tfoot>
               <tr>
                 <th>Total</th>

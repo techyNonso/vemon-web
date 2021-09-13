@@ -7,7 +7,7 @@ from .serializers import CompanySerializer
 from account.models import Account
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
-from account.utils import Util
+from vemon.utils import Util
 from account.models import Account
 
 # Create your views here.
@@ -64,7 +64,7 @@ def companyDetail(request, pk):
 def send_mail(company):
     if Account.objects.filter(email=company.owner).exists():
         account = Account.objects.get(email=company.owner)
-        email_body = "Hello, "+account.first_name+" "+account.last_name +"\n You are getting this mail to confirm that your company activation was successful \n Company name: "+company.companyName+"\n Plan: "+company.plan+"\n Expiry date: "+company.expiryDate+"\n If you have questions, please contact us."
+        email_body = "Hello, "+account.first_name+" "+account.last_name +"\n\n You are getting this mail to confirm that your company activation was successful \n Company name: "+company.companyName+"\n"+"Company ID: "+company.companyId+"\n Plan: "+company.plan+"\n Expiry date: "+company.expiryDate.strftime("%d/%m/%y")+"\n If you have questions, please contact us."
         message={'email_body':email_body,'to_email':[account.email],'email_subject':'Payment confirmation'}
         Util.send_email(message)
         

@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import Pagination from "Components/dashComponents/pagination";
 import { getDebts } from "Store/actions/debtsAction";
 import Formatter from "Components/dashComponents/Formatter";
-
+import swal from "sweetalert";
 import {
   extractDates,
   extractDebts,
@@ -138,6 +138,18 @@ class Debts extends Component {
     }
   }
 
+  checkDateStatus(date) {
+    let oldDate = new Date(date);
+    let now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    if (oldDate < now) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   //wait for when our props arrive
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.debts !== this.props.debts) {
@@ -149,7 +161,16 @@ class Debts extends Component {
       prevProps.branch !== this.props.branch
     ) {
       //console.log(this.props.company.companyId, this.props.branch.branchId);
+      if (this.checkDateStatus(this.props.company.expiryDate)) {
+        swal({
+          title: "Data error",
+          text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+          icon: "error",
+          button: "OK",
+        });
 
+        return;
+      }
       this.props.getDebts(
         this.props.company.companyId,
         this.props.branch.branchId,
@@ -167,6 +188,17 @@ class Debts extends Component {
       prevState.startDate !== this.state.startDate ||
       prevState.endDate !== this.state.endDate
     ) {
+      if (this.checkDateStatus(this.props.company.expiryDate)) {
+        swal({
+          title: "Data error",
+          text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+          icon: "error",
+          button: "OK",
+        });
+
+        return;
+      }
+
       this.props.getDebts(
         this.props.company.companyId,
         this.props.branch.branchId,
@@ -181,6 +213,16 @@ class Debts extends Component {
   }
 
   componentDidMount() {
+    if (this.checkDateStatus(this.props.company.expiryDate)) {
+      swal({
+        title: "Data error",
+        text: `You need to clear all bills associated with ${this.props.company.companyId} before you can access this data.`,
+        icon: "error",
+        button: "OK",
+      });
+
+      return;
+    }
     this.props.getDebts(
       this.props.company.companyId,
       this.props.branch.branchId,
