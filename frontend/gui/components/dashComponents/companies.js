@@ -687,7 +687,7 @@ const ActMod = (props) => {
     amount,
     firstname: firstname.charAt(0).toUpperCase() + firstname.slice(1),
     lastname: lastname.charAt(0).toUpperCase() + lastname.slice(1),
-    channels: ["card", "bank_transfer"],
+    channels: ["card" /*, "bank_transfer"*/],
     metadata: {
       firstname,
       lastname,

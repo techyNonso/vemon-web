@@ -104,11 +104,9 @@ def contactMessage(request, ):
     
     if request.method == 'POST':
         data = request.data
-        
         #'to' will take a value based on what department gets the mail
         # the email sending should be on try and except
-        
-        email_to = "williamikeji@gmail.com"
+        email_to = "williamikeji@gmail.com" #data['email']
         email_body="From: "+data['fname']+" "+data['lname']+" "+"\n"+"Email: "+data['email']+"\n"+"Message: "+data['msg']+"\n"
         message={'email_body':email_body,'to_email':[email_to],'email_subject':'Customer message'}
         #return message based on mail sending result

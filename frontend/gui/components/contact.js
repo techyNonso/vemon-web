@@ -100,7 +100,7 @@ class Contact extends Component {
         .catch((err) => {
           swal({
             title: "Error",
-            text: "OOPs! an error occured occured, please try again later",
+            text: "OOPs! an error occurred, please try again later",
             icon: "error",
             button: "OK",
           });
@@ -232,9 +232,9 @@ class Contact extends Component {
                         onChange={this.changeDept.bind(this)}
                       >
                         <option value="">Select Department</option>
-                        <option value="1">Support</option>
-                        <option value="2">Sales</option>
-                        <option value="3">Accounting</option>
+                        <option value="support@vemon.com">Support</option>
+                        <option value="sales@vemon.com">Sales</option>
+                        {/**<option value="account@vemon.com">Accounting</option>*/}
                       </select>
                       {this.state.errors.department && (
                         <div className="formError">
