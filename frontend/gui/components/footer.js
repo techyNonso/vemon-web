@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { ExternalLink } from "react-external-link";
+import AnchorLink from "react-anchor-link-smooth-scroll";
 
 function Footer() {
   return (
@@ -14,12 +16,12 @@ function Footer() {
                   Home
                 </Link>
 
-                <a className="nav-link" href="#features">
+                <AnchorLink className="nav-link" href="#features">
                   Features
-                </a>
-                <a className="nav-link" href="#pricing">
+                </AnchorLink>
+                <AnchorLink className="nav-link" href="#pricing">
                   Pricing
-                </a>
+                </AnchorLink>
 
                 <Link className="nav-link" to="/contact">
                   Contact Us
@@ -53,9 +55,8 @@ function Footer() {
             <div className="col-12 col-lg-2 ml-auto text-lg-left mt-4 mt-lg-0">
               <strong>Follow Us</strong>
               <p className="lead">
-                <a
+                <ExternalLink
                   href="https://web.facebook.com/profile.php?id=100009564907771"
-                  target="_blank"
                   style={{
                     color: "	#4267B2",
                     display: "inline-block",
@@ -64,8 +65,8 @@ function Footer() {
                 >
                   {" "}
                   <i className="fa fa-facebook-square" aria-hidden="true"></i>
-                </a>
-                <a
+                </ExternalLink>
+                <ExternalLink
                   href="#"
                   style={{
                     color: "	#1DA1F2",
@@ -74,7 +75,7 @@ function Footer() {
                   }}
                 >
                   <i className="fa fa-twitter" aria-hidden="true"></i>
-                </a>
+                </ExternalLink>
               </p>
             </div>
           </div>
