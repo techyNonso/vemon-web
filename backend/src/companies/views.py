@@ -98,3 +98,20 @@ def payment(request, pk):
     elif request.method == 'DELETE':
         theCompany.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+#create your company detail view
+@swagger_auto_schema(method='put',request_body=CompanySerializer)
+@api_view(['GET','PUT','DELETE'])
+@permission_classes([IsAuthenticated])
+def access_verification(request, value):
+    
+    try:
+        theCompany = company.objects.get(companyId=value)
+    except company.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    #account = Account.objects.get(email=request.user)
+    if not Util.checkExpiration(theCompany.expiryDate):
+        return Response({"message":"blocked"})
+    else:
+        return Response({"message":"open"})
