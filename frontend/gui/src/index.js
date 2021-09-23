@@ -13,6 +13,7 @@ import { Provider } from "react-redux";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Dashboard from "Components/dashboard";
+import Download from "Components/download";
 import About from "Components/about";
 import Contact from "Components/contact";
 import Faq from "Components/faq";
@@ -56,6 +57,7 @@ class App extends Component {
                 <ProtectedRoute path="/signup" exact component={Signup} />
                 <Route path="/terms" exact component={Terms} />
                 <ProtectedRoute path="/dashboard" exact component={Dashboard} />
+                <ProtectedRoute path="/download" exact component={Download} />
                 <ProtectedRoute
                   path="/dashboard/:page"
                   exact

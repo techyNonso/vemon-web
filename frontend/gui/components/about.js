@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Header from "./header";
 import Footer from "./footer";
+import { ExternalLink } from "react-external-link";
 
 class About extends Component {
   constructor(props) {
@@ -36,9 +37,8 @@ class About extends Component {
                 </p>
 
                 <p className="h1">
-                  <a
+                  <ExternalLink
                     href="https://web.facebook.com/profile.php?id=100009564907771"
-                    target="_blank"
                     style={{
                       color: "	#4267B2",
                       display: "inline-block",
@@ -47,8 +47,8 @@ class About extends Component {
                   >
                     {" "}
                     <i className="fa fa-facebook-square" aria-hidden="true"></i>
-                  </a>
-                  <a
+                  </ExternalLink>
+                  <ExternalLink
                     href="#"
                     style={{
                       color: "	#1DA1F2",
@@ -57,8 +57,8 @@ class About extends Component {
                     }}
                   >
                     <i className="fa fa-twitter" aria-hidden="true"></i>
-                  </a>
-                  <a
+                  </ExternalLink>
+                  <ExternalLink
                     href="https://www.github.com/techynonso"
                     target="_blank"
                     style={{
@@ -68,8 +68,8 @@ class About extends Component {
                     }}
                   >
                     <i className="fa fa-github-square" aria-hidden="true"></i>
-                  </a>
-                  <a
+                  </ExternalLink>
+                  <ExternalLink
                     href="https://www.linkedin.com/in/chukwunonso-ikeji-040519205/"
                     target="_blank"
                     style={{
@@ -79,7 +79,7 @@ class About extends Component {
                     }}
                   >
                     <i className="fa fa-linkedin-square" aria-hidden="true"></i>
-                  </a>
+                  </ExternalLink>
                 </p>
               </div>
               <div className="col-12 col-md-8 m-auto ml-lg-auto mr-lg-0 col-lg-6 pt-5 pt-lg-0">

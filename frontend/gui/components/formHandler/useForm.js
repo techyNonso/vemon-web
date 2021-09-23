@@ -21,6 +21,7 @@ export default function useForm(validate, history, formType, saveUser = false) {
     if (data.user_type == "admin") {
       localStorage.setItem("access_token", token);
       localStorage.setItem("refresh_token", refresh);
+
       axiosInstance.defaults.headers["Authorization"] =
         "JWT " + localStorage.getItem("access_token");
 
@@ -31,6 +32,7 @@ export default function useForm(validate, history, formType, saveUser = false) {
         last_name: data.last_name,
         stockLimit: data.stockLimit,
         user_id: data.user_id,
+        download_access: data.download_access,
       };
 
       saveUser(values);
@@ -115,6 +117,7 @@ export default function useForm(validate, history, formType, saveUser = false) {
           })
           .then((res) => {
             //decode access token
+            console.log(res.data);
             decode(res.data.access, res.data.refresh);
           })
           .catch((err) => {

@@ -45,6 +45,7 @@ class MyAccountManager(BaseUserManager):
         user.is_superuser =  True
         user.is_emailvalidated = True
         user.is_phonevalidated = True
+        user.download_access = True
         user.save(using=self._db)
         return user
 
@@ -67,6 +68,7 @@ class Account(AbstractBaseUser):
     is_phonevalidated = models.BooleanField(default=False)
     expiration_limit  = models.IntegerField(default=90)
     stock_limit       = models.IntegerField(default=10)
+    download_access   = models.BooleanField(default=False)
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS  =['first_name','last_name','phone']

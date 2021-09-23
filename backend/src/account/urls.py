@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import registerUser,LogoutAPIView,SetNewPasswordApiView, VerifyEmail,RequestPasswordResetEmail,MyTokenObtainPairView, userHandler,contactMessage,PasswordTokenCheckAPI,resendValidationEmail
+from .views import registerUser,LogoutAPIView,SetNewPasswordApiView, VerifyEmail,RequestPasswordResetEmail,MyTokenObtainPairView, userHandler,contactMessage,PasswordTokenCheckAPI,resendValidationEmail,user_update
 from rest_framework.authtoken.views import obtain_auth_token
 
 
@@ -11,6 +11,7 @@ urlpatterns = [
     path('resend-validation-email/',resendValidationEmail,name='resend-validation-email'),
     path('user-update/',userHandler,name="user-update"),
     path('contact-us/',contactMessage),
+    path('user-update/',user_update),
     path('request-reset-email/', RequestPasswordResetEmail.as_view(),name='request-reset-email'),
     path('password-reset/<uidb64>/<token>/',PasswordTokenCheckAPI.as_view(),name='password-reset-confirm'),
     path('password-reset-complete/',SetNewPasswordApiView.as_view(),name='password-reset-complete')

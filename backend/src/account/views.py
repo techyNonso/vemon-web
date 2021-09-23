@@ -24,6 +24,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from decouple import config
 from django.shortcuts import redirect
 from django.http import HttpResponsePermanentRedirect
+from rest_framework.permissions import IsAuthenticated
 
 
 #we specify our own redirect class because django only allows redirect to http or https
@@ -192,6 +193,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['email'] = user.email
         token['expirationLimit'] = user.expiration_limit
         token['stockLimit'] = user.stock_limit
+        token['download_access'] = user.download_access
         if user.is_admin:
             token['user_type'] = 'admin'
         else :
@@ -271,3 +273,20 @@ class SetNewPasswordApiView(generics.GenericAPIView):
         serializer=self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({'success':True,'message':'password reset successful. Proceed to login'}, status=status.HTTP_200_OK)
+
+# Create your views here.
+@api_view(['GET','POST','PUT'])
+@permission_classes([IsAuthenticated])
+def user_update(request):
+    try:
+        user = Account.objects.get(email=request.user)
+    except Account.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        serializer = UserSerializer(user,data=request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+       
