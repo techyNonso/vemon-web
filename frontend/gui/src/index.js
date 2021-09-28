@@ -14,6 +14,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Dashboard from "Components/dashboard";
 import Download from "Components/download";
+import GetStarted from "Components/getStarted";
 import About from "Components/about";
 import Contact from "Components/contact";
 import Faq from "Components/faq";
@@ -50,6 +51,7 @@ class App extends Component {
                 <Route path="/about" exact component={About} />
                 <Route path="/contact" exact component={Contact} />
                 <Route path="/faq" exact component={Faq} />
+                <Route path="/get-started" exact component={GetStarted} />
                 <Route path="/privacy" exact component={Privacy} />
                 <Route path="/verify-email" component={EmailVerification} />
                 <Route path="/reset-password" component={PasswordReset} />

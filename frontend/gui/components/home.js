@@ -145,7 +145,7 @@ class Home extends Component {
               </span>
 
               <div>
-                <Link to="#" className="btn btn-success mt-4">
+                <Link to="/get-started" className="btn btn-success mt-4">
                   Get Started
                 </Link>
               </div>
@@ -222,8 +222,8 @@ class Home extends Component {
                   management is required.
                 </p>
                 <p>
-                  <Link className="btn myBtn mt-4" to="https://www.froala.com">
-                    Download
+                  <Link to="/get-started" className="btn btn-success mt-4">
+                    Get Started
                   </Link>
                 </p>
               </div>
@@ -424,7 +424,7 @@ class Home extends Component {
               </div>
               <div className="col-12 col-md-3 ml-auto text-left text-md-right">
                 <p>
-                  <Link to="https://www.froala.com" className="btn btn-success">
+                  <Link to="/get-started" className="btn btn-success">
                     Get Started
                   </Link>
                 </p>
