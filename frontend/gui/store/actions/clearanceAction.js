@@ -41,7 +41,6 @@ export const getClearance = (company, branch, startDate, endDate) => (
     .catch((err) => console.error(err));
 };
 
-
 export const getClearancePerCompany = (company, startDate, endDate) => (
   dispatch
 ) => {

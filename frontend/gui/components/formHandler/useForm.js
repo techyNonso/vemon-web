@@ -78,7 +78,7 @@ export default function useForm(validate, history, formType, saveUser = false) {
         formType == "signup"
       ) {
         axios
-          .post("http://127.0.0.1:8000/register/", {
+          .post(`http://127.0.0.1:8000/register/`, {
             first_name:
               values.firstname.charAt(0).toUpperCase() +
               values.firstname.slice(1),
@@ -111,7 +111,7 @@ export default function useForm(validate, history, formType, saveUser = false) {
         formType == "signin"
       ) {
         axios
-          .post("http://127.0.0.1:8000/login/", {
+          .post(`http://127.0.0.1:8000/login/`, {
             email: values.email,
             password: values.password,
           })

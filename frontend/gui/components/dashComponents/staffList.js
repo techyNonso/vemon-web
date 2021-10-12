@@ -152,6 +152,7 @@ class StaffList extends Component {
 
       return;
     }
+
     //connect to web socket staff room
     WebSocketInstance.connect(
       this.props.company.companyId,

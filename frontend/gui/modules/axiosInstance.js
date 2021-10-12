@@ -35,7 +35,7 @@ axiosInstance.interceptors.response.use(
 
     if (
       (error.response.status === 401 || error.response.status === 400) &&
-      originalRequest.url === "http://127.0.0.1:8000/api/token/refresh/"
+      originalRequest.url === `http://127.0.0.1:8000/api/token/refresh/`
     ) {
       //clear app data from local storage
       localStorage.setItem("access_token", "");
@@ -50,7 +50,7 @@ axiosInstance.interceptors.response.use(
       const refreshToken = localStorage.getItem("refresh_token");
 
       return axiosInstance
-        .post("http://127.0.0.1:8000/api/token/refresh/", {
+        .post(`http://127.0.0.1:8000/api/token/refresh/`, {
           refresh: refreshToken,
         })
         .then((res) => {

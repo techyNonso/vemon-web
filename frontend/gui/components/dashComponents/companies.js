@@ -331,7 +331,7 @@ class Companies extends Component {
   }
 
   generateId() {
-    return "company-" + Math.random().toString(36).substr(2, 6);
+    return "company" + Math.random().toString(36).substr(2, 6);
   }
 
   //proceed to create
