@@ -148,7 +148,7 @@ class Contact extends Component {
                   <strong>Support</strong>
                 </p>
                 <p>+234 813 183 2011</p>
-                <p>Support@vemon.com</p>
+                <p>Support@managerfront.com</p>
 
                 <p>
                   Our technical support is available by phone or email from 8am
@@ -159,7 +159,7 @@ class Contact extends Component {
                   <strong>Sales</strong>
                 </p>
                 <p>+234 813 183 2011</p>
-                <p>Sales@vemon.com</p>
+                <p>Sales@managerfront.com</p>
 
                 <p>
                   Our technical support is available by phone or email from 11am
@@ -232,9 +232,11 @@ class Contact extends Component {
                         onChange={this.changeDept.bind(this)}
                       >
                         <option value="">Select Department</option>
-                        <option value="support@vemon.com">Support</option>
-                        <option value="sales@vemon.com">Sales</option>
-                        {/**<option value="account@vemon.com">Accounting</option>*/}
+                        <option value="support@managerfront.com">
+                          Support
+                        </option>
+                        <option value="sales@managerfront.com">Sales</option>
+                        {/**<option value="account@managerfront.com">Accounting</option>*/}
                       </select>
                       {this.state.errors.department && (
                         <div className="formError">

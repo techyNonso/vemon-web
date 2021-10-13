@@ -19,9 +19,9 @@ class About extends Component {
               <div className="col-12 col-md-12 col-lg-6 col-xl-5">
                 <h1>About Us</h1>
                 <p className="lead mb-5">
-                  Vemon is an African based company focused on creating digital
-                  products to help both small and big business grow. It was
-                  started by our founder who at the time of creating this
+                  Managerfront is an African based company focused on creating
+                  digital products to help both small and big business grow. It
+                  was started by our founder who at the time of creating this
                   software was a college student and at same time worked as an
                   employee for some companies and in this time developed this
                   software to help solve the problems of the company.

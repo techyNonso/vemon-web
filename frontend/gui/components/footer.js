@@ -82,7 +82,7 @@ function Footer() {
 
           <div className="row mt-3">
             <div className="col text-center">
-              © 2021 Vemon. All Rights Reserved
+              © 2021 managerfront. All Rights Reserved
             </div>
           </div>
         </div>

@@ -41,7 +41,7 @@ function PasswordReset(props) {
 
   useEffect(() => {
     //redirect if user is logged in
-    if (localStorage.getItem("IsVemonOnline") == "true") {
+    if (localStorage.getItem("IsManagerfrontOnline") == "true") {
       history.push("/");
     }
     //run only before initial form submit

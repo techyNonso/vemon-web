@@ -1,9 +1,9 @@
 class Auth {
   login() {
-    localStorage.setItem("IsVemonOnline", true);
+    localStorage.setItem("IsManagerfrontOnline", true);
   }
   isAuthenticated() {
-    if (localStorage.getItem("IsVemonOnline") == "true") {
+    if (localStorage.getItem("IsManagerfrontOnline") == "true") {
       return true;
     } else {
       return false;

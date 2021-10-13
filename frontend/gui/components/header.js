@@ -71,7 +71,7 @@ function Header(props) {
         <div className="container" style={{ backgroundColor: "inherit" }}>
           <Link className="navbar-brand" to="/">
             <img src="/img/icon.png" alt="" width="70px" />
-            <span id="myLogo">Vemon</span>
+            <span id="myLogo">Managerfront</span>
           </Link>
           <button
             className="navbar-toggler"

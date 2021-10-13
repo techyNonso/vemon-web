@@ -62,7 +62,7 @@ class Home extends Component {
             <div className="container" style={{ backgroundColor: "inherit" }}>
               <Link className="navbar-brand" to="/">
                 <img src="/img/icon.png" alt="" width="100px" />
-                <span id="myLogo">Vemon</span>
+                <span id="myLogo">Managerfront</span>
               </Link>
               <button
                 className="navbar-toggler"
@@ -214,9 +214,9 @@ class Home extends Component {
                 <img alt="image" className="img-fluid" src="/img/intro.png" />
               </div>
               <div className="col-12 col-md-6 col-lg-5 ml-md-auto text-left">
-                <h1>Vemon</h1>
+                <h1>Managerfront</h1>
                 <p className="lead">
-                  Vemon is for all business that require proper and good
+                  Managerfront is for all business that require proper and good
                   management, ranging from Boutiques, Pharmacy outlets,
                   Suppermarkets, Malls, Beauty shops and also all business where
                   management is required.
@@ -241,8 +241,8 @@ class Home extends Component {
                 <div className="fdb-box fdb-touch">
                   <h2>Inventory</h2>
                   <p>
-                    Vemon helps you keep a proper inventory of all your stock.
-                    Monitoring quantity and life.
+                    Managerfront helps you keep a proper inventory of all your
+                    stock. Monitoring quantity and life.
                   </p>
                 </div>
               </div>
@@ -250,8 +250,8 @@ class Home extends Component {
                 <div className="fdb-box fdb-touch">
                   <h2>Staff management</h2>
                   <p>
-                    With Vemon, you will have a record of all your your staff in
-                    all your business branches.
+                    With managerfront, you will have a record of all your your
+                    staff in all your business branches.
                   </p>
                 </div>
               </div>
@@ -259,8 +259,8 @@ class Home extends Component {
                 <div className="fdb-box fdb-touch">
                   <h2>Sales Record</h2>
                   <p>
-                    Vemon helps you process all forms of sales; generating all
-                    assciated invoice an keeping records of them.
+                    Managerfront helps you process all forms of sales;
+                    generating all assciated invoice an keeping records of them.
                   </p>
                 </div>
               </div>
@@ -270,8 +270,8 @@ class Home extends Component {
                 <div className="fdb-box fdb-touch">
                   <h2>Debt record</h2>
                   <p>
-                    Vemon helps you keep a record of all debts from customers
-                    till the debts are cleared.
+                    Managerfront helps you keep a record of all debts from
+                    customers till the debts are cleared.
                   </p>
                 </div>
               </div>
@@ -279,8 +279,8 @@ class Home extends Component {
                 <div className="fdb-box fdb-touch">
                   <h2>Analysis</h2>
                   <p>
-                    Vemon monitors your business to give you a proper analysis
-                    of your business performace.
+                    Managerfront monitors your business to give you a proper
+                    analysis of your business performace.
                   </p>
                 </div>
               </div>
@@ -288,8 +288,8 @@ class Home extends Component {
                 <div className="fdb-box fdb-touch">
                   <h2>Account</h2>
                   <p>
-                    Vemon gives you a proper accounting of all transactions that
-                    take place in all your business premisses.
+                    Managerfront gives you a proper accounting of all
+                    transactions that take place in all your business premisses.
                   </p>
                 </div>
               </div>

@@ -40,7 +40,7 @@ axiosInstance.interceptors.response.use(
       //clear app data from local storage
       localStorage.setItem("access_token", "");
       localStorage.setItem("refresh_token", "");
-      localStorage.setItem("IsVemonOnline", false);
+      localStorage.setItem("IsManagerfrontOnline", false);
       window.location = "/signin";
       return Promise.reject(error);
     }

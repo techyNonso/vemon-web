@@ -115,10 +115,10 @@ class Download extends Component {
               <div className="col-12 col-md-12 col-lg-6 col-xl-5">
                 <h1>Download Us</h1>
                 <p className="lead mb-5">
-                  You are few steps away from getting Vemon desktop app. The
-                  button you see below is dependent on your download access
+                  You are few steps away from getting managerfront desktop app.
+                  The button you see below is dependent on your download access
                   placed on the app. You are required to make a one time payment
-                  and forever have access to Vemon desktop app.
+                  and forever have access to managerfront desktop app.
                 </p>
               </div>
               <div className="col-12 col-md-8 m-auto ml-lg-auto mr-lg-0 col-lg-6 pt-5 pt-lg-0">
